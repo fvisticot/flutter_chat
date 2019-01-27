@@ -81,7 +81,7 @@ class _ChatDemoAppState extends State<ChatDemoApp> {
 
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) {
-        print("onMessage received: ${message}");
+        print("onMessage received: $message");
       },
       onLaunch: (Map<String, dynamic> message) {
         print("onLaunch: $message");
