@@ -1,5 +1,3 @@
-import 'package:dio/dio.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -16,11 +14,10 @@ class ChatDemoApp extends StatefulWidget {
 }
 
 class _ChatDemoAppState extends State<ChatDemoApp> {
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   Chat _chat = Chat();
   bool _isChatReady = false;
 
-  _ChatDemoAppState() {}
+  _ChatDemoAppState();
 
   @override
   void initState() {
@@ -47,13 +44,14 @@ class _ChatDemoAppState extends State<ChatDemoApp> {
     );
   }
 
+  /*
   Future<FirebaseUser> _loginExternal(String userName) async {
     Dio dio = Dio();
     Response response = await dio.post(
         'https://us-central1-gamification-d5b83.cloudfunctions.net/testAuth',
         data: {'userName': userName});
     final token = response.data;
-    print('Token: ${token}');
+    print('Token: $token');
     final FirebaseAuth auth = FirebaseAuth.instance;
     FirebaseUser fbUser =
         await auth.signInWithCustomToken(token: token).catchError((error) {
@@ -62,9 +60,10 @@ class _ChatDemoAppState extends State<ChatDemoApp> {
     print(fbUser);
     return fbUser;
   }
+  */
 
   _initChat(FirebaseDatabase database) async {
-    FirebaseUser fbUser = await _loginExternal('alexia');
+    //FirebaseUser fbUser = await _loginExternal('alexia');
     //final user = User(firstName: 'fred', lastName: 'Visticot');
     final user = User(firstName: 'alexia', lastName: 'Frit');
     try {
