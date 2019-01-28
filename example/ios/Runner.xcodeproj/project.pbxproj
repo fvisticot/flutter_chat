@@ -437,9 +437,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fvisticot.chat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
+				TRACK_WIDGET_CREATION = false;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Profile;
@@ -566,12 +567,13 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fvisticot.chat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.0;
+				TRACK_WIDGET_CREATION = false;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -595,11 +597,12 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fvisticot.chat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.0;
+				TRACK_WIDGET_CREATION = false;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

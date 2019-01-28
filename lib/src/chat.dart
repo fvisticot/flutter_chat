@@ -335,7 +335,7 @@ class Chat {
         .child('groups')
         .orderByKey()
         .equalTo(id)
-        .limitToFirst(1)
+        //.limitToFirst(1)
         .once();
     if (snapshot.value == null) {
       return null;
