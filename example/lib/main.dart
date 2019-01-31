@@ -62,12 +62,17 @@ class _ChatDemoAppState extends State<ChatDemoApp> {
   }
   */
 
+  _test() {
+    _chat.group('8');
+  }
+
   _initChat(FirebaseDatabase database) async {
     //FirebaseUser fbUser = await _loginExternal('alexia');
     //final user = User(firstName: 'fred', lastName: 'Visticot');
     final user = User(firstName: 'alexia', lastName: 'Frit');
     try {
       await _chat.init(database, user: user);
+      _test();
       _isChatReady = true;
       setState(() {});
       _setupNotifications();

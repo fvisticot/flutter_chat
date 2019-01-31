@@ -335,7 +335,6 @@ class Chat {
         .child('groups')
         .orderByKey()
         .equalTo(id)
-        //.limitToFirst(1)
         .once();
     if (snapshot.value == null) {
       return null;
@@ -346,6 +345,7 @@ class Chat {
         group = Group.fromMap(value);
         group.id = key;
       });
+
       return group;
     }
   }

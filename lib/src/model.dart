@@ -62,7 +62,8 @@ class Group {
   factory Group.fromMap(Map map) {
     Group group = Group(map['createdByUserId'],
         name: map['name'],
-        createdAt: DateTime.parse(map['createdAt']),
+        createdAt:
+            map['createdAt'] == null ? null : DateTime.parse(map['createdAt']),
         photoUrl: map['photoUrl']);
 
     return group;
