@@ -171,10 +171,10 @@ class _ChatPageState extends State<ChatPage>
       Location location = Location();
       final permission = await location.hasPermission();
       final currentLocation = await location.getLocation();
-      _chat.sendMessage(
-          widget.groupId,
-          LocationMessage(
-              currentLocation['longitude'], currentLocation['latitude']));
+      print(
+          'Current location: ${currentLocation.longitude}, ${currentLocation.latitude}');
+      _chat.sendMessage(widget.groupId,
+          LocationMessage(currentLocation.longitude, currentLocation.latitude));
     } on PlatformException catch (e) {
       String error;
       if (e.code == 'PERMISSION_DENIED') {
@@ -307,29 +307,23 @@ class _ChatPageState extends State<ChatPage>
   }
 
   Widget _buildLocationMessage(LocationMessage message) {
-    print('BuildLoc');
+    print('BuildLoc: $message');
     return Container(
       height: 220,
       child: ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(18)),
         child: GoogleMap(
-          options: GoogleMapOptions(
-            myLocationEnabled: false,
-            mapType: MapType.hybrid,
-            zoomGesturesEnabled: false,
-            rotateGesturesEnabled: false,
-            scrollGesturesEnabled: false,
-            tiltGesturesEnabled: false,
-            cameraPosition: CameraPosition(
-                target: LatLng(message.latitude, message.longitude),
-                zoom: 18.0),
-          ),
-          onMapCreated: (mapController) {
-            final markerOptions = MarkerOptions(
-                icon: BitmapDescriptor.defaultMarker,
-                position: LatLng(message.latitude, message.longitude));
-            mapController.addMarker(markerOptions);
-          },
+          myLocationEnabled: false,
+          mapType: MapType.hybrid,
+          zoomGesturesEnabled: false,
+          rotateGesturesEnabled: false,
+          scrollGesturesEnabled: false,
+          tiltGesturesEnabled: false,
+          //markers: Set.from(
+          //  [Marker(position: LatLng(message.latitude, message.longitude))]),
+          initialCameraPosition: CameraPosition(
+              target: LatLng(message.latitude, message.longitude), zoom: 18.0),
+          onMapCreated: (mapController) {},
         ),
       ),
     );
@@ -476,7 +470,7 @@ class _ChatPageState extends State<ChatPage>
           imageUrl: message.url,
           fadeInDuration: Duration(milliseconds: 200),
           fit: BoxFit.fill,
-          placeholder: CircularProgressIndicator(),
+          placeholder: (context, url) => CircularProgressIndicator(),
         ),
       ),
       padding: EdgeInsets.all(8),

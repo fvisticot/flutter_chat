@@ -153,6 +153,11 @@ class LocationMessage extends Message {
         'latitude': latitude,
         'timestamp': timestamp.toIso8601String(),
       };
+
+  @override
+  String toString() {
+    return 'LocationMessage{longitude: $longitude, latitude: $latitude}';
+  }
 }
 
 class Chat {
