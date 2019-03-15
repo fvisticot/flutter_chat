@@ -87,6 +87,7 @@ class _ChatPageState extends State<ChatPage>
   _buildPage(ChatState state) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
         bottom: PreferredSize(
             child: StreamBuilder<double>(
                 initialData: 0,

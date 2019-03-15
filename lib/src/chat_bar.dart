@@ -103,110 +103,115 @@ class _ChatBarState extends State<ChatBar> with SingleTickerProviderStateMixin {
 
     return SafeArea(
       child: Container(
-        child:
-            Column(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-          widget.message != null ? _buildInfo() : Container(),
-          _isShowSticker ? _buildStickerSelection() : Container(),
-          Container(
-            decoration: new BoxDecoration(color: Colors.white.withOpacity(0.5)),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-              child: Container(
-                  decoration:
-                      BoxDecoration(color: Colors.white.withOpacity(0.0)),
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                        margin: new EdgeInsets.symmetric(horizontal: 1.0),
-                        child: new IconButton(
-                          icon: new Icon(Icons.location_on),
-                          onPressed: () {
-                            if (widget.onLocationShared != null) {
-                              widget.onLocationShared();
-                            }
-                          },
-                          color: primaryColor,
-                        ),
-                      ),
-                      // Button send image
-                      Container(
-                        margin: new EdgeInsets.symmetric(horizontal: 1.0),
-                        child: new IconButton(
-                          icon: new Icon(Icons.image),
-                          onPressed: () {
-                            _isShowSticker = false;
-                            _isShowAsset = !_isShowAsset;
-                            setState(() {});
-                          },
-                          color: primaryColor,
-                        ),
-                      ),
-                      Container(
-                        margin: new EdgeInsets.symmetric(horizontal: 1.0),
-                        child: new IconButton(
-                          icon: new Icon(Icons.face),
-                          onPressed: () {
-                            _isShowAsset = false;
-                            _isShowSticker = !_isShowSticker;
-                            setState(() {});
-                          },
-                          color: primaryColor,
-                        ),
-                      ),
-
-                      // Edit text
-                      Flexible(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8)),
-                              border: Border.all(
-                                  color: Colors.grey.withOpacity(0.3))),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: TextField(
-                              keyboardType: TextInputType.multiline,
-                              autocorrect: true,
-                              maxLines: null,
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 15.0,
-                              ),
-                              controller: _textEditingController,
-                              decoration: InputDecoration.collapsed(
-                                hintText: 'Type your message...',
-                                hintStyle: TextStyle(color: Colors.grey),
-                              ),
-                              focusNode: _focusNode,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      // Button send message
-                      Container(
-                        margin: EdgeInsets.symmetric(horizontal: 8.0),
-                        child: IconButton(
-                          icon: Icon(Icons.send),
-                          onPressed: _isShowSendButton
-                              ? () {
-                                  if (widget.onSendButtonClicked != null) {
-                                    widget.onSendButtonClicked(
-                                        _textEditingController.text);
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              widget.message != null ? _buildInfo() : Container(),
+              _isShowSticker ? _buildStickerSelection() : Container(),
+              Container(
+                decoration: BoxDecoration(color: Colors.white.withOpacity(0.5)),
+                child: ClipRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                    child: Container(
+                        decoration:
+                            BoxDecoration(color: Colors.white.withOpacity(0.0)),
+                        child: Row(
+                          children: <Widget>[
+                            Container(
+                              margin: new EdgeInsets.symmetric(horizontal: 1.0),
+                              child: new IconButton(
+                                icon: new Icon(Icons.location_on),
+                                onPressed: () {
+                                  if (widget.onLocationShared != null) {
+                                    widget.onLocationShared();
                                   }
-                                  _textEditingController.clear();
-                                }
-                              : null,
-                          color: primaryColor,
-                        ),
-                      ),
-                    ],
-                  )),
-            ),
-            width: double.infinity,
-          ),
-          _isShowAsset ? _buildAssetSelection() : Container(),
-        ]),
+                                },
+                                color: primaryColor,
+                              ),
+                            ),
+                            // Button send image
+                            Container(
+                              margin: new EdgeInsets.symmetric(horizontal: 1.0),
+                              child: new IconButton(
+                                icon: new Icon(Icons.image),
+                                onPressed: () {
+                                  _isShowSticker = false;
+                                  _isShowAsset = !_isShowAsset;
+                                  setState(() {});
+                                },
+                                color: primaryColor,
+                              ),
+                            ),
+                            Container(
+                              margin: new EdgeInsets.symmetric(horizontal: 1.0),
+                              child: new IconButton(
+                                icon: new Icon(Icons.face),
+                                onPressed: () {
+                                  _isShowAsset = false;
+                                  _isShowSticker = !_isShowSticker;
+                                  setState(() {});
+                                },
+                                color: primaryColor,
+                              ),
+                            ),
+
+                            // Edit text
+                            Flexible(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8)),
+                                    border: Border.all(
+                                        color: Colors.grey.withOpacity(0.3))),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: TextField(
+                                    keyboardType: TextInputType.multiline,
+                                    autocorrect: true,
+                                    maxLines: null,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 15.0,
+                                    ),
+                                    controller: _textEditingController,
+                                    decoration: InputDecoration.collapsed(
+                                      hintText: 'Type your message...',
+                                      hintStyle: TextStyle(color: Colors.grey),
+                                    ),
+                                    focusNode: _focusNode,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            // Button send message
+                            Container(
+                              margin: EdgeInsets.symmetric(horizontal: 8.0),
+                              child: IconButton(
+                                icon: Icon(Icons.send),
+                                onPressed: _isShowSendButton
+                                    ? () {
+                                        if (widget.onSendButtonClicked !=
+                                            null) {
+                                          widget.onSendButtonClicked(
+                                              _textEditingController.text);
+                                        }
+                                        _textEditingController.clear();
+                                      }
+                                    : null,
+                                color: primaryColor,
+                              ),
+                            ),
+                          ],
+                        )),
+                  ),
+                ),
+                width: double.infinity,
+              ),
+              _isShowAsset ? _buildAssetSelection() : Container(),
+            ]),
       ),
     );
   }

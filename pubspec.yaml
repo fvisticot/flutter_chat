@@ -10,15 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_localizations:
-      sdk: flutter
-
   flutter_bloc: ^0.4.8
-  firebase_messaging: "^1.0.2"
+  firebase_messaging: ^1.0.2
   firebase_database: ^1.0.5
   logging: ^0.11.3+2
   image_picker: ^0.4.10
@@ -30,7 +23,14 @@ dev_dependencies:
   firebase_auth: ^ 0.5.20
   giphy_client: ^0.0.1
   dio: ^1.0.1
-  cupertino_icons: ^0.1.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_localizations:
+      sdk: flutter
+
+
 
 
 

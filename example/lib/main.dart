@@ -1,8 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/flutter_chat.dart';
+import 'package:dio/dio.dart';
 
 void main() {
   runApp(ChatDemoApp());
@@ -44,7 +46,6 @@ class _ChatDemoAppState extends State<ChatDemoApp> {
     );
   }
 
-  /*
   Future<FirebaseUser> _loginExternal(String userName) async {
     Dio dio = Dio();
     Response response = await dio.post(
@@ -60,16 +61,15 @@ class _ChatDemoAppState extends State<ChatDemoApp> {
     print(fbUser);
     return fbUser;
   }
-  */
 
   _test() {
     _chat.group('8');
   }
 
   _initChat(FirebaseDatabase database) async {
-    //FirebaseUser fbUser = await _loginExternal('alexia');
-    //final user = User(firstName: 'fred', lastName: 'Visticot');
-    final user = User(firstName: 'alexia', lastName: 'Frit');
+    FirebaseUser fbUser = await _loginExternal('fred');
+    final user = User(firstName: 'fred', lastName: 'Visticot');
+    //final user = User(firstName: 'alexia', lastName: 'Frit');
     try {
       await _chat.init(database, user: user);
       _test();
