@@ -103,7 +103,7 @@ class PhotoMessage extends Message {
 
   Widget displayMessage(isMine) {
     return ClipRRect(
-      borderRadius: BorderRadius.all(Radius.circular(16.0)),
+      borderRadius: BorderRadius.all(Radius.circular(15.0)),
       child: CachedNetworkImage(
         placeholder: (context, url) => SizedBox(
               child: CircularProgressIndicator(),
