@@ -1,12 +1,27 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/flutter_chat.dart';
-import 'package:dio/dio.dart';
+import 'authentication/authentication.dart';
+import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
+class SimpleBlocDelegate extends BlocDelegate {
+  @override
+  void onTransition(Transition transition) {
+    print(transition);
+  }
+
+  @override
+  void onError(Object error, StackTrace stacktrace) {
+    print(error);
+  }
+}
 
 void main() {
+  BlocSupervisor().delegate = SimpleBlocDelegate();
   runApp(ChatDemoApp());
 }
 
@@ -16,96 +31,56 @@ class ChatDemoApp extends StatefulWidget {
 }
 
 class _ChatDemoAppState extends State<ChatDemoApp> {
-  Chat _chat = Chat();
-  bool _isChatReady = false;
-
-  _ChatDemoAppState();
+  final GoogleSignIn googleSignIn = GoogleSignIn();
+  final FirebaseApp app = FirebaseApp.instance;
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  AuthenticationBloc _authenticationBloc;
+  FirebaseDatabase database;
 
   @override
   void initState() {
-    FirebaseApp app = FirebaseApp.instance;
-    FirebaseDatabase database = FirebaseDatabase(app: app);
+    database = FirebaseDatabase(app: app);
     database.setPersistenceEnabled(false);
-    _initChat(database);
+
+    _authenticationBloc = AuthenticationBloc(googleSignIn, firebaseAuth);
+    _authenticationBloc.dispatch(AppStarted());
     super.initState();
   }
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return BlocProvider<AuthenticationBloc>(
+      bloc: _authenticationBloc,
+      child: MaterialApp(
+        home: BlocBuilder<AuthenticationEvent, AuthenticationState>(
+          bloc: _authenticationBloc,
+          builder: (BuildContext context, AuthenticationState state) {
+            if (state is AuthenticationUninitialized) {
+              // TODO : SPLASHSCREEN
+              return Container(decoration: BoxDecoration(color: Colors.lightGreen),);
+            }
+            if (state is AuthenticationAuthenticated) {
+              return Chat(database, 'Toto', groupId:'MzuQUqGjXVXnu3urV9SmrWJXMeW2_vxri76DaHNQ709FIlFptYxugwN93');
+            }
+            if (state is AuthenticationUnauthenticated) {
+              return AuthenticationPage();
+            }
+            if (state is AuthenticationLoading) {
+              return Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                ),
+                /*child: Center(
+                  child: SizedBox(
+                      width: 20.0,
+                      height: 20.0,
+                      child: CircularProgressIndicator()),
+                ),*/
+              );
+            }
+          },
+        ),
       ),
-      home: _isChatReady
-          ? ChatsPage()
-          : Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            ),
     );
-  }
-
-  Future<FirebaseUser> _loginExternal(String userName) async {
-    Dio dio = Dio();
-    Response response = await dio.post(
-        'https://us-central1-gamification-d5b83.cloudfunctions.net/testAuth',
-        data: {'userName': userName});
-    final token = response.data;
-    print('Token: $token');
-    final FirebaseAuth auth = FirebaseAuth.instance;
-    FirebaseUser fbUser =
-        await auth.signInWithCustomToken(token: token).catchError((error) {
-      throw Exception('Error login with external solution');
-    });
-    print(fbUser);
-    return fbUser;
-  }
-
-  _test() {
-    _chat.group('8');
-  }
-
-  _initChat(FirebaseDatabase database) async {
-    FirebaseUser fbUser = await _loginExternal('fred');
-    final user = User(firstName: 'fred', lastName: 'Visticot');
-    //final user = User(firstName: 'alexia', lastName: 'Frit');
-    try {
-      await _chat.init(database, user: user);
-      _test();
-      _isChatReady = true;
-      setState(() {});
-      _setupNotifications();
-    } catch (e) {
-      print("Error: $e");
-    }
-  }
-
-  void _setupNotifications() {
-    final FirebaseMessaging _firebaseMessaging = new FirebaseMessaging();
-
-    _firebaseMessaging.configure(
-      onMessage: (Map<String, dynamic> message) {
-        print("onMessage received: $message");
-      },
-      onLaunch: (Map<String, dynamic> message) {
-        print("onLaunch: $message");
-      },
-      onResume: (Map<String, dynamic> message) {
-        print("onResume: $message");
-      },
-    );
-
-    _firebaseMessaging.requestNotificationPermissions(
-        const IosNotificationSettings(sound: true, badge: true, alert: true));
-    _firebaseMessaging.onIosSettingsRegistered
-        .listen((IosNotificationSettings settings) {
-      print("Settings registered: $settings");
-    });
-
-    _firebaseMessaging.getToken().then((String token) {
-      print("Push Messaging token: $token");
-      _chat.setPushNotificationToken(token);
-    });
   }
 }

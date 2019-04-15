@@ -1,3 +1,6 @@
+# Firebase Cloud Functions
+functions/*
+
 # Miscellaneous
 *.class
 *.lock
@@ -14,7 +17,7 @@
 *.iml
 *.ipr
 *.iws
-.idea/
+.idea/*
 
 # Visual Studio Code related
 .vscode/
