@@ -58,10 +58,33 @@ class _MessageBarState extends State<MessageBar> {
                   margin: EdgeInsets.symmetric(horizontal: 8.0),
                   child: IconButton(
                     onPressed:() async {
-                      File imageFile = await ImagePicker.pickImage(source: ImageSource.camera);
+                      try {
+                        File imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
                         if (imageFile != null) {
                           _messageBarBloc.dispatch(StoreImageEvent(imageFile));
                         }
+                      }
+                      catch (e) {
+                        print(e);
+                      }
+                    },
+                    icon: Icon(Icons.photo_library),
+                    color: Colors.blue,
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(right: 8.0),
+                  child: IconButton(
+                    onPressed:() async {
+                      try {
+                        File imageFile = await ImagePicker.pickImage(source: ImageSource.camera);
+                        if (imageFile != null) {
+                          _messageBarBloc.dispatch(StoreImageEvent(imageFile));
+                        }
+                      }
+                      catch (e) {
+                        print(e);
+                      }
                       },
                     icon: Icon(Icons.photo_camera),
                     color: Colors.blue,
