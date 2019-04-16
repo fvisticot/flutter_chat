@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_chat/src/message_bar/message_bar_ui.dart';
-import 'package:flutter_chat/src/models/user.dart';
-import 'package:flutter_chat/src/repositories/firebase_repository.dart';
-import 'package:flutter_chat/src/models/models.dart';
 import 'package:flutter_chat/src/group_messages/group_messages.dart';
+import 'package:flutter_chat/src/message_bar/message_bar_ui.dart';
+import 'package:flutter_chat/src/models/models.dart';
+import 'package:flutter_chat/src/repositories/firebase_repository.dart';
 import 'package:flutter_chat/src/typing_users/typing_users_ui.dart';
 import 'package:flutter_chat/src/upload_file/upload_file.dart';
-import 'package:intl/intl.dart';
-import 'group_chat.dart';
 import 'package:flutter_chat/src/user_presence/user_presence_ui.dart';
+import 'package:intl/intl.dart';
+
+import 'group_chat.dart';
 
 class GroupChatPage extends StatefulWidget {
   final String groupId;
@@ -48,97 +48,89 @@ class _GroupChatPageState extends State<GroupChatPage> {
             return Scaffold(
               body: Container(),
             );
-          } else if (groupChatState is GroupChatSuccess) {
-            if (groupChatState.group.users.length > 2) {
-              return Scaffold(
-                appBar: AppBar(
-                    title: Text(
-                  groupChatState.group.title,
-                  maxLines: 1,
-                )),
-                body: Column(
-                  //alignment: Alignment.bottomCenter,
-                  children: <Widget>[
-                    Expanded(
-                      child: Container(),
-                    ),
-                    TypingUsers(widget.firebaseRepository, widget.groupId,
-                        widget.currentUser),
-                    MessageBar(widget.firebaseRepository, widget.groupId,
-                        widget.currentUser, _uploadFileBloc),
-                  ],
-                ),
-              );
-            } else {
-              String userId = groupChatState.group.users.keys.firstWhere(
-                  (k) => k != widget.currentUser.id,
-                  orElse: () => null);
-              String title = groupChatState.group.users[userId];
-              return Scaffold(
-                appBar: AppBar(
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Stack(children: <Widget>[
-                        CircleAvatar(
-                          backgroundColor: Colors.brown.shade800,
-                          child: Text('AH'),
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: UserPresenceIndicator(
-                              widget.firebaseRepository, userId),
-                        )
-                      ]),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        title,
-                        maxLines: 1,
-                      ),
-                    ],
-                  ),
-                  bottom: PreferredSize(
-                      child: BlocBuilder<UploadFileEvent, UploadFileState>(
-                          bloc: _uploadFileBloc,
-                          builder: (context, uploadFileState) {
-                            if (uploadFileState is UploadFileInitial) {
-                              return Container();
-                            } else if (uploadFileState is UploadFileProgress) {
-                              return LinearProgressIndicator(
-                                value: uploadFileState.progress,
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(Colors.green),
-                              );
-                            }
-                          }),
-                      preferredSize: const Size(double.infinity, 6)),
-                ),
-                body: Column(
-                  //alignment: Alignment.bottomCenter,
-                  children: <Widget>[
-                    Expanded(
-                      child: _buildMessagesList(),
-                    ),
-                    TypingUsers(widget.firebaseRepository, widget.groupId,
-                        widget.currentUser),
-                    MessageBar(widget.firebaseRepository, widget.groupId,
-                        widget.currentUser, _uploadFileBloc),
-                  ],
-                ),
-              );
-            }
           } else if (groupChatState is GroupChatLoading) {
             return Scaffold(
-              body: Container(),
+              body: Center(
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            );
+          } else if (groupChatState is GroupChatSuccess) {
+            return Scaffold(
+              appBar: _buildAppBar(groupChatState.group),
+              body: Column(
+                children: <Widget>[
+                  Expanded(
+                    child: _buildMessagesList(groupChatState.group),
+                  ),
+                  TypingUsers(widget.firebaseRepository, widget.groupId,
+                      widget.currentUser),
+                  MessageBar(widget.firebaseRepository, widget.groupId,
+                      widget.currentUser, _uploadFileBloc),
+                ],
+              ),
             );
           }
         });
   }
 
-  _buildMessagesList() {
+  Widget _buildAppBar(Group group) {
+    if (group.users.length > 2) {
+      return AppBar(
+          title: Text(
+        group.title,
+        maxLines: 1,
+      ));
+    } else {
+      String userId = group.users.keys
+          .firstWhere((k) => k != widget.currentUser.id, orElse: () => null);
+      String title = group.users[userId];
+      return AppBar(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Stack(children: <Widget>[
+              CircleAvatar(
+                backgroundColor: Colors.brown.shade800,
+                child: Text('AH'),
+              ),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: UserPresenceIndicator(widget.firebaseRepository, userId),
+              )
+            ]),
+            SizedBox(
+              width: 10,
+            ),
+            Text(
+              title,
+              maxLines: 1,
+            ),
+          ],
+        ),
+        bottom: PreferredSize(
+            child: BlocBuilder<UploadFileEvent, UploadFileState>(
+                bloc: _uploadFileBloc,
+                builder: (context, uploadFileState) {
+                  if (uploadFileState is UploadFileInitial) {
+                    return Container();
+                  } else if (uploadFileState is UploadFileProgress) {
+                    return LinearProgressIndicator(
+                      value: uploadFileState.progress,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+                    );
+                  }
+                }),
+            preferredSize: const Size(double.infinity, 6)),
+      );
+    }
+  }
+
+  _buildMessagesList(Group group) {
     return Container(
       child: GestureDetector(
           onTap: () {
@@ -167,7 +159,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
                           scrollDirection: Axis.vertical,
                           itemCount: messages.length,
                           itemBuilder: (BuildContext context, int i) {
-                            return _buildMessage(messages[i]);
+                            return _buildMessage(messages[i], group);
                           },
                         );
                       }
@@ -176,43 +168,42 @@ class _GroupChatPageState extends State<GroupChatPage> {
     );
   }
 
-  Widget _buildMessage(Message message) {
-    bool isMine = widget.currentUser.id == message.userId ? true : false;
-    return GestureDetector(
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 1, horizontal: 5),
-        child: Row(
-          mainAxisAlignment:
-              isMine ? MainAxisAlignment.end : MainAxisAlignment.start,
-          children: <Widget>[
-            Flexible(
-              child: Container(
-                padding: EdgeInsets.all(8),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: isMine
-                      ? CrossAxisAlignment.end
-                      : CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
+  Widget _buildMessage(Message message, Group group) {
+    bool isDuo = (group.users.length > 2) ? false : true;
+    bool isMine = (widget.currentUser.id == message.userId) ? true : false;
+
+    return Row(
+      mainAxisAlignment:
+          isMine ? MainAxisAlignment.end : MainAxisAlignment.start,
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment:
+                isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            children: <Widget>[
+              (isDuo || isMine)
+                  ? Container()
+                  : Padding(
                       padding: const EdgeInsets.only(bottom: 3),
                       child: Text(
-                        DateFormat('dd/MM/yyyy - kk:mm:ss')
-                            .format(message.timestamp),
-                        style: TextStyle(fontSize: 9, color: Colors.grey),
+                        group.users[message.userId],
+                        style: TextStyle(fontSize: 12),
                       ),
                     ),
-                    message.displayMessage(isMine),
-                    //Container(
-                    //child: Text(message.timestamp.toIso8601String()),
-                    //)
-                  ],
+              message.displayMessage(isMine),
+              Padding(
+                padding: const EdgeInsets.only(top: 3),
+                child: Text(
+                  DateFormat('dd/MM/yyyy - kk:mm:ss').format(message.timestamp),
+                  style: TextStyle(fontSize: 9, color: Colors.grey),
                 ),
               ),
-            )
-          ],
-        ),
-      ),
+            ],
+          ),
+        )
+      ],
     );
   }
 }
