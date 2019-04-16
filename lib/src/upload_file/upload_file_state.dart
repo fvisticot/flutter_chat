@@ -8,7 +8,8 @@ class UploadFileProgress extends UploadFileState {
   final double progress;
 
   UploadFileProgress(this.progress)
-      : super([progress]);
+      : assert(progress != null),
+        super([progress]);
 
   @override
   String toString() => 'UploadFileProgress $progress';
@@ -18,4 +19,3 @@ class UploadFileInitial extends UploadFileState {
   @override
   String toString() => 'UploadFileInitial';
 }
-
