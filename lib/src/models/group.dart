@@ -5,10 +5,6 @@ class Group {
 
   Group(this.id, this.users, {this.title});
 
-  Map<String, dynamic> toJson() => {
-        'title': title,
-      };
-
   @override
   String toString() {
     return 'Group{id: $id, users: $users, title: $title}';
