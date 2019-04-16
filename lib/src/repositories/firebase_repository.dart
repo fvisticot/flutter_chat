@@ -117,7 +117,20 @@ class FirebaseRepository implements DataRepository {
 
     if (groupUsersSnapshot.value != null) {
       print(groupUsersSnapshot.value);
-      List<User> users = [];
+
+      Map<String, String> users = Map<String, String>.from(groupUsersSnapshot.value);
+
+      String title = '';
+      if (users.length > 2) {
+        DataSnapshot groupSnapshot =
+        await firebaseDatabase.reference().child('groups/$groupId').once();
+        title = groupSnapshot.value['title'];
+      }
+      return (title != '')
+          ? Group(groupId, users, title: title)
+          : Group(groupId, users);
+
+/*      List<User> users = [];
       for (String userKey in groupUsersSnapshot.value.keys) {
         User user = await _userFromId(userKey);
         users.add(user);
@@ -131,7 +144,7 @@ class FirebaseRepository implements DataRepository {
       }
       return (title != '')
           ? Group(groupId, users, title: title)
-          : Group(groupId, users);
+          : Group(groupId, users);*/
     } else {
       throw Exception('Unknown group');
     }
