@@ -29,27 +29,17 @@ class _UserPresenceIndicatorState extends State<UserPresenceIndicator> {
     return BlocBuilder<UserPresenceEvent, UserPresenceState>(
         bloc: _userPresenceBloc,
         builder: (context, userPresenceState) {
-          if (userPresenceState is UserPresenceIsOnline) {
-            return Container(
-              width: 13,
-              height: 13,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.white, width: 1.5),
-                color: (userPresenceState.isOnline) ? Colors.green : Colors.red,
-                borderRadius: BorderRadius.all(Radius.circular(50.0)),
-              ),
-            );
-          } else if (userPresenceState is UserPresenceLoading) {
-            return Container(
-              width: 13,
-              height: 13,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.white, width: 1.5),
-                borderRadius: BorderRadius.all(Radius.circular(50.0)),
-              ),
-              child: CircularProgressIndicator(),
-            );
-          }
+          return Container(
+            width: 13,
+            height: 13,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.white, width: 1.5),
+              color: (userPresenceState is UserPresenceIsOnline)
+                  ? (userPresenceState.isOnline) ? Colors.green : Colors.red
+                  : Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(50.0)),
+            ),
+          );
         });
   }
 }
