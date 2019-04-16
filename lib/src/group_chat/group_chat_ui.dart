@@ -70,10 +70,10 @@ class _GroupChatPageState extends State<GroupChatPage> {
                 ),
               );
             } else {
-              String title =
-                  (groupChatState.group.users[1].id == widget.currentUser.id)
-                      ? groupChatState.group.users[0].userName
-                      : groupChatState.group.users[1].userName;
+              String userId = groupChatState.group.users.keys.firstWhere(
+                  (k) => k != widget.currentUser.id,
+                  orElse: () => null);
+              String title = groupChatState.group.users[userId];
               return Scaffold(
                 appBar: AppBar(
                   title: Row(
@@ -87,13 +87,8 @@ class _GroupChatPageState extends State<GroupChatPage> {
                         Positioned(
                           bottom: 0,
                           right: 0,
-                          child:
-                          UserPresenceIndicator(
-                              widget.firebaseRepository,
-                              (groupChatState.group.users[1].id == widget.currentUser.id)
-                              ? groupChatState.group.users[0].id
-                              : groupChatState.group.users[1].id
-                          ),
+                          child: UserPresenceIndicator(
+                              widget.firebaseRepository, userId),
                         )
                       ]),
                       SizedBox(

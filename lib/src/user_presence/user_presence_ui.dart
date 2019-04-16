@@ -10,7 +10,6 @@ class UserPresenceIndicator extends StatefulWidget {
   UserPresenceIndicator(this.firebaseRepository, this.userId)
       : assert(firebaseRepository != null),
         assert(userId != null);
-
   @override
   _UserPresenceIndicatorState createState() => _UserPresenceIndicatorState();
 }
@@ -35,7 +34,7 @@ class _UserPresenceIndicatorState extends State<UserPresenceIndicator> {
               width: 13,
               height: 13,
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.white, width: 2),
+                border: Border.all(color: Colors.white, width: 1.5),
                 color: (userPresenceState.isOnline) ? Colors.green : Colors.red,
                 borderRadius: BorderRadius.all(Radius.circular(50.0)),
               ),
@@ -45,7 +44,7 @@ class _UserPresenceIndicatorState extends State<UserPresenceIndicator> {
               width: 13,
               height: 13,
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.white, width: 2),
+                border: Border.all(color: Colors.white, width: 1.5),
                 borderRadius: BorderRadius.all(Radius.circular(50.0)),
               ),
               child: CircularProgressIndicator(),
