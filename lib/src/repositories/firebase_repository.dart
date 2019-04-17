@@ -8,6 +8,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_chat/src/models/models.dart';
 import 'package:intl/date_symbol_data_local.dart';
+
 import 'data_repository.dart';
 
 class FirebaseRepository implements DataRepository {
@@ -118,23 +119,8 @@ class FirebaseRepository implements DataRepository {
     if (groupUsersSnapshot.value != null) {
       print(groupUsersSnapshot.value);
 
-      Map<String, String> users = Map<String, String>.from(groupUsersSnapshot.value);
-
-      String title = '';
-      if (users.length > 2) {
-        DataSnapshot groupSnapshot =
-        await firebaseDatabase.reference().child('groups/$groupId').once();
-        title = groupSnapshot.value['title'];
-      }
-      return (title != '')
-          ? Group(groupId, users, title: title)
-          : Group(groupId, users);
-
-/*      List<User> users = [];
-      for (String userKey in groupUsersSnapshot.value.keys) {
-        User user = await _userFromId(userKey);
-        users.add(user);
-      }
+      Map<String, String> users =
+          Map<String, String>.from(groupUsersSnapshot.value);
 
       String title = '';
       if (users.length > 2) {
@@ -144,7 +130,7 @@ class FirebaseRepository implements DataRepository {
       }
       return (title != '')
           ? Group(groupId, users, title: title)
-          : Group(groupId, users);*/
+          : Group(groupId, users);
     } else {
       throw Exception('Unknown group');
     }
@@ -212,8 +198,7 @@ class FirebaseRepository implements DataRepository {
         .map((event) {
       print(event.snapshot.value);
       return (event.snapshot.value == true);
-    }
-    );
+    });
   }
 
   sendMessage(String groupId, Message message) {
@@ -265,5 +250,31 @@ class FirebaseRepository implements DataRepository {
     } else {
       return await activityRef.child(writer.id).remove();
     }
+  }
+
+  Future<Map<String, String>> searchUsersByName(String name) async {
+    Query query = firebaseDatabase
+        .reference()
+        .child('users')
+        .orderByChild('userNameLowerCase');
+
+    if (name != null) {
+      query = query
+          .startAt(name.toLowerCase())
+          .endAt(('${name.toLowerCase()}\uf8ff'));
+    }
+    final Map<String, String> usersMap = {};
+
+    return query.once().then((snap) {
+      final snapMap = snap.value;
+      if (snapMap != null) {
+        snapMap.forEach((key, value) {
+          usersMap.addAll({key: value['userName']});
+        });
+        return usersMap;
+      } else {
+        return {};
+      }
+    });
   }
 }

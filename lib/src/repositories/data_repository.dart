@@ -24,4 +24,6 @@ abstract class DataRepository {
   Stream<List<String>> typingUsers(String groupId, User currentUser);
 
   Future<void> isTyping(String groupId, User writer, bool isTyping);
+
+  Future<Map<String, String>> searchUsersByName(String name);
 }
