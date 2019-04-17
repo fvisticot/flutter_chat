@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:equatable/equatable.dart';
-import 'package:flutter_chat/src/models/message.dart';
+import 'package:flutter_chat/src/models/message/message.dart';
 
 abstract class MessageBarEvent extends Equatable {
   MessageBarEvent([List props = const []]) : super(props);
@@ -22,7 +22,7 @@ class SendMessageEvent extends MessageBarEvent {
   final Message message;
 
   SendMessageEvent(this.message)
-      : assert(message!= null),
+      : assert(message != null),
         super([message]);
   @override
   String toString() => 'SendMessageEvent';
@@ -32,9 +32,8 @@ class StoreImageEvent extends MessageBarEvent {
   final File imageFile;
 
   StoreImageEvent(this.imageFile)
-      : assert(imageFile!= null),
+      : assert(imageFile != null),
         super([imageFile]);
   @override
   String toString() => 'StoreImageEvent $imageFile';
 }
-
