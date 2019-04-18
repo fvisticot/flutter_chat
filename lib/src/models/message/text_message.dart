@@ -43,6 +43,6 @@ class TextMessage extends Message {
 
   @override
   String toString() {
-    return 'TextMessage{timestamp: $timestamp, text: $text}';
+    return 'TextMessage{type: $type, userId: $userId timestamp: $timestamp, text: $text}';
   }
 }
