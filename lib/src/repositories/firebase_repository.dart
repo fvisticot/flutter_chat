@@ -20,14 +20,12 @@ class FirebaseRepository implements DataRepository {
     initializeDateFormatting("fr_FR", null);
     final FirebaseUser firebaseUser = await FirebaseAuth.instance.currentUser();
     if (firebaseUser == null) {
-      //throw ChatException('User not authenticated on Firebase.');
       throw Exception('User not authenticated on Firebase.');
     }
     User currentUser;
     final User userDb = await _userFromId(firebaseUser.uid);
     if (userDb == null) {
       if (firebaseUser == null || userName == null) {
-        //throw ChatException('User info must be provided (userName) to create the user in DB.');
         throw Exception(
             'User info must be provided (userName) to create the user in DB.');
       }
@@ -74,6 +72,19 @@ class FirebaseRepository implements DataRepository {
       userRef.onDisconnect().remove();
       userRef.set(true);
     });
+  }
+
+  Future<void> setPresence(bool presence) async {
+    final FirebaseUser firebaseUser = await FirebaseAuth.instance.currentUser();
+    if (firebaseUser != null) {
+      DatabaseReference userRef =
+          firebaseDatabase.reference().child('presences/${firebaseUser.uid}');
+      if (presence) {
+        userRef.set(true);
+      } else {
+        userRef.remove();
+      }
+    }
   }
 
   Future<void> _setupNotifications(String uid) async {

@@ -7,6 +7,8 @@ import 'package:flutter_chat/src/models/models.dart';
 abstract class DataRepository {
   Future<User> initChat(String userName);
 
+  Future<void> setPresence(bool presence);
+
   Future<Group> getGroupInfo(String groupId);
 
   Future<List<String>> getGroupUsers(String groupId);

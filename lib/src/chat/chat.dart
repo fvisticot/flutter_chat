@@ -21,16 +21,26 @@ class Chat extends StatefulWidget {
   _ChatState createState() => _ChatState();
 }
 
-class _ChatState extends State<Chat> {
+class _ChatState extends State<Chat> with WidgetsBindingObserver {
   ChatBloc _chatBloc;
   FirebaseRepository firebaseRepository;
 
   @override
   void initState() {
     firebaseRepository = FirebaseRepository(widget.firebaseDatabase);
+    WidgetsBinding.instance.addObserver(this);
     _chatBloc = ChatBloc(firebaseRepository);
     _chatBloc.dispatch(ChatStarted(widget.userName));
     super.initState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      firebaseRepository.setPresence(true);
+    } else {
+      firebaseRepository.setPresence(false);
+    }
   }
 
   @override
@@ -70,6 +80,7 @@ class _ChatState extends State<Chat> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 }
