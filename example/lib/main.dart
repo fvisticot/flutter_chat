@@ -1,12 +1,13 @@
+import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat/flutter_chat.dart';
-import 'authentication/authentication.dart';
-import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_chat/flutter_chat.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+
+import 'authentication/authentication.dart';
 
 class SimpleBlocDelegate extends BlocDelegate {
   @override
@@ -57,10 +58,16 @@ class _ChatDemoAppState extends State<ChatDemoApp> {
           builder: (BuildContext context, AuthenticationState state) {
             if (state is AuthenticationUninitialized) {
               // TODO : SPLASHSCREEN
-              return Container(decoration: BoxDecoration(color: Colors.lightGreen),);
+              return Container(
+                decoration: BoxDecoration(color: Colors.lightGreen),
+              );
             }
             if (state is AuthenticationAuthenticated) {
-              return Chat(database, 'Toto', groupId:'MzuQUqGjXVXnu3urV9SmrWJXMeW2_vxri76DaHNQ709FIlFptYxugwN93');
+              /*return Chat(database, 'Toto', groupId:'MzuQUqGjXVXnu3urV9SmrWJXMeW2_vxri76DaHNQ709FIlFptYxugwN93');*/
+              return Chat(
+                database,
+                'Toto',
+              );
             }
             if (state is AuthenticationUnauthenticated) {
               return AuthenticationPage();
