@@ -171,16 +171,18 @@ class FirebaseRepository implements DataRepository {
           .map((event) {
         List<Message> messages = [];
         Map<dynamic, dynamic> map = event.snapshot.value;
-        List<dynamic> list = map.keys.toList()
-          ..sort((a, b) {
-            return b.compareTo(a);
-          });
-        LinkedHashMap sortedMap = LinkedHashMap.fromIterable(list,
-            key: (k) => k, value: (k) => map[k]);
+        if (map != null) {
+          List<dynamic> list = map.keys.toList()
+            ..sort((a, b) {
+              return b.compareTo(a);
+            });
+          LinkedHashMap sortedMap = LinkedHashMap.fromIterable(list,
+              key: (k) => k, value: (k) => map[k]);
 
-        sortedMap.forEach((messageKey, messageValue) {
-          messages.add(Message.fromMap(messageValue));
-        });
+          sortedMap.forEach((messageKey, messageValue) {
+            messages.add(Message.fromMap(messageValue));
+          });
+        }
         return messages;
       });
     } catch (e) {
@@ -276,5 +278,67 @@ class FirebaseRepository implements DataRepository {
         return {};
       }
     });
+  }
+
+  Future<String> getDuoGroupId(String currentUserId, String userId) async {
+    Query query = firebaseDatabase
+        .reference()
+        .child('users-groups/$currentUserId')
+        .orderByChild('duo')
+        .equalTo(userId);
+
+    return query.once().then((snap) {
+      print(snap.key);
+      final snapMap = snap.value;
+      if (snapMap != null) {
+        return snap.value.keys.first;
+      } else {
+        return null;
+      }
+    });
+  }
+
+  Future<String> createDuoGroup(String currentUserId, String userId) async {
+    String groupId = firebaseDatabase.reference().child('groups').push().key;
+    DatabaseReference groupsUsersRef =
+        firebaseDatabase.reference().child('groups-users').child(groupId);
+    List<Future> futures = [];
+
+    firebaseDatabase
+        .reference()
+        .child('users')
+        .child(userId)
+        .once()
+        .then((userSnapshot) {
+      futures
+          .add(groupsUsersRef.update({userId: userSnapshot.value['userName']}));
+    });
+
+    futures.add(firebaseDatabase
+        .reference()
+        .child('users')
+        .child(currentUserId)
+        .once()
+        .then((userSnapshot) {
+      futures.add(groupsUsersRef
+          .update({currentUserId: userSnapshot.value['userName']}));
+    }));
+
+    firebaseDatabase
+        .reference()
+        .child('users-groups')
+        .child(currentUserId)
+        .child(groupId)
+        .set({"duo": userId});
+
+    firebaseDatabase
+        .reference()
+        .child('users-groups')
+        .child(userId)
+        .child(groupId)
+        .set({"duo": currentUserId});
+
+    await Future.wait(futures);
+    return groupId;
   }
 }

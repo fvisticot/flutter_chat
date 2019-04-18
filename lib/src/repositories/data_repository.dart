@@ -26,4 +26,8 @@ abstract class DataRepository {
   Future<void> isTyping(String groupId, User writer, bool isTyping);
 
   Future<Map<String, String>> searchUsersByName(String name);
+
+  Future<String> getDuoGroupId(String currentUserId, String userId);
+
+  Future<String> createDuoGroup(String currentUserId, String userId);
 }
