@@ -48,7 +48,6 @@ class _ChatState extends State<Chat> {
             return GroupChatPage(
                 widget.groupId, state.user, firebaseRepository);
           } else {
-            // TODO : return ChatHomePage
             return ChatHomePage(firebaseRepository, state.user);
           }
         }

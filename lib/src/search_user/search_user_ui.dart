@@ -1,49 +1,106 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_chat/src/models/models.dart';
 
 import 'search_user.dart';
 
-class SearchUserResults extends StatefulWidget {
-  final SearchUserBloc searchUserBloc;
+class SearchUserPage extends StatefulWidget {
+  final User currentUser;
 
-  SearchUserResults(this.searchUserBloc) : assert(searchUserBloc != null);
+  SearchUserPage(this.currentUser) : assert(currentUser != null);
 
   @override
-  _SearchUserResultsState createState() => _SearchUserResultsState();
+  _SearchUserPageState createState() => _SearchUserPageState();
 }
 
-class _SearchUserResultsState extends State<SearchUserResults> {
+class _SearchUserPageState extends State<SearchUserPage> {
+  TextEditingController _searchTextFieldEditingController =
+      TextEditingController();
+  SearchUserBloc searchUserBloc;
+
   @override
   void initState() {
+    searchUserBloc = BlocProvider.of<SearchUserBloc>(context);
+
+    _searchTextFieldEditingController.addListener(() {
+      searchUserBloc
+          .dispatch(SearchUserWithName(_searchTextFieldEditingController.text));
+    });
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SearchUserEvent, SearchUserState>(
-        bloc: widget.searchUserBloc,
+        bloc: searchUserBloc,
         builder: (context, searchUserState) {
           if (searchUserState is SearchUserList) {
-            if (searchUserState.users.length == 0) {
-              return Container();
-            } else {
-              List<String> keys = searchUserState.users.keys.toList();
-              return ListView.builder(
-                  itemCount: searchUserState.users.length,
-                  itemBuilder: (BuildContext context, int index) =>
-                      _buildUserTile(
-                          keys[index], searchUserState.users[keys[index]]));
-            }
+            List<String> keys = searchUserState.users.keys.toList();
+            return Column(
+              children: <Widget>[
+                _buildSearchBar(),
+                (searchUserState.users.length != 0)
+                    ? Expanded(
+                        child: ListView.builder(
+                            itemCount: searchUserState.users.length,
+                            itemBuilder: (BuildContext context, int index) =>
+                                _buildUserTile(keys[index],
+                                    searchUserState.users[keys[index]])),
+                      )
+                    : Container()
+              ],
+            );
+          } else if (searchUserState is SearchUserCreatingGroup) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                CircularProgressIndicator(),
+                SizedBox(
+                  height: 20,
+                ),
+                Text('Creating discussion')
+              ],
+            );
           } else {
-            return Container();
+            _searchTextFieldEditingController.clear();
+            return Column(
+              children: <Widget>[_buildSearchBar()],
+            );
           }
         });
+  }
+
+  Widget _buildSearchBar() {
+    return Container(
+      child: Card(
+        child: ListTile(
+          leading: Icon(Icons.search),
+          title: TextField(
+            controller: _searchTextFieldEditingController,
+            decoration: InputDecoration(
+                hintText: 'Search username', border: InputBorder.none),
+          ),
+          trailing: IconButton(
+            icon: Icon(Icons.cancel),
+            onPressed: () {
+              _searchTextFieldEditingController.clear();
+            },
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildUserTile(userId, userName) {
     return ListTile(
       title: Text(userName),
-      trailing: IconButton(icon: Icon(Icons.message), onPressed: null),
+      trailing: IconButton(
+          icon: Icon(Icons.message),
+          onPressed: () {
+            searchUserBloc
+                .dispatch(ChatWithUser(widget.currentUser.id, userId));
+          }),
     );
   }
 }

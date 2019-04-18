@@ -16,3 +16,17 @@ class SearchUserList extends SearchUserState {
   @override
   String toString() => 'SearchUserList $users';
 }
+
+class SearchUserGroupChat extends SearchUserState {
+  String groupId;
+
+  SearchUserGroupChat(this.groupId) : super([groupId]);
+
+  @override
+  String toString() => 'SearchUserGroupChat $groupId';
+}
+
+class SearchUserCreatingGroup extends SearchUserState {
+  @override
+  String toString() => 'CreatingGroup';
+}

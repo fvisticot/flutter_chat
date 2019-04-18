@@ -17,13 +17,24 @@ class SearchUserBloc extends Bloc<SearchUserEvent, SearchUserState> {
   Stream<SearchUserState> mapEventToState(
     SearchUserEvent event,
   ) async* {
-    if (event is SearchUserEvent) {
+    if (event is SearchUserWithName) {
       if (event.searchName.length == 0) {
         yield SearchUserList({});
       } else {
         final Map<String, String> users =
             await firebaseRepository.searchUsersByName(event.searchName);
         yield SearchUserList(users);
+      }
+    } else if (event is ChatWithUser) {
+      String groupId =
+          await firebaseRepository.getDuoGroupId(event.currentUid, event.uid);
+      if (groupId != null) {
+        yield SearchUserGroupChat(groupId);
+      } else {
+        yield SearchUserCreatingGroup();
+        groupId = await firebaseRepository.createDuoGroup(
+            event.currentUid, event.uid);
+        yield SearchUserGroupChat(groupId);
       }
     }
   }

@@ -1,12 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_chat/src/group_chat/group_chat_ui.dart';
 import 'package:flutter_chat/src/models/user.dart';
 import 'package:flutter_chat/src/repositories/firebase_repository.dart';
 import 'package:flutter_chat/src/search_user/search_user.dart';
 import 'package:flutter_chat/src/search_user/search_user_ui.dart';
 
 class ChatHomePage extends StatefulWidget {
-  FirebaseRepository firebaseRepository;
-  User currentUser;
+  final FirebaseRepository firebaseRepository;
+  final User currentUser;
 
   ChatHomePage(this.firebaseRepository, this.currentUser)
       : assert(firebaseRepository != null),
@@ -16,55 +20,53 @@ class ChatHomePage extends StatefulWidget {
   _ChatHomePageState createState() => _ChatHomePageState();
 }
 
-class _ChatHomePageState extends State<ChatHomePage> {
+class _ChatHomePageState extends State<ChatHomePage>
+    with SingleTickerProviderStateMixin {
   SearchUserBloc searchUserBloc;
-
-  TextEditingController _searchTextFieldEditingController =
-      TextEditingController();
+  StreamSubscription stateStream;
+  TabController _tabController;
 
   @override
   void initState() {
     super.initState();
     searchUserBloc = SearchUserBloc(widget.firebaseRepository);
-    _searchTextFieldEditingController.addListener(() {
-      searchUserBloc
-          .dispatch(SearchUserEvent(_searchTextFieldEditingController.text));
+    stateStream = searchUserBloc.state.listen((state) {
+      if (state is SearchUserGroupChat) {
+        _navigateToChatPage(state.groupId);
+      }
     });
+    _tabController = new TabController(vsync: this, length: 2);
+  }
+
+  @override
+  void dispose() {
+    stateStream.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
+      appBar: AppBar(
           title: Text('Chat'),
-        ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            _buildSearchBar(),
-            Expanded(child: SearchUserResults(searchUserBloc))
-          ],
-        ));
+          bottom: TabBar(
+              controller: _tabController,
+              isScrollable: false,
+              indicatorColor: Colors.white,
+              tabs: [Tab(text: 'My discussions'), Tab(text: 'Search User')])),
+      body: TabBarView(controller: _tabController, children: <Widget>[
+        Container(),
+        BlocProvider(
+          bloc: searchUserBloc,
+          child: SearchUserPage(widget.currentUser),
+        )
+      ]),
+    );
   }
 
-  Widget _buildSearchBar() {
-    return Container(
-      child: new Card(
-        child: new ListTile(
-          leading: new Icon(Icons.search),
-          title: new TextField(
-            controller: _searchTextFieldEditingController,
-            decoration: new InputDecoration(
-                hintText: 'Rechercher', border: InputBorder.none),
-          ),
-          trailing: new IconButton(
-            icon: new Icon(Icons.cancel),
-            onPressed: () {
-              _searchTextFieldEditingController.clear();
-            },
-          ),
-        ),
-      ),
-    );
+  _navigateToChatPage(groupId) {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => GroupChatPage(
+            groupId, widget.currentUser, widget.firebaseRepository)));
   }
 }
