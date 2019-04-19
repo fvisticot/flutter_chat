@@ -125,9 +125,7 @@ class _MessageBarState extends State<MessageBar> {
                     onPressed: () {
                       if (_textMessageController.text.length > 0) {
                         Message message = TextMessage(
-                            _textMessageController.text,
-                            widget.currentUser.id,
-                            widget.currentUser.userName);
+                            _textMessageController.text, widget.currentUser.id);
                         _messageBarBloc.dispatch(SendMessageEvent(message));
                         _textMessageController.clear();
                       }

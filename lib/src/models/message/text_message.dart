@@ -4,8 +4,8 @@ import 'package:flutter_chat/src/models/message/message.dart';
 class TextMessage extends Message {
   final String text;
 
-  TextMessage(this.text, String userId, String userName, {DateTime timestamp})
-      : super(userId, userName, timestamp: timestamp) {
+  TextMessage(this.text, String userId, {DateTime timestamp})
+      : super(userId, timestamp: timestamp) {
     type = MessageType.text;
   }
 
@@ -13,14 +13,12 @@ class TextMessage extends Message {
     return TextMessage(
       map['text'],
       map['userId'],
-      map['userName'],
       timestamp: DateTime.parse(map['timestamp']),
     );
   }
 
   Map<String, dynamic> toJson() => {
         'userId': userId,
-        'userName': userName,
         'type': 'text',
         'text': text,
         'timestamp': timestamp.toIso8601String(),

@@ -8,9 +8,8 @@ abstract class Message {
   DateTime timestamp;
   MessageType type;
   String userId;
-  String userName;
 
-  Message(this.userId, this.userName, {this.timestamp}) {
+  Message(this.userId, {this.timestamp}) {
     if (this.timestamp == null) {
       this.timestamp = DateTime.now();
     }

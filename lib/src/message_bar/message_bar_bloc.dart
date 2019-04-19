@@ -46,8 +46,10 @@ class MessageBarBloc extends Bloc<MessageBarEvent, MessageBarState> {
         });
         task.onComplete.then((snapshot) {
           snapshot.ref.getDownloadURL().then((url) {
-            Message message =
-                PhotoMessage(url, currentUser.id, currentUser.userName);
+            Message message = PhotoMessage(
+              url,
+              currentUser.id,
+            );
             dispatch(SendMessageEvent(message));
             uploadFileBloc.dispatch(UploadFileEvent(-1.0));
           });

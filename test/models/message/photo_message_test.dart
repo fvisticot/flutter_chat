@@ -7,13 +7,11 @@ void main() {
   test('PhotoMessage constructor with all parameters', () {
     String photoUrl = 'photoUrl';
     String userId = 'uid';
-    String userName = 'uName';
     DateTime dateTime = DateTime.now();
     PhotoMessage photoMessage =
-        PhotoMessage(photoUrl, userId, userName, timestamp: dateTime);
+        PhotoMessage(photoUrl, userId, timestamp: dateTime);
 
     expect(photoMessage.userId, userId);
-    expect(photoMessage.userName, userName);
     expect(photoMessage.photoUrl, photoUrl);
     expect(photoMessage.type, MessageType.photo);
     expect(photoMessage.timestamp, dateTime);
@@ -22,15 +20,12 @@ void main() {
   test('PhotoMessage constructor without timestamp', () {
     String photoUrl = 'photoUrl';
     String userId = 'uid';
-    String userName = 'uName';
     PhotoMessage photoMessage = PhotoMessage(
       photoUrl,
       userId,
-      userName,
     );
 
     expect(photoMessage.userId, userId);
-    expect(photoMessage.userName, userName);
     expect(photoMessage.photoUrl, photoUrl);
     expect(photoMessage.type, MessageType.photo);
     expect(photoMessage.timestamp, isInstanceOf<DateTime>());
@@ -39,19 +34,16 @@ void main() {
   test('PhotoMessage.fromMap', () {
     String photoUrl = 'photoUrl';
     String userId = 'uid';
-    String userName = 'uName';
     DateTime dateTime = DateTime.now();
 
     Map<String, dynamic> map = {
       "photoUrl": photoUrl,
       "userId": userId,
-      "userName": userName,
       "timestamp": dateTime.toIso8601String()
     };
     PhotoMessage photoMessage = PhotoMessage.fromMap(map);
 
     expect(photoMessage.userId, userId);
-    expect(photoMessage.userName, userName);
     expect(photoMessage.photoUrl, photoUrl);
     expect(photoMessage.type, MessageType.photo);
     expect(photoMessage.timestamp, dateTime);
@@ -60,16 +52,14 @@ void main() {
   test('PhotoMessage.toJson', () {
     String photoUrl = 'photoUrl';
     String userId = 'uid';
-    String userName = 'uName';
     DateTime dateTime = DateTime.now();
     PhotoMessage photoMessage =
-        PhotoMessage(photoUrl, userId, userName, timestamp: dateTime);
+        PhotoMessage(photoUrl, userId, timestamp: dateTime);
 
     Map<String, dynamic> json = photoMessage.toJson();
 
     expect(json, {
       'userId': userId,
-      'userName': userName,
       'type': 'photo',
       'photoUrl': photoUrl,
       'timestamp': dateTime.toIso8601String(),
@@ -81,10 +71,9 @@ void main() {
       () {
     String photoUrl = 'photoUrl';
     String userId = 'uid';
-    String userName = 'uName';
     DateTime dateTime = DateTime.now();
     PhotoMessage photoMessage =
-        PhotoMessage(photoUrl, userId, userName, timestamp: dateTime);
+        PhotoMessage(photoUrl, userId, timestamp: dateTime);
 
     bool isMine = true;
 
@@ -96,10 +85,9 @@ void main() {
       () {
     String photoUrl = 'photoUrl';
     String userId = 'uid';
-    String userName = 'uName';
     DateTime dateTime = DateTime.now();
     PhotoMessage photoMessage =
-        PhotoMessage(photoUrl, userId, userName, timestamp: dateTime);
+        PhotoMessage(photoUrl, userId, timestamp: dateTime);
 
     bool isMine = false;
 
@@ -109,10 +97,9 @@ void main() {
   test('TextMessage.toString', () {
     String photoUrl = 'photoUrl';
     String userId = 'uid';
-    String userName = 'uName';
     DateTime dateTime = DateTime.now();
     PhotoMessage photoMessage =
-        PhotoMessage(photoUrl, userId, userName, timestamp: dateTime);
+        PhotoMessage(photoUrl, userId, timestamp: dateTime);
 
     expect(photoMessage.toString(),
         'PhotoMessage{type: ${MessageType.photo}, userId: $userId timestamp: $dateTime, photoUrl: $photoUrl}');

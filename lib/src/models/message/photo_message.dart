@@ -5,9 +5,8 @@ import 'package:flutter_chat/src/models/message/message.dart';
 class PhotoMessage extends Message {
   final String photoUrl;
 
-  PhotoMessage(this.photoUrl, String userId, String userName,
-      {DateTime timestamp})
-      : super(userId, userName, timestamp: timestamp) {
+  PhotoMessage(this.photoUrl, String userId, {DateTime timestamp})
+      : super(userId, timestamp: timestamp) {
     type = MessageType.photo;
   }
 
@@ -15,14 +14,12 @@ class PhotoMessage extends Message {
     return PhotoMessage(
       map['photoUrl'],
       map['userId'],
-      map['userName'],
       timestamp: DateTime.parse(map['timestamp']),
     );
   }
 
   Map<String, dynamic> toJson() => {
         'userId': userId,
-        'userName': userName,
         'type': 'photo',
         'photoUrl': photoUrl,
         'timestamp': timestamp.toIso8601String(),
