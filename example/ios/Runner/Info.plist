@@ -38,13 +38,13 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Use camera</string>
+	<string>Use camera to send photo message</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Use photo library to send photo message</string>
 	<key>NSLocationUsageDescription</key>
 	<string>Location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Location</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Use photo library</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
