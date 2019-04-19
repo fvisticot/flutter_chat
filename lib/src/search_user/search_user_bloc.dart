@@ -26,6 +26,7 @@ class SearchUserBloc extends Bloc<SearchUserEvent, SearchUserState> {
         yield SearchUserList(users);
       }
     } else if (event is ChatWithUser) {
+      yield SearchUserList({});
       String groupId =
           await firebaseRepository.getDuoGroupId(event.currentUid, event.uid);
       if (groupId != null) {

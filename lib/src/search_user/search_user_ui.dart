@@ -43,11 +43,16 @@ class _SearchUserPageState extends State<SearchUserPage> {
                 (searchUserState.users.length != 0)
                     ? Expanded(
                         child: ListView.builder(
-                            itemCount: searchUserState.users.length,
-                            itemBuilder: (BuildContext context, int index) =>
-                                _buildUserTile(keys[index],
-                                    searchUserState.users[keys[index]])),
-                      )
+                        itemCount: searchUserState.users.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          if (keys[index] != widget.currentUser.id) {
+                            return _buildUserTile(keys[index],
+                                searchUserState.users[keys[index]]);
+                          } else {
+                            return Container();
+                          }
+                        },
+                      ))
                     : Container()
               ],
             );
