@@ -19,7 +19,7 @@ abstract class Message {
   Map<String, dynamic> toJson();
   Widget displayMessage(bool isMine);
 
-  static Message fromMap(Map map) {
+  static dynamic fromMap(Map map) {
     switch (map['type']) {
       case 'text':
         return TextMessage.fromMap(map);

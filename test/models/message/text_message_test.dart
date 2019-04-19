@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_chat/src/models/message/message.dart';
 import 'package:flutter_chat/src/models/message/text_message.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -68,6 +69,35 @@ void main() {
       'text': text,
       'timestamp': dateTime.toIso8601String(),
     });
+  });
+
+  test('TextMessage.displayMessage() shoud return a Widget when isMine is true',
+      () {
+    String text = 'msgTxt';
+    String userId = 'uid';
+    String userName = 'uName';
+    DateTime dateTime = DateTime.now();
+    TextMessage txtMsg =
+        TextMessage(text, userId, userName, timestamp: dateTime);
+
+    bool isMine = true;
+
+    expect(txtMsg.displayMessage(isMine), isInstanceOf<Widget>());
+  });
+
+  test(
+      'TextMessage.displayMessage() shoud return a Widget when isMine is false',
+      () {
+    String text = 'msgTxt';
+    String userId = 'uid';
+    String userName = 'uName';
+    DateTime dateTime = DateTime.now();
+    TextMessage txtMsg =
+        TextMessage(text, userId, userName, timestamp: dateTime);
+
+    bool isMine = false;
+
+    expect(txtMsg.displayMessage(isMine), isInstanceOf<Widget>());
   });
 
   test('TextMessage.toString', () {

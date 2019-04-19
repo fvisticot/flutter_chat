@@ -47,6 +47,6 @@ class PhotoMessage extends Message {
 
   @override
   String toString() {
-    return 'PhotoMessage{timestamp: $timestamp, photoUrl: $photoUrl}';
+    return 'PhotoMessage{type: ${MessageType.photo}, userId: $userId timestamp: $timestamp, photoUrl: $photoUrl}';
   }
 }
