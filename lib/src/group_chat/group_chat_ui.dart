@@ -176,31 +176,34 @@ class _GroupChatPageState extends State<GroupChatPage> {
       mainAxisAlignment:
           isMine ? MainAxisAlignment.end : MainAxisAlignment.start,
       children: <Widget>[
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment:
-                isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-            children: <Widget>[
-              (isDuo || isMine)
-                  ? Container()
-                  : Padding(
-                      padding: const EdgeInsets.only(bottom: 3),
-                      child: Text(
-                        group.users[message.userId],
-                        style: TextStyle(fontSize: 12),
+        Flexible(
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment:
+                  isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              children: <Widget>[
+                (isDuo || isMine)
+                    ? Container()
+                    : Padding(
+                        padding: const EdgeInsets.only(bottom: 3),
+                        child: Text(
+                          group.users[message.userId],
+                          style: TextStyle(fontSize: 12),
+                        ),
                       ),
-                    ),
-              message.displayMessage(isMine),
-              Padding(
-                padding: const EdgeInsets.only(top: 3),
-                child: Text(
-                  DateFormat('dd/MM/yyyy - kk:mm:ss').format(message.timestamp),
-                  style: TextStyle(fontSize: 9, color: Colors.grey),
+                message.displayMessage(isMine),
+                Padding(
+                  padding: const EdgeInsets.only(top: 3),
+                  child: Text(
+                    DateFormat('dd/MM/yyyy - kk:mm:ss')
+                        .format(message.timestamp),
+                    style: TextStyle(fontSize: 9, color: Colors.grey),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         )
       ],

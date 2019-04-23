@@ -28,8 +28,7 @@ class TextMessage extends Message {
     return Container(
       child: Text(
         '$text',
-        overflow: TextOverflow.ellipsis,
-        maxLines: 5,
+        softWrap: true,
       ),
       padding: EdgeInsets.all(8),
       decoration: BoxDecoration(
