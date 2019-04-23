@@ -178,6 +178,7 @@ class FirebaseRepository implements DataRepository {
       return firebaseDatabase
           .reference()
           .child('groups-messages/$groupId')
+          .limitToLast(50)
           .onValue
           .map((event) {
         List<Message> messages = [];
