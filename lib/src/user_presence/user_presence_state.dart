@@ -8,7 +8,7 @@ class UserPresenceIsOnline extends UserPresenceState {
   final bool isOnline;
 
   UserPresenceIsOnline(this.isOnline)
-      : assert(isOnline!=null),
+      : assert(isOnline != null),
         super([isOnline]);
 
   @override
@@ -16,7 +16,6 @@ class UserPresenceIsOnline extends UserPresenceState {
 }
 
 class UserPresenceLoading extends UserPresenceState {
-
   @override
-  String toString() => 'UserPresenceLoading ';
+  String toString() => 'UserPresenceLoading';
 }
