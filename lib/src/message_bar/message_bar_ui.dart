@@ -107,20 +107,29 @@ class _MessageBarState extends State<MessageBar> {
                         borderRadius: BorderRadius.all(Radius.circular(8)),
                         border:
                             Border.all(color: Colors.grey.withOpacity(0.3))),
-                    child: TextField(
-                      keyboardType: TextInputType.multiline,
-                      autocorrect: true,
-                      maxLines: null,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 15.0,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxHeight: 150.0),
+                      child: Scrollbar(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          reverse: true,
+                          child: TextField(
+                            keyboardType: TextInputType.multiline,
+                            autocorrect: true,
+                            maxLines: null,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15.0,
+                            ),
+                            controller: _textMessageController,
+                            decoration: InputDecoration.collapsed(
+                              hintText: 'Type your message...',
+                              hintStyle: TextStyle(color: Colors.grey),
+                            ),
+                            //focusNode: _focusNode,
+                          ),
+                        ),
                       ),
-                      controller: _textMessageController,
-                      decoration: InputDecoration.collapsed(
-                        hintText: 'Type your message...',
-                        hintStyle: TextStyle(color: Colors.grey),
-                      ),
-                      //focusNode: _focusNode,
                     ),
                   ),
                 ),
