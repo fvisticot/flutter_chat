@@ -64,7 +64,10 @@ class _MessageBarState extends State<MessageBar> {
                     onPressed: () async {
                       try {
                         File imageFile = await ImagePicker.pickImage(
-                            source: ImageSource.gallery);
+                          source: ImageSource.gallery,
+                          maxWidth: 750,
+                          maxHeight: 750,
+                        );
                         if (imageFile != null) {
                           _messageBarBloc.dispatch(StoreImageEvent(imageFile));
                         }
@@ -82,7 +85,10 @@ class _MessageBarState extends State<MessageBar> {
                     onPressed: () async {
                       try {
                         File imageFile = await ImagePicker.pickImage(
-                            source: ImageSource.camera);
+                          source: ImageSource.camera,
+                          maxWidth: 750,
+                          maxHeight: 750,
+                        );
                         if (imageFile != null) {
                           _messageBarBloc.dispatch(StoreImageEvent(imageFile));
                         }
