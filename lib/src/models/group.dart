@@ -1,15 +1,9 @@
-import 'package:flutter_chat/src/models/user.dart';
-
 class Group {
   String id;
   String title;
-  List<User> users;
+  Map<String, String> users;
 
   Group(this.id, this.users, {this.title});
-
-  Map<String, dynamic> toJson() => {
-        'title': title,
-      };
 
   @override
   String toString() {
