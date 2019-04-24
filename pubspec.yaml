@@ -19,7 +19,7 @@ dependencies:
   firebase_auth: ^0.8.1+4
   firebase_storage: ^2.1.0+1
 
-  # Others dependencies
+  # Other dependencies
   flutter_bloc: ^0.11.1
   equatable: ^0.2.3
   image_picker: ^0.5.3+2
