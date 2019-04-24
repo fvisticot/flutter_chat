@@ -15,7 +15,7 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="example"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/flutter_chat_example_app_icon">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
