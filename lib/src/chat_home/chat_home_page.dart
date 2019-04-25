@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_chat/src/discussions_list/discussions_list_ui.dart';
 import 'package:flutter_chat/src/group_chat/group_chat_ui.dart';
 import 'package:flutter_chat/src/models/user.dart';
 import 'package:flutter_chat/src/repositories/firebase_repository.dart';
@@ -55,7 +56,7 @@ class _ChatHomePageState extends State<ChatHomePage>
               indicatorColor: Colors.white,
               tabs: [Tab(text: 'My discussions'), Tab(text: 'Search User')])),
       body: TabBarView(controller: _tabController, children: <Widget>[
-        Container(),
+        DiscussionsListPage(),
         BlocProvider(
           bloc: searchUserBloc,
           child: SearchUserPage(widget.currentUser),
