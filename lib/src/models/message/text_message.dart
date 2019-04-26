@@ -13,7 +13,9 @@ class TextMessage extends Message {
     return TextMessage(
       map['text'],
       map['userId'],
-      timestamp: DateTime.parse(map['timestamp']),
+      timestamp:
+          DateTime.fromMillisecondsSinceEpoch(map['timestamp'], isUtc: true)
+              .toLocal(),
     );
   }
 
@@ -21,7 +23,7 @@ class TextMessage extends Message {
         'userId': userId,
         'type': 'text',
         'text': text,
-        'timestamp': timestamp.toIso8601String(),
+        'timestamp': timestamp.millisecondsSinceEpoch,
       };
 
   Widget displayMessage(isMine) {

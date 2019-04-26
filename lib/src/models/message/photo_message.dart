@@ -14,7 +14,9 @@ class PhotoMessage extends Message {
     return PhotoMessage(
       map['photoUrl'],
       map['userId'],
-      timestamp: DateTime.parse(map['timestamp']),
+      timestamp:
+          DateTime.fromMillisecondsSinceEpoch(map['timestamp'], isUtc: true)
+              .toLocal(),
     );
   }
 
@@ -22,7 +24,7 @@ class PhotoMessage extends Message {
         'userId': userId,
         'type': 'photo',
         'photoUrl': photoUrl,
-        'timestamp': timestamp.toIso8601String(),
+        'timestamp': timestamp.millisecondsSinceEpoch,
       };
 
   Widget displayMessage(isMine) {
