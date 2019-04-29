@@ -15,7 +15,7 @@ class DiscussionsLoading extends DiscussionsListState {
 }
 
 class DiscussionsSuccess extends DiscussionsListState {
-  Map<String, String> discussions;
+  Map<String, dynamic> discussions;
 
   DiscussionsSuccess(this.discussions)
       : assert(discussions != null),
