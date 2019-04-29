@@ -111,10 +111,10 @@ class FirebaseRepository implements DataRepository {
 
     String token = await _firebaseMessaging.getToken();
     print("Push Messaging token: $token");
-    await _setPushNotificationToken(token, uid);
+    await _setPushNotificationToken(uid, token);
   }
 
-  Future<void> _setPushNotificationToken(String token, String uid) async {
+  Future<void> _setPushNotificationToken(String uid, String token) async {
     return await firebaseDatabase
         .reference()
         .child('users-pushTokens')
@@ -300,7 +300,6 @@ class FirebaseRepository implements DataRepository {
         .equalTo(userId);
 
     return query.once().then((snap) {
-      print(snap.key);
       final snapMap = snap.value;
       if (snapMap != null) {
         return snap.value.keys.first;
@@ -324,9 +323,20 @@ class FirebaseRepository implements DataRepository {
         .then((userSnapshot) {
       futures
           .add(groupsUsersRef.update({userId: userSnapshot.value['userName']}));
+      firebaseDatabase
+          .reference()
+          .child('users-groups')
+          .child(currentUserId)
+          .child(groupId)
+          .set({
+        "duo": userId,
+        "lastMsg": "",
+        "lastMsgTimestamp": DateTime.now().millisecondsSinceEpoch,
+        "title": userSnapshot.value['userName']
+      });
     });
 
-    futures.add(firebaseDatabase
+    firebaseDatabase
         .reference()
         .child('users')
         .child(currentUserId)
@@ -334,23 +344,51 @@ class FirebaseRepository implements DataRepository {
         .then((userSnapshot) {
       futures.add(groupsUsersRef
           .update({currentUserId: userSnapshot.value['userName']}));
-    }));
-
-    firebaseDatabase
-        .reference()
-        .child('users-groups')
-        .child(currentUserId)
-        .child(groupId)
-        .set({"duo": userId});
-
-    firebaseDatabase
-        .reference()
-        .child('users-groups')
-        .child(userId)
-        .child(groupId)
-        .set({"duo": currentUserId});
+      firebaseDatabase
+          .reference()
+          .child('users-groups')
+          .child(userId)
+          .child(groupId)
+          .set({
+        "duo": currentUserId,
+        "lastMsg": "",
+        "lastMsgTimestamp": DateTime.now().millisecondsSinceEpoch,
+        "title": userSnapshot.value['userName']
+      });
+    });
 
     await Future.wait(futures);
     return groupId;
+  }
+
+  Future<Map<String, dynamic>> getUserDiscussions(String currentUserId) async {
+    Map<String, dynamic> discussions = {};
+    await firebaseDatabase
+        .reference()
+        .child('users-groups')
+        .child(currentUserId)
+        .once()
+        .then((groupsSnapshot) {
+      Map<dynamic, dynamic> map = groupsSnapshot.value;
+      if (map != null) {
+        List<dynamic> list = map.keys.toList()
+          ..sort((a, b) {
+            return map[b]['lastMsgTimestamp']
+                .compareTo(map[a]['lastMsgTimestamp']);
+          });
+        LinkedHashMap sortedMap = LinkedHashMap.fromIterable(list,
+            key: (k) => k, value: (k) => map[k]);
+        print(sortedMap);
+        sortedMap.forEach((groupKey, groupValue) {
+          discussions.addAll({
+            groupKey: {
+              "title": groupValue["title"],
+              "lastMsg": groupValue["lastMsg"]
+            }
+          });
+        });
+      }
+    });
+    return discussions;
   }
 }
