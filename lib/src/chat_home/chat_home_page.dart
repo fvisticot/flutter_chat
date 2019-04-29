@@ -2,10 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_chat/src/discussions_list/discussions_list_ui.dart';
 import 'package:flutter_chat/src/group_chat/group_chat_ui.dart';
+import 'package:flutter_chat/src/group_management/group_management.dart';
 import 'package:flutter_chat/src/models/user.dart';
 import 'package:flutter_chat/src/repositories/firebase_repository.dart';
-import 'package:flutter_chat/src/search_user/search_user.dart';
 import 'package:flutter_chat/src/search_user/search_user_ui.dart';
 
 class ChatHomePage extends StatefulWidget {
@@ -22,16 +23,16 @@ class ChatHomePage extends StatefulWidget {
 
 class _ChatHomePageState extends State<ChatHomePage>
     with SingleTickerProviderStateMixin {
-  SearchUserBloc searchUserBloc;
+  GroupManagementBloc groupManagementBloc;
   StreamSubscription stateStream;
   TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    searchUserBloc = SearchUserBloc(widget.firebaseRepository);
-    stateStream = searchUserBloc.state.listen((state) {
-      if (state is SearchUserGroupChat) {
+    groupManagementBloc = GroupManagementBloc(widget.firebaseRepository);
+    stateStream = groupManagementBloc.state.listen((state) {
+      if (state is NavigateToGroupState) {
         _navigateToChatPage(state.groupId);
       }
     });
@@ -40,28 +41,53 @@ class _ChatHomePageState extends State<ChatHomePage>
 
   @override
   void dispose() {
+    _tabController.dispose();
     stateStream.cancel();
+    groupManagementBloc.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-          title: Text('Chat'),
-          bottom: TabBar(
-              controller: _tabController,
-              isScrollable: false,
-              indicatorColor: Colors.white,
-              tabs: [Tab(text: 'My discussions'), Tab(text: 'Search User')])),
-      body: TabBarView(controller: _tabController, children: <Widget>[
-        Container(),
-        BlocProvider(
-          bloc: searchUserBloc,
-          child: SearchUserPage(widget.currentUser),
-        )
-      ]),
-    );
+    return BlocBuilder<GroupManagementEvent, GroupManagementState>(
+        bloc: groupManagementBloc,
+        builder: (context, state) {
+          if (state is CreatingGroupState) {
+            return Scaffold(
+              body: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  CircularProgressIndicator(),
+                  SizedBox(
+                    height: 20,
+                    width: 20,
+                  ),
+                  Text('Creating discussion')
+                ],
+              ),
+            );
+          } else {
+            return Scaffold(
+              appBar: AppBar(
+                  title: Text('Flutter Chat'),
+                  bottom: TabBar(
+                      controller: _tabController,
+                      isScrollable: false,
+                      indicatorColor: Colors.white,
+                      tabs: [
+                        Tab(text: 'My discussions'),
+                        Tab(text: 'Search User')
+                      ])),
+              body: TabBarView(controller: _tabController, children: <Widget>[
+                DiscussionsListPage(widget.firebaseRepository,
+                    groupManagementBloc, widget.currentUser),
+                SearchUserPage(widget.firebaseRepository, widget.currentUser,
+                    groupManagementBloc),
+              ]),
+            );
+          }
+        });
   }
 
   _navigateToChatPage(groupId) {

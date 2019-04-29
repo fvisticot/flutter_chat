@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_chat/src/group_management/group_management.dart';
 import 'package:flutter_chat/src/models/models.dart';
+import 'package:flutter_chat/src/repositories/firebase_repository.dart';
 
 import 'search_user.dart';
 
 class SearchUserPage extends StatefulWidget {
+  final FirebaseRepository firebaseRepository;
   final User currentUser;
+  final GroupManagementBloc groupManagementBloc;
 
-  SearchUserPage(this.currentUser) : assert(currentUser != null);
+  SearchUserPage(
+      this.firebaseRepository, this.currentUser, this.groupManagementBloc)
+      : assert(firebaseRepository != null),
+        assert(currentUser != null),
+        assert(groupManagementBloc != null);
 
   @override
   _SearchUserPageState createState() => _SearchUserPageState();
@@ -20,8 +28,8 @@ class _SearchUserPageState extends State<SearchUserPage> {
 
   @override
   void initState() {
-    searchUserBloc = BlocProvider.of<SearchUserBloc>(context);
-
+    searchUserBloc =
+        SearchUserBloc(widget.firebaseRepository, widget.groupManagementBloc);
     _searchTextFieldEditingController.addListener(() {
       searchUserBloc
           .dispatch(SearchUserWithName(_searchTextFieldEditingController.text));
@@ -56,19 +64,9 @@ class _SearchUserPageState extends State<SearchUserPage> {
                     : Container()
               ],
             );
-          } else if (searchUserState is SearchUserCreatingGroup) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                CircularProgressIndicator(),
-                SizedBox(
-                  height: 20,
-                ),
-                Text('Creating discussion')
-              ],
-            );
           } else {
             _searchTextFieldEditingController.clear();
+
             return Column(
               children: <Widget>[_buildSearchBar()],
             );
