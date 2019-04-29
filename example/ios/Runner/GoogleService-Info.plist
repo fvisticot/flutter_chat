@@ -2,39 +2,37 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>AD_UNIT_ID_FOR_BANNER_TEST</key>
-	<string>ca-app-pub-3940256099942544/2934735716</string>
-	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
-	<string>ca-app-pub-3940256099942544/4411468910</string>
 	<key>CLIENT_ID</key>
-	<string>162007142775-dic043o3a3e8sjr9ve6jgtsflm880odt.apps.googleusercontent.com</string>
+	<string>942553856827-8522d7e86bonir8tl03pl621isr25da0.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.162007142775-dic043o3a3e8sjr9ve6jgtsflm880odt</string>
+	<string>com.googleusercontent.apps.942553856827-8522d7e86bonir8tl03pl621isr25da0</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>942553856827-cteikh2kn6bjvkb3o9lndjmuhs660d9d.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyAPnnsx0xykulPUQOuImgMVo8MFiQVuaTE</string>
+	<string>AIzaSyDCkCylRtAya7ygJ-tmEFhTUvfndvovkNc</string>
 	<key>GCM_SENDER_ID</key>
-	<string>162007142775</string>
+	<string>942553856827</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.orange.oab.gamification</string>
+	<string>com.orange.oab.flutterexamplechat</string>
 	<key>PROJECT_ID</key>
-	<string>gamification-d5b83</string>
+	<string>flutter-example-chat-app</string>
 	<key>STORAGE_BUCKET</key>
-	<string>gamification-d5b83.appspot.com</string>
+	<string>flutter-example-chat-app.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
-	<true></true>
+	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
 	<false></false>
 	<key>IS_APPINVITE_ENABLED</key>
-	<false></false>
+	<true></true>
 	<key>IS_GCM_ENABLED</key>
 	<true></true>
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:162007142775:ios:e6dedbaf96790921</string>
+	<string>1:942553856827:ios:517b99f58321c494</string>
 	<key>DATABASE_URL</key>
-	<string>https://gamification-d5b83.firebaseio.com</string>
+	<string>https://flutter-example-chat-app.firebaseio.com</string>
 </dict>
 </plist>
