@@ -32,6 +32,7 @@ coverage/*
 build/
 
 # Android related
+**/android/*.jks
 **/android/**/gradle-wrapper.jar
 **/android/.gradle
 **/android/captures/
@@ -41,6 +42,7 @@ build/
 **/android/**/GeneratedPluginRegistrant.java
 
 # iOS/XCode related
+**/ios/*.mobileprovision
 **/ios/**/*.mode1v3
 **/ios/**/*.mode2v3
 **/ios/**/*.moved-aside
