@@ -5,12 +5,6 @@ abstract class DiscussionsListEvent extends Equatable {
 }
 
 class GetDiscussionsList extends DiscussionsListEvent {
-  String userId;
-
-  GetDiscussionsList(this.userId)
-      : assert(userId != null),
-        super([userId]);
-
   @override
   String toString() => 'GetDiscussionsList';
 }
