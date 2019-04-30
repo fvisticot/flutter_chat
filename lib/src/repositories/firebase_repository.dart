@@ -29,7 +29,11 @@ class FirebaseRepository implements DataRepository {
         throw Exception(
             'User info must be provided (userName) to create the user in DB.');
       }
-      currentUser = User(firebaseUser.uid, userName);
+      currentUser = User(
+          firebaseUser.uid,
+          (firebaseUser.displayName.length > 0)
+              ? firebaseUser.displayName
+              : userName);
       print('User not present in DB, creating user ($currentUser).');
       await _createUser(currentUser);
     } else {
@@ -45,8 +49,8 @@ class FirebaseRepository implements DataRepository {
     DataSnapshot snapshot =
         await firebaseDatabase.reference().child('users').child(userId).once();
     Map map = snapshot.value;
-    map['id'] = snapshot.key;
     if (map != null) {
+      map['id'] = snapshot.key;
       User user = User.fromMap(map);
       return user;
     } else {
@@ -128,8 +132,6 @@ class FirebaseRepository implements DataRepository {
         .once();
 
     if (groupUsersSnapshot.value != null) {
-      print(groupUsersSnapshot.value);
-
       Map<String, String> users =
           Map<String, String>.from(groupUsersSnapshot.value);
 
@@ -153,9 +155,11 @@ class FirebaseRepository implements DataRepository {
         .child('groups-users/$groupId')
         .once();
     List<String> usersId = [];
-    groupUsersSnapshot.value.forEach((userKey, userValue) {
-      usersId.add(userKey);
-    });
+    if (groupUsersSnapshot.value != null) {
+      groupUsersSnapshot.value.forEach((userKey, userValue) {
+        usersId.add(userKey);
+      });
+    }
     return usersId;
   }
 
@@ -164,8 +168,8 @@ class FirebaseRepository implements DataRepository {
         await firebaseDatabase.reference().child('users/$userId').once();
 
     Map map = userSnapshot.value;
-    map['id'] = userSnapshot.key;
     if (map != null) {
+      map['id'] = userSnapshot.key;
       User user = User.fromMap(map);
       return user;
     } else {
@@ -361,15 +365,15 @@ class FirebaseRepository implements DataRepository {
     return groupId;
   }
 
-  Future<Map<String, dynamic>> getUserDiscussions(String currentUserId) async {
-    Map<String, dynamic> discussions = {};
-    await firebaseDatabase
+  Stream<Map<String, dynamic>> streamOfUserDiscussions(String currentUserId) {
+    return firebaseDatabase
         .reference()
         .child('users-groups')
         .child(currentUserId)
-        .once()
-        .then((groupsSnapshot) {
-      Map<dynamic, dynamic> map = groupsSnapshot.value;
+        .onValue
+        .map((event) {
+      Map<String, dynamic> discussions = {};
+      Map<dynamic, dynamic> map = event.snapshot.value;
       if (map != null) {
         List<dynamic> list = map.keys.toList()
           ..sort((a, b) {
@@ -388,7 +392,7 @@ class FirebaseRepository implements DataRepository {
           });
         });
       }
+      return discussions;
     });
-    return discussions;
   }
 }

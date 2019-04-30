@@ -1,4 +1,4 @@
-package com.example
+package com.orange.oab.flutter_example_chat
 
 import android.os.Bundle
 

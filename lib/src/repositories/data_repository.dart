@@ -33,5 +33,5 @@ abstract class DataRepository {
 
   Future<String> createDuoGroup(String currentUserId, String userId);
 
-  Future<Map<String, dynamic>> getUserDiscussions(String currentUserId);
+  Stream<Map<String, dynamic>> streamOfUserDiscussions(String currentUserId);
 }

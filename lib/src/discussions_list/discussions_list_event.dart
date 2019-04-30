@@ -8,3 +8,12 @@ class GetDiscussionsList extends DiscussionsListEvent {
   @override
   String toString() => 'GetDiscussionsList';
 }
+
+class SyncDiscussionsList extends DiscussionsListEvent {
+  Map<String, dynamic> discussions;
+
+  SyncDiscussionsList(this.discussions) : super([discussions]);
+
+  @override
+  String toString() => 'SyncDiscussionsList';
+}
