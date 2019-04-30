@@ -72,7 +72,7 @@ class _DiscussionsListPageState extends State<DiscussionsListPage> {
                     );
                   });
             } else {
-              Center(
+              return Center(
                 child: Text('No discussions available'),
               );
             }
