@@ -59,16 +59,14 @@ class _ChatDemoAppState extends State<ChatDemoApp> {
           bloc: _authenticationBloc,
           builder: (BuildContext context, AuthenticationState state) {
             if (state is AuthenticationUninitialized) {
-              // TODO : SPLASHSCREEN
               return Container(
-                decoration: BoxDecoration(color: Colors.lightGreen),
-              );
+                  //decoration: BoxDecoration(color: Colors.lightGreen),
+                  );
             }
             if (state is AuthenticationAuthenticated) {
-              /*return Chat(database, 'Toto', groupId:'MzuQUqGjXVXnu3urV9SmrWJXMeW2_vxri76DaHNQ709FIlFptYxugwN93');*/
               return Chat(
                 database,
-                'Toto',
+                'username',
               );
             }
             if (state is AuthenticationUnauthenticated) {
