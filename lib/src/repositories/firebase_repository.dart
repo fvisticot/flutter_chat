@@ -361,15 +361,15 @@ class FirebaseRepository implements DataRepository {
     return groupId;
   }
 
-  Future<Map<String, dynamic>> getUserDiscussions(String currentUserId) async {
-    Map<String, dynamic> discussions = {};
-    await firebaseDatabase
+  Stream<Map<String, dynamic>> streamOfUserDiscussions(String currentUserId) {
+    return firebaseDatabase
         .reference()
         .child('users-groups')
         .child(currentUserId)
-        .once()
-        .then((groupsSnapshot) {
-      Map<dynamic, dynamic> map = groupsSnapshot.value;
+        .onValue
+        .map((event) {
+      Map<String, dynamic> discussions = {};
+      Map<dynamic, dynamic> map = event.snapshot.value;
       if (map != null) {
         List<dynamic> list = map.keys.toList()
           ..sort((a, b) {
@@ -388,7 +388,7 @@ class FirebaseRepository implements DataRepository {
           });
         });
       }
+      return discussions;
     });
-    return discussions;
   }
 }

@@ -11,12 +11,19 @@ class DiscussionsListBloc
   FirebaseRepository firebaseRepository;
   GroupManagementBloc groupManagementBloc;
   String userId;
+  StreamSubscription _subDiscussions;
 
   DiscussionsListBloc(
       this.firebaseRepository, this.groupManagementBloc, this.userId)
       : assert(firebaseRepository != null),
         assert(groupManagementBloc != null),
-        assert(userId != null);
+        assert(userId != null) {
+    _subDiscussions = firebaseRepository
+        .streamOfUserDiscussions(userId)
+        .listen((discussions) {
+      dispatch(SyncDiscussionsList(discussions));
+    });
+  }
 
   @override
   DiscussionsListState get initialState => DiscussionsInitial();
@@ -24,11 +31,14 @@ class DiscussionsListBloc
   @override
   Stream<DiscussionsListState> mapEventToState(
       DiscussionsListEvent event) async* {
-    if (event is GetDiscussionsList) {
-      yield DiscussionsLoading();
-      Map<String, dynamic> discussions =
-          await firebaseRepository.getUserDiscussions(userId);
-      yield DiscussionsSuccess(discussions);
+    if (event is SyncDiscussionsList) {
+      yield DiscussionsSuccess(event.discussions);
     }
+  }
+
+  @override
+  void dispose() {
+    _subDiscussions.cancel();
+    super.dispose();
   }
 }
