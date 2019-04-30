@@ -14,17 +14,16 @@ dependencies:
     sdk: flutter
 
   # Firebase dependencies
-  firebase_messaging: ^4.0.0+1
-  firebase_database: ^2.0.2
+  firebase_messaging: ^4.0.0+4
+  firebase_database: ^2.0.3
   firebase_auth: ^0.8.4+5
-  firebase_storage: ^2.1.0+1
+  firebase_storage: ^2.1.1+1
 
   # Other dependencies
   flutter_bloc: ^0.11.1
   equatable: ^0.2.3
-  image_picker: ^0.5.3+2
+  image_picker: ^0.6.0+1
   cached_network_image: ^0.7.0
-  location: ^2.0.0
 
 
 dev_dependencies:
