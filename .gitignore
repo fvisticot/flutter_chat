@@ -30,6 +30,8 @@ coverage/*
 .pub-cache/
 .pub/
 build/
+pubspeck.lock
+
 
 # Android related
 **/android/*.jks

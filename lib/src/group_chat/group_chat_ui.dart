@@ -68,8 +68,11 @@ class _GroupChatPageState extends State<GroupChatPage> {
                   ),
                   TypingUsers(widget.firebaseRepository, widget.groupId,
                       widget.currentUser),
-                  MessageBar(widget.firebaseRepository, widget.groupId,
-                      widget.currentUser, _uploadFileBloc),
+                  SafeArea(
+                    bottom: true,
+                    child: MessageBar(widget.firebaseRepository, widget.groupId,
+                        widget.currentUser, _uploadFileBloc),
+                  ),
                 ],
               ),
             );
