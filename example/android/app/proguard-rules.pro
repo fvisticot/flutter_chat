@@ -5,3 +5,12 @@
 -keep class io.flutter.view.**  { *; }
 -keep class io.flutter.**  { *; }
 -keep class io.flutter.plugins.**  { *; }
+
+# GooglePlay Services
+-keep class com.google.android.gms.** { *; }
+-dontwarn com.google.android.gms.**
+-keep class com.google.common.** { *; }
+-dontwarn com.google.common.**
+
+# Firebase Services
+-keep class com.google.firebase.** { *; }
