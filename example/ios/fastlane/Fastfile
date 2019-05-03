@@ -1,8 +1,8 @@
-import_from_git(
-   url: "https://oauth2:eBkSWpg1x8ozCSQdKyk9@git-oab.si.fr.intraorange/practice-apple-mds-o/fastlane-core.git",
-   branch: "0.3.0",
-   path: "Fastfile"
-)
+#import_from_git(
+ #  url: "https://oauth2:eBkSWpg1x8ozCSQdKyk9@git-oab.si.fr.intraorange/practice-apple-mds-o/fastlane-core.git",
+  # branch: "0.3.0",
+  # path: "Fastfile"
+#)
 # This file contains the fastlane.tools configuration
 # You can find the documentation at https://docs.fastlane.tools
 #
