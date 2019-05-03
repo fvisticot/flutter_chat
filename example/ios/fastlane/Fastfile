@@ -21,6 +21,14 @@ import_from_git(
    path: "Fastfile"
 )
 
+desc "Disable automatic signing"
+  lane :disable_automatic_signing do
+    disable_automatic_code_signing(
+     use_automatic_signing: false
+   )
+ end
+
+
 
 lane :build_project_test do
     check_mandatory_env_var
