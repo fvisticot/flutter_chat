@@ -23,7 +23,7 @@ default_platform(:ios)
 desc "sign project"
   desc "Configure the .env.default file in this directory before you run the test or build lanes."
   desc "Info on the .env files and how to use them can be found here: https://github.com/fastlane/fastlane/blob/master/fastlane/docs/Advanced.md#environment-variables"
-  lane :build_project do
+  lane :sign_project do
     disable_automatic_signing
     gym(
       export_options: {
