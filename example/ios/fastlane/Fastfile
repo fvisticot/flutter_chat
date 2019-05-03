@@ -25,8 +25,6 @@ import_from_git(
 
 default_platform(:ios)
 
-cocoapods(use_bundle_exec: false)
-
 platform :ios do
 
 end
