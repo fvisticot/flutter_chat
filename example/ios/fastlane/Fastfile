@@ -40,7 +40,6 @@ desc "sign project"
           ENV["FL_BUNDLE_IDENTIFIER"] => ENV["PROVISIONING_IDENTIFIER"]
         }
       },
-      xcargs: { :PROVISIONING_PROFILE => ENV["PROVISIONING_IDENTIFIER"]}
     )
 
   end
