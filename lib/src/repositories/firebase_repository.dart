@@ -41,7 +41,7 @@ class FirebaseRepository implements DataRepository {
       print('User already present in DB.');
     }
     _initPresence(currentUser.id);
-    _setupNotifications(currentUser.id);
+    //_setupNotifications(currentUser.id);
     return currentUser;
   }
 
