@@ -28,20 +28,14 @@ desc "Disable automatic signing"
    )
  end
 
-
-
-lane :build_project_test do
+lane :build_ios_project do
     check_mandatory_env_var
     init_version_number
-    init_slack
-    init_cocoapods
     init_automatic_code_signing
     init_gym(version: get_version_number)
     disable_automatic_signing
     gym(
       export_options: {
-        compileBitcode: ENV["GYM_INCLUDE_BITCODE"],
-        uploadBitcode: ENV["GYM_INCLUDE_BITCODE"],
         provisioningProfiles: {
           ENV["FL_BUNDLE_IDENTIFIER"] => ENV["PROVISIONING_IDENTIFIER"]
         }
