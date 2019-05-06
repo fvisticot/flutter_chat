@@ -95,14 +95,14 @@ class FirebaseRepository implements DataRepository {
     final FirebaseMessaging _firebaseMessaging = new FirebaseMessaging();
 
     _firebaseMessaging.configure(
-      onMessage: (Map<String, dynamic> message) {
-        print("onMessage received: $message");
+      onMessage: (Map<String, dynamic> message) async {
+        print('on message $message');
       },
-      onLaunch: (Map<String, dynamic> message) {
-        print("onLaunch: $message");
+      onResume: (Map<String, dynamic> message) async {
+        print('on resume $message');
       },
-      onResume: (Map<String, dynamic> message) {
-        print("onResume: $message");
+      onLaunch: (Map<String, dynamic> message) async {
+        print('on launch $message');
       },
     );
 
