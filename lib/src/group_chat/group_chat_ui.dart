@@ -86,6 +86,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
           title: Text(
         group.title,
         maxLines: 1,
+        overflow: TextOverflow.ellipsis,
       ));
     } else {
       String userId = group.users.keys
@@ -98,7 +99,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
             Stack(children: <Widget>[
               CircleAvatar(
                 backgroundColor: Colors.brown.shade800,
-                child: Text('AH'),
+                child: Text(title.substring(0, 1).toUpperCase()),
               ),
               Positioned(
                 bottom: 0,
@@ -112,6 +113,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
             Text(
               title,
               maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
