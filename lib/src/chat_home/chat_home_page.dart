@@ -70,14 +70,27 @@ class _ChatHomePageState extends State<ChatHomePage>
           } else {
             return Scaffold(
               appBar: AppBar(
-                  title: Text('Flutter Chat'),
+                  title: Text('Chat'),
+                  centerTitle: true,
+                  flexibleSpace: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomLeft,
+                        end: Alignment.centerRight,
+                        colors: [
+                          Color.fromRGBO(149, 152, 178, 1),
+                          Color.fromRGBO(90, 95, 129, 1)
+                        ],
+                      ),
+                    ),
+                  ),
                   bottom: TabBar(
                       controller: _tabController,
                       isScrollable: false,
                       indicatorColor: Colors.white,
                       tabs: [
-                        Tab(text: 'My discussions'),
-                        Tab(text: 'Search User')
+                        Tab(icon: Icon(Icons.chat)),
+                        Tab(icon: Icon(Icons.search)),
                       ])),
               body: TabBarView(controller: _tabController, children: <Widget>[
                 DiscussionsListPage(widget.firebaseRepository,
