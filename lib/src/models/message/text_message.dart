@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat/src/common/styles.dart';
 import 'package:flutter_chat/src/models/message/message.dart';
 
 class TextMessage extends Message {
@@ -28,16 +29,16 @@ class TextMessage extends Message {
 
   Widget displayMessage(isMine) {
     return Container(
-      child: Text(
-        '$text',
-        softWrap: true,
-      ),
-      padding: EdgeInsets.all(8),
-      decoration: BoxDecoration(
-          color: isMine ? Colors.blue : Colors.black12,
-          borderRadius: BorderRadius.all(Radius.circular(8)),
-          border: Border.all(color: Colors.grey.withOpacity(0.3))),
-    );
+        child: Text(
+          '$text',
+          softWrap: true,
+          style: isMine ? Styles.myMessagetext : Styles.otherMessagetext,
+        ),
+        padding: EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: isMine ? Styles.mainColor : Styles.otherMessageBackgroundColor,
+          borderRadius: BorderRadius.all(Radius.circular(7)),
+        ));
   }
 
   @override

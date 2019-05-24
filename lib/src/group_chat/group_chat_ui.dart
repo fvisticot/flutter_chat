@@ -83,11 +83,24 @@ class _GroupChatPageState extends State<GroupChatPage> {
   Widget _buildAppBar(Group group) {
     if (group.users.length > 2) {
       return AppBar(
-          title: Text(
-        group.title,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ));
+        title: Text(
+          group.title,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.bottomLeft,
+              end: Alignment.centerRight,
+              colors: [
+                Color.fromRGBO(149, 152, 178, 1),
+                Color.fromRGBO(90, 95, 129, 1)
+              ],
+            ),
+          ),
+        ),
+      );
     } else {
       String userId = group.users.keys
           .firstWhere((k) => k != widget.currentUser.id, orElse: () => null);
@@ -116,6 +129,18 @@ class _GroupChatPageState extends State<GroupChatPage> {
               overflow: TextOverflow.ellipsis,
             ),
           ],
+        ),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.bottomLeft,
+              end: Alignment.centerRight,
+              colors: [
+                Color.fromRGBO(149, 152, 178, 1),
+                Color.fromRGBO(90, 95, 129, 1)
+              ],
+            ),
+          ),
         ),
         bottom: PreferredSize(
             child: BlocBuilder<UploadFileEvent, UploadFileState>(

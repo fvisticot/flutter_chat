@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_chat/src/common/styles.dart';
 import 'package:flutter_chat/src/group_management/group_management.dart';
 import 'package:flutter_chat/src/models/models.dart';
 import 'package:flutter_chat/src/repositories/firebase_repository.dart';
@@ -82,13 +83,15 @@ class _SearchUserPageState extends State<SearchUserPage> {
           title: TextField(
             controller: _searchTextFieldEditingController,
             decoration: InputDecoration(
-                hintText: 'Search username', border: InputBorder.none),
+                hintText: 'Rechercher un utilisateur',
+                border: InputBorder.none),
           ),
           trailing: IconButton(
             icon: Icon(Icons.cancel),
             onPressed: () {
               _searchTextFieldEditingController.clear();
             },
+            color: Styles.mainColor,
           ),
         ),
       ),
@@ -99,11 +102,12 @@ class _SearchUserPageState extends State<SearchUserPage> {
     return ListTile(
       title: Text(userName),
       trailing: IconButton(
-          icon: Icon(Icons.message),
-          onPressed: () {
-            searchUserBloc
-                .dispatch(ChatWithUser(widget.currentUser.id, userId));
-          }),
+        icon: Icon(Icons.message),
+        onPressed: () {
+          searchUserBloc.dispatch(ChatWithUser(widget.currentUser.id, userId));
+        },
+        color: Styles.mainColor,
+      ),
     );
   }
 }

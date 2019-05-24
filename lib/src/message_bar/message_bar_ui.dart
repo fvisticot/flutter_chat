@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_chat/src/common/styles.dart';
 import 'package:flutter_chat/src/message_bar/message_bar.dart';
 import 'package:flutter_chat/src/models/message/message.dart';
 import 'package:flutter_chat/src/models/models.dart';
@@ -61,23 +62,23 @@ class _MessageBarState extends State<MessageBar> {
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 8.0),
                   child: IconButton(
-                    onPressed: () async {
-                      try {
-                        File imageFile = await ImagePicker.pickImage(
-                          source: ImageSource.gallery,
-                          maxWidth: 750,
-                          maxHeight: 750,
-                        );
-                        if (imageFile != null) {
-                          _messageBarBloc.dispatch(StoreImageEvent(imageFile));
+                      onPressed: () async {
+                        try {
+                          File imageFile = await ImagePicker.pickImage(
+                            source: ImageSource.gallery,
+                            maxWidth: 750,
+                            maxHeight: 750,
+                          );
+                          if (imageFile != null) {
+                            _messageBarBloc
+                                .dispatch(StoreImageEvent(imageFile));
+                          }
+                        } catch (e) {
+                          print(e);
                         }
-                      } catch (e) {
-                        print(e);
-                      }
-                    },
-                    icon: Icon(Icons.photo_library),
-                    color: Colors.blue,
-                  ),
+                      },
+                      icon: Icon(Icons.photo_library),
+                      color: Styles.mainColor),
                 ),
                 Container(
                   margin: EdgeInsets.only(right: 8.0),
@@ -97,7 +98,7 @@ class _MessageBarState extends State<MessageBar> {
                       }
                     },
                     icon: Icon(Icons.photo_camera),
-                    color: Colors.blue,
+                    color: Styles.mainColor,
                   ),
                 ),
                 Expanded(
@@ -123,7 +124,7 @@ class _MessageBarState extends State<MessageBar> {
                             ),
                             controller: _textMessageController,
                             decoration: InputDecoration.collapsed(
-                              hintText: 'Type your message...',
+                              hintText: 'Message...',
                               hintStyle: TextStyle(color: Colors.grey),
                             ),
                             //focusNode: _focusNode,
@@ -146,7 +147,7 @@ class _MessageBarState extends State<MessageBar> {
                       }
                     },
                     icon: Icon(Icons.send),
-                    color: Colors.blue,
+                    color: Styles.mainColor,
                   ),
                 ),
               ],

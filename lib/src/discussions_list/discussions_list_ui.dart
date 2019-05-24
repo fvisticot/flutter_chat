@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_chat/src/common/styles.dart';
 import 'package:flutter_chat/src/group_management/group_management.dart';
 import 'package:flutter_chat/src/models/user.dart';
 import 'package:flutter_chat/src/repositories/firebase_repository.dart';
@@ -64,11 +65,13 @@ class _DiscussionsListPageState extends State<DiscussionsListPage> {
                         overflow: TextOverflow.ellipsis,
                       ),
                       trailing: IconButton(
-                          icon: Icon(Icons.message),
-                          onPressed: () {
-                            _discussionsListBloc.groupManagementBloc
-                                .dispatch(NavigateToGroup(keys[index]));
-                          }),
+                        icon: Icon(Icons.message),
+                        onPressed: () {
+                          _discussionsListBloc.groupManagementBloc
+                              .dispatch(NavigateToGroup(keys[index]));
+                        },
+                        color: Styles.mainColor,
+                      ),
                     );
                   });
             } else {
