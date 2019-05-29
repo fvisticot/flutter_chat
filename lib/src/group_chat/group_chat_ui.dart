@@ -223,7 +223,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
                           style: TextStyle(fontSize: 12),
                         ),
                       ),
-                message.displayMessage(isMine),
+                message.displayMessage(isMine, context),
                 Padding(
                   padding: const EdgeInsets.only(top: 3),
                   child: Text(

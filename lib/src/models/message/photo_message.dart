@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat/src/group_chat/photo_viewer.dart';
 import 'package:flutter_chat/src/models/message/message.dart';
 
 class PhotoMessage extends Message {
@@ -27,19 +28,34 @@ class PhotoMessage extends Message {
         'timestamp': timestamp.millisecondsSinceEpoch,
       };
 
-  Widget displayMessage(isMine) {
+  Widget displayMessage(isMine, context) {
     return ClipRRect(
       borderRadius: BorderRadius.all(Radius.circular(15.0)),
-      child: CachedNetworkImage(
-        placeholder: (context, url) => SizedBox(
-              child: CircularProgressIndicator(),
-              width: 20,
-              height: 20,
-            ),
-        imageUrl: photoUrl,
-        fit: BoxFit.cover,
-        width: 150,
-        height: 150,
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HeroPhotoViewWrapper(
+                      heroTag: photoUrl,
+                      imageProvider: CachedNetworkImageProvider(photoUrl),
+                    ),
+              ));
+        },
+        child: Hero(
+          tag: photoUrl,
+          child: CachedNetworkImage(
+            placeholder: (context, url) => SizedBox(
+                  child: CircularProgressIndicator(),
+                  width: 20,
+                  height: 20,
+                ),
+            imageUrl: photoUrl,
+            fit: BoxFit.cover,
+            width: 150,
+            height: 150,
+          ),
+        ),
       ),
     );
   }

@@ -27,7 +27,7 @@ class TextMessage extends Message {
         'timestamp': timestamp.millisecondsSinceEpoch,
       };
 
-  Widget displayMessage(isMine) {
+  Widget displayMessage(isMine, context) {
     return Container(
         child: Text(
           '$text',
