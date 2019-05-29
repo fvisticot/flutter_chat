@@ -47,8 +47,10 @@ class _MessageBarState extends State<MessageBar> {
   }
 
   _isTyping() {
-    _messageBarBloc
-        .dispatch(IsTyping((_textMessageController.text.length > 0)));
+    if (_textMessageController.text.length <= 1) {
+      _messageBarBloc
+          .dispatch(IsTyping((_textMessageController.text.length > 0)));
+    }
   }
 
   @override

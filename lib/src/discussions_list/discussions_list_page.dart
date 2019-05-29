@@ -72,6 +72,10 @@ class _DiscussionsListPageState extends State<DiscussionsListPage> {
                         },
                         color: Styles.mainColor,
                       ),
+                      onTap: () {
+                        _discussionsListBloc.groupManagementBloc
+                            .dispatch(NavigateToGroup(keys[index]));
+                      },
                     );
                   });
             } else {
