@@ -1,8 +1,7 @@
 name: flutter_chat
 description: A Chat Flutter 
-version: 0.0.1
-author:
-homepage:
+version: 0.0.2
+
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
