@@ -39,7 +39,7 @@ void main() {
     Map<String, dynamic> map = {
       "photoUrl": photoUrl,
       "userId": userId,
-      "timestamp": dateTime.toIso8601String()
+      "timestamp": dateTime.millisecondsSinceEpoch
     };
     PhotoMessage photoMessage = PhotoMessage.fromMap(map);
 
@@ -62,7 +62,7 @@ void main() {
       'userId': userId,
       'type': 'photo',
       'photoUrl': photoUrl,
-      'timestamp': dateTime.toIso8601String(),
+      'timestamp': dateTime.millisecondsSinceEpoch,
     });
   });
 
@@ -76,8 +76,10 @@ void main() {
         PhotoMessage(photoUrl, userId, timestamp: dateTime);
 
     bool isMine = true;
+    BuildContext context;
 
-    expect(photoMessage.displayMessage(isMine), isInstanceOf<Widget>());
+    expect(
+        photoMessage.displayMessage(isMine, context), isInstanceOf<Widget>());
   });
 
   test(
@@ -90,8 +92,10 @@ void main() {
         PhotoMessage(photoUrl, userId, timestamp: dateTime);
 
     bool isMine = false;
+    BuildContext context;
 
-    expect(photoMessage.displayMessage(isMine), isInstanceOf<Widget>());
+    expect(
+        photoMessage.displayMessage(isMine, context), isInstanceOf<Widget>());
   });
 
   test('TextMessage.toString', () {

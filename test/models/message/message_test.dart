@@ -15,7 +15,7 @@ void main() {
       "text": text,
       "userId": userId,
       "userName": userName,
-      "timestamp": dateTime.toIso8601String()
+      "timestamp": dateTime.millisecondsSinceEpoch
     };
 
     expect(Message.fromMap(map), isInstanceOf<TextMessage>());
@@ -32,7 +32,7 @@ void main() {
       "photoUrl": photoUrl,
       "userId": userId,
       "userName": userName,
-      "timestamp": dateTime.toIso8601String()
+      "timestamp": dateTime.millisecondsSinceEpoch
     };
 
     expect(Message.fromMap(map), isInstanceOf<PhotoMessage>());

@@ -13,7 +13,8 @@ void main() {
     expect(txtMsg.userId, userId);
     expect(txtMsg.text, text);
     expect(txtMsg.type, MessageType.text);
-    expect(txtMsg.timestamp, dateTime);
+    expect(txtMsg.timestamp.millisecondsSinceEpoch,
+        dateTime.millisecondsSinceEpoch);
   });
 
   test('Text Message constructor without timestamp', () {
@@ -34,7 +35,7 @@ void main() {
     Map<String, dynamic> map = {
       "text": text,
       "userId": userId,
-      "timestamp": dateTime.toIso8601String()
+      "timestamp": dateTime.millisecondsSinceEpoch
     };
     TextMessage txtMsg = TextMessage.fromMap(map);
 
@@ -56,7 +57,7 @@ void main() {
       'userId': userId,
       'type': 'text',
       'text': text,
-      'timestamp': dateTime.toIso8601String(),
+      'timestamp': dateTime.millisecondsSinceEpoch,
     });
   });
 
@@ -68,8 +69,9 @@ void main() {
     TextMessage txtMsg = TextMessage(text, userId, timestamp: dateTime);
 
     bool isMine = true;
+    BuildContext context;
 
-    expect(txtMsg.displayMessage(isMine), isInstanceOf<Widget>());
+    expect(txtMsg.displayMessage(isMine, context), isInstanceOf<Widget>());
   });
 
   test(
@@ -81,8 +83,8 @@ void main() {
     TextMessage txtMsg = TextMessage(text, userId, timestamp: dateTime);
 
     bool isMine = false;
-
-    expect(txtMsg.displayMessage(isMine), isInstanceOf<Widget>());
+    BuildContext context;
+    expect(txtMsg.displayMessage(isMine, context), isInstanceOf<Widget>());
   });
 
   test('TextMessage.toString', () {
