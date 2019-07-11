@@ -1,7 +1,6 @@
 name: flutter_chat
-description: A Chat Flutter 
+description: A Chat Flutter
 version: 0.0.2
-
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -22,19 +21,13 @@ dependencies:
   flutter_bloc: ^0.11.1
   equatable: ^0.2.3
   image_picker: ^0.6.0+1
-  cached_network_image: ^0.7.0
-  photo_view: ^0.3.3
-
+  cached_network_image: ^1.0.0
+  photo_view: ^0.4.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^4.0.0
-
-
-
-
-
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
@@ -42,7 +35,6 @@ dev_dependencies:
 # The following section is specific to Flutter.
 flutter:
   uses-material-design: true
-
   # To add assets to your package, add an assets section, like this:
   # assets:
   #  - images/a_dot_burr.jpeg
@@ -53,7 +45,6 @@ flutter:
   #
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.
-
   # To add custom fonts to your package, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a

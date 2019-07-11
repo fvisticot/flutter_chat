@@ -5,6 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chat/flutter_chat.dart';
+import 'package:flutter_chat_example/authentication/prechat.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'authentication/authentication.dart';
@@ -64,10 +65,7 @@ class _ChatDemoAppState extends State<ChatDemoApp> {
                   );
             }
             if (state is AuthenticationAuthenticated) {
-              return Chat(
-                database,
-                'username',
-              );
+              return PreChat();
             }
             if (state is AuthenticationUnauthenticated) {
               return AuthenticationPage();

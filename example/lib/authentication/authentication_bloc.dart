@@ -4,27 +4,28 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:bloc/bloc.dart';
 import 'authentication.dart';
 
-class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
+class AuthenticationBloc
+    extends Bloc<AuthenticationEvent, AuthenticationState> {
   final GoogleSignIn googleSignIn;
   final FirebaseAuth firebaseAuth;
 
   AuthenticationBloc(this.googleSignIn, this.firebaseAuth)
-      : assert (googleSignIn != null),
-        assert (firebaseAuth!= null);
+      : assert(googleSignIn != null),
+        assert(firebaseAuth != null);
 
   @override
   AuthenticationState get initialState => AuthenticationUninitialized();
 
   @override
-  Stream<AuthenticationState> mapEventToState(AuthenticationEvent event) async* {
+  Stream<AuthenticationState> mapEventToState(
+      AuthenticationEvent event) async* {
     if (event is AppStarted) {
       bool googleIsSignedIn = await googleSignIn.isSignedIn();
       if (googleIsSignedIn) {
         FirebaseUser fbUser = await firebaseAuth.currentUser();
-        if(fbUser != null) {
+        if (fbUser != null) {
           yield AuthenticationAuthenticated();
-        }
-        else {
+        } else {
           yield AuthenticationUnauthenticated();
         }
       } else {
@@ -37,16 +38,17 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
       try {
         final GoogleSignInAccount googleUser = await googleSignIn.signIn();
         final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
+            await googleUser.authentication;
         final AuthCredential credential = GoogleAuthProvider.getCredential(
           accessToken: googleAuth.accessToken,
           idToken: googleAuth.idToken,
         );
-        final FirebaseUser user = await firebaseAuth.signInWithCredential(credential);
+        final FirebaseUser user =
+            await firebaseAuth.signInWithCredential(credential);
         final FirebaseUser currentUser = await firebaseAuth.currentUser();
-        assert(user.uid == currentUser.uid);
+        if (user.uid != currentUser.uid) throw Exception();
         yield AuthenticationAuthenticated();
-       } catch (e) {
+      } catch (e) {
         print(e);
         yield AuthenticationUnauthenticated();
       }
@@ -58,6 +60,4 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
       yield AuthenticationUnauthenticated();
     }
   }
-
-
 }
