@@ -6,12 +6,11 @@ import 'authentication.dart';
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
-  final GoogleSignIn googleSignIn;
-  final FirebaseAuth firebaseAuth;
-
   AuthenticationBloc(this.googleSignIn, this.firebaseAuth)
       : assert(googleSignIn != null),
         assert(firebaseAuth != null);
+  final GoogleSignIn googleSignIn;
+  final FirebaseAuth firebaseAuth;
 
   @override
   AuthenticationState get initialState => AuthenticationUninitialized();
@@ -20,9 +19,9 @@ class AuthenticationBloc
   Stream<AuthenticationState> mapEventToState(
       AuthenticationEvent event) async* {
     if (event is AppStarted) {
-      bool googleIsSignedIn = await googleSignIn.isSignedIn();
+      final bool googleIsSignedIn = await googleSignIn.isSignedIn();
       if (googleIsSignedIn) {
-        FirebaseUser fbUser = await firebaseAuth.currentUser();
+        final FirebaseUser fbUser = await firebaseAuth.currentUser();
         if (fbUser != null) {
           yield AuthenticationAuthenticated();
         } else {
@@ -46,7 +45,9 @@ class AuthenticationBloc
         final FirebaseUser user =
             await firebaseAuth.signInWithCredential(credential);
         final FirebaseUser currentUser = await firebaseAuth.currentUser();
-        if (user.uid != currentUser.uid) throw Exception();
+        if (user.uid != currentUser.uid) {
+          throw Exception();
+        }
         yield AuthenticationAuthenticated();
       } catch (e) {
         print(e);

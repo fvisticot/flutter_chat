@@ -20,12 +20,12 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Google Sign In'),
+        title: const Text('Google Sign In'),
       ),
       body: Center(
         child: RaisedButton(
           onPressed: () => _authBloc.dispatch(LogIn()),
-          child: Text('Sign In With Google'),
+          child: const Text('Sign In With Google'),
         ),
       ),
     );
