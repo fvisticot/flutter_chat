@@ -14,7 +14,7 @@ dependencies:
   # Firebase dependencies
   firebase_messaging: ^4.0.0+4
   firebase_database: ^2.0.3
-  firebase_auth: ^0.8.4+5
+  firebase_auth: ^0.11.1+8
   firebase_storage: ^2.1.1+1
 
   # Other dependencies

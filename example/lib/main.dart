@@ -43,8 +43,6 @@ class _ChatDemoAppState extends State<ChatDemoApp> {
   @override
   void initState() {
     database = FirebaseDatabase(app: app);
-    database.setPersistenceEnabled(false);
-
     _authenticationBloc = AuthenticationBloc(googleSignIn, firebaseAuth);
     _authenticationBloc.dispatch(AppStarted());
     super.initState();
@@ -68,9 +66,9 @@ class _ChatDemoAppState extends State<ChatDemoApp> {
                   color: Colors.white,
                 ),
                 child: Center(
-                  child: SizedBox(
-                      width: 20.0,
-                      height: 20.0,
+                  child: const SizedBox(
+                      width: 20,
+                      height: 20,
                       child: CircularProgressIndicator()),
                 ),
               );

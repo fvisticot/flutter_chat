@@ -1,4 +1,3 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chat/src/chat/chat_bloc.dart';
@@ -18,7 +17,6 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> with WidgetsBindingObserver {
-  FirebaseDatabase firebaseDatabase;
   ChatBloc _chatBloc;
   ChatFirebaseRepository firebaseRepository;
   @override
