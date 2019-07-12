@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chat/src/models/user.dart';
-import 'package:flutter_chat/src/repositories/firebase_repository.dart';
+import 'package:flutter_chat/src/repositories/chat_firebase_repository.dart';
 
 import 'typing_users.dart';
 
 class TypingUsers extends StatefulWidget {
-  final FirebaseRepository firebaseRepository;
-  final String groupId;
-  final User currentUser;
-
-  TypingUsers(this.firebaseRepository, this.groupId, this.currentUser)
-      : assert(firebaseRepository != null),
+  const TypingUsers(
+    this.firebaseRepository,
+    this.groupId,
+    this.currentUser,
+  )   : assert(firebaseRepository != null),
         assert(groupId != null),
         assert(currentUser != null);
+  final ChatFirebaseRepository firebaseRepository;
+  final String groupId;
+  final User currentUser;
 
   @override
   _TypingUsersState createState() => _TypingUsersState();
@@ -35,7 +37,7 @@ class _TypingUsersState extends State<TypingUsers> {
         bloc: _typingUsersBloc,
         builder: (context, typingUsersState) {
           if (typingUsersState is TypingUsersList) {
-            if (typingUsersState.usersNames.length == 0) {
+            if (typingUsersState.usersNames.isEmpty) {
               return Container();
             } else {
               String typingMsg;
@@ -48,8 +50,8 @@ class _TypingUsersState extends State<TypingUsers> {
               return Row(
                 children: <Widget>[
                   Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 8),
                       child: Text(
                         typingMsg,
                         style: TextStyle(color: Colors.grey),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/flutter_chat.dart';
-import 'package:firebase_database/firebase_database.dart';
 
 class PreChat extends StatelessWidget {
   @override
@@ -14,8 +13,7 @@ class PreChat extends StatelessWidget {
             RaisedButton(
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) =>
-                      Chat(FirebaseDatabase.instance, 'testName'),
+                  builder: (context) => Chat('testName'),
                 ),
               ),
               child: Text('Open Chat'),

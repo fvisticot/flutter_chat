@@ -10,9 +10,8 @@ class GetDiscussionsList extends DiscussionsListEvent {
 }
 
 class SyncDiscussionsList extends DiscussionsListEvent {
-  Map<String, dynamic> discussions;
-
   SyncDiscussionsList(this.discussions) : super([discussions]);
+  Map<String, dynamic> discussions;
 
   @override
   String toString() => 'SyncDiscussionsList';

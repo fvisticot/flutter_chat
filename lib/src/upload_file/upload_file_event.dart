@@ -1,11 +1,10 @@
 import 'package:equatable/equatable.dart';
 
 class UploadFileEvent extends Equatable {
-  final double progress;
-
   UploadFileEvent(this.progress)
-      :assert (progress!=null),
+      : assert(progress != null),
         super([progress]);
+  final double progress;
 
   @override
   String toString() => 'UploadFileEvent $progress';

@@ -15,11 +15,10 @@ class DiscussionsLoading extends DiscussionsListState {
 }
 
 class DiscussionsSuccess extends DiscussionsListState {
-  Map<String, dynamic> discussions;
-
   DiscussionsSuccess(this.discussions)
       : assert(discussions != null),
         super([discussions]);
+  Map<String, dynamic> discussions;
 
   @override
   String toString() => 'DiscussionsSuccess $discussions';

@@ -5,24 +5,22 @@ class GroupManagementEvent extends Equatable {
 }
 
 class NavigateToGroup extends GroupManagementEvent {
-  String groupId;
-
   NavigateToGroup(this.groupId)
       : assert(groupId != null),
         super([groupId]);
+  String groupId;
 
   @override
   String toString() => 'NavigateToGroup $groupId';
 }
 
 class CreateDuoGroup extends GroupManagementEvent {
-  String currentUid;
-  String uid;
-
   CreateDuoGroup(this.currentUid, this.uid)
       : assert(currentUid != null),
         assert(uid != null),
         super([currentUid, uid]);
+  String currentUid;
+  String uid;
 
   @override
   String toString() =>

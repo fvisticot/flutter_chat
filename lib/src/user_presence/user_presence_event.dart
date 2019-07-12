@@ -1,11 +1,11 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/widgets.dart';
 
 class UserPresenceEvent extends Equatable {
-  final bool isOnline;
-
-  UserPresenceEvent(this.isOnline)
-      :assert (isOnline!=null),
+  UserPresenceEvent({@required this.isOnline})
+      : assert(isOnline != null),
         super([isOnline]);
+  final bool isOnline;
 
   @override
   String toString() => 'UserPresenceEvent $isOnline';

@@ -1,21 +1,25 @@
 import 'dart:async';
 
-import 'package:flutter_chat/src/repositories/firebase_repository.dart';
+import 'package:flutter_chat/src/repositories/chat_firebase_repository.dart';
 import 'package:flutter_chat/src/typing_users/typing_users.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
-class MockFirebaseRepository extends Mock implements FirebaseRepository {}
+class MockFirebaseRepository extends Mock implements ChatFirebaseRepository {}
 
 void main() {
-  FirebaseRepository firebaseRepository;
+  ChatFirebaseRepository firebaseRepository;
   TypingUsersBloc typingUsersBloc;
 
   setUp(() {
     firebaseRepository = MockFirebaseRepository();
     when(firebaseRepository.typingUsers(any, any))
         .thenAnswer((_) => Stream.fromIterable([]));
-    typingUsersBloc = TypingUsersBloc(firebaseRepository, any, any);
+    typingUsersBloc = TypingUsersBloc(
+      firebaseRepository,
+      any,
+      any,
+    );
   });
 
   test('initial state is correct', () {

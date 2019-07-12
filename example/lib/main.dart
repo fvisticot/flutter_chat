@@ -4,8 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_chat/flutter_chat.dart';
-import 'package:flutter_chat_example/authentication/prechat.dart';
+import 'package:flutter_chat_example/prechat.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'authentication/authentication.dart';
@@ -59,28 +58,21 @@ class _ChatDemoAppState extends State<ChatDemoApp> {
         home: BlocBuilder<AuthenticationEvent, AuthenticationState>(
           bloc: _authenticationBloc,
           builder: (BuildContext context, AuthenticationState state) {
-            if (state is AuthenticationUninitialized) {
-              return Container(
-                  //decoration: BoxDecoration(color: Colors.lightGreen),
-                  );
-            }
             if (state is AuthenticationAuthenticated) {
               return PreChat();
-            }
-            if (state is AuthenticationUnauthenticated) {
+            } else if (state is AuthenticationUnauthenticated) {
               return AuthenticationPage();
-            }
-            if (state is AuthenticationLoading) {
+            } else {
               return Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
                 ),
-                /*child: Center(
+                child: Center(
                   child: SizedBox(
                       width: 20.0,
                       height: 20.0,
                       child: CircularProgressIndicator()),
-                ),*/
+                ),
               );
             }
           },

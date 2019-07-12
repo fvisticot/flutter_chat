@@ -1,18 +1,18 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:flutter_chat/src/repositories/chat_firebase_repository.dart';
 import 'user_presence.dart';
-import 'package:flutter_chat/src/repositories/firebase_repository.dart';
 
 class UserPresenceBloc extends Bloc<UserPresenceEvent, UserPresenceState> {
-  FirebaseRepository firebaseRepository;
-  String userId;
-  StreamSubscription _subUserPresence;
-
   UserPresenceBloc(this.firebaseRepository, this.userId) {
-    _subUserPresence = firebaseRepository.userPresence(userId).listen((isOnline) {
-      dispatch(UserPresenceEvent(isOnline));
+    _subUserPresence =
+        firebaseRepository.userPresence(userId).listen((isOnline) {
+      dispatch(UserPresenceEvent(isOnline: isOnline));
     });
   }
+  ChatFirebaseRepository firebaseRepository;
+  String userId;
+  StreamSubscription _subUserPresence;
 
   @override
   UserPresenceState get initialState => UserPresenceLoading();
@@ -20,10 +20,9 @@ class UserPresenceBloc extends Bloc<UserPresenceEvent, UserPresenceState> {
   @override
   Stream<UserPresenceState> mapEventToState(UserPresenceEvent event) async* {
     if (event is UserPresenceEvent) {
-      yield UserPresenceIsOnline(event.isOnline);
+      yield UserPresenceIsOnline(isOnline: event.isOnline);
     }
   }
-
 
   @override
   void dispose() {

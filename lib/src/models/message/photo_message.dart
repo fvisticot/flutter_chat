@@ -4,8 +4,6 @@ import 'package:flutter_chat/src/group_chat/photo_viewer.dart';
 import 'package:flutter_chat/src/models/message/message.dart';
 
 class PhotoMessage extends Message {
-  final String photoUrl;
-
   PhotoMessage(this.photoUrl, String userId, {DateTime timestamp})
       : super(userId, timestamp: timestamp) {
     type = MessageType.photo;
@@ -20,7 +18,9 @@ class PhotoMessage extends Message {
               .toLocal(),
     );
   }
+  final String photoUrl;
 
+  @override
   Map<String, dynamic> toJson() => {
         'userId': userId,
         'type': 'photo',
@@ -28,28 +28,29 @@ class PhotoMessage extends Message {
         'timestamp': timestamp.millisecondsSinceEpoch,
       };
 
-  Widget displayMessage(isMine, context) {
+  @override
+  Widget displayMessage(BuildContext context, {@required bool isMine}) {
     return ClipRRect(
-      borderRadius: BorderRadius.all(Radius.circular(15.0)),
+      borderRadius: const BorderRadius.all(Radius.circular(15)),
       child: GestureDetector(
         onTap: () {
           Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => HeroPhotoViewWrapper(
-                      heroTag: photoUrl,
-                      imageProvider: CachedNetworkImageProvider(photoUrl),
-                    ),
+                  heroTag: photoUrl,
+                  imageProvider: CachedNetworkImageProvider(photoUrl),
+                ),
               ));
         },
         child: Hero(
           tag: photoUrl,
           child: CachedNetworkImage(
-            placeholder: (context, url) => SizedBox(
-                  child: CircularProgressIndicator(),
-                  width: 20,
-                  height: 20,
-                ),
+            placeholder: (context, url) => const SizedBox(
+              child: CircularProgressIndicator(),
+              width: 20,
+              height: 20,
+            ),
             imageUrl: photoUrl,
             fit: BoxFit.cover,
             width: 150,

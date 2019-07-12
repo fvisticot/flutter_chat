@@ -39,6 +39,6 @@ void main() {
           [UploadFileInitial(), UploadFileProgress(10.2), UploadFileInitial()]),
     );
     uploadFileBloc.dispatch(UploadFileEvent(10.2));
-    uploadFileBloc.dispatch(UploadFileEvent(-1.0));
+    uploadFileBloc.dispatch(UploadFileEvent(-1));
   });
 }

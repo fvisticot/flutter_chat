@@ -16,11 +16,10 @@ class GroupChatLoading extends GroupChatState {
 }
 
 class GroupChatSuccess extends GroupChatState {
-  Group group;
-
   GroupChatSuccess(this.group)
-  : assert(group != null),
-  super([group]);
+      : assert(group != null),
+        super([group]);
+  Group group;
 
   @override
   String toString() => 'GroupChatSuccess $group';

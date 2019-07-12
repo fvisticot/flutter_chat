@@ -5,10 +5,8 @@ class TypingUsersState extends Equatable {
 }
 
 class TypingUsersList extends TypingUsersState {
+  TypingUsersList(this.usersNames) : super([usersNames]);
   List<String> usersNames;
-
-  TypingUsersList(this.usersNames)
-      : super([usersNames]);
 
   @override
   String toString() => 'TypingUsersList $usersNames';
@@ -18,4 +16,3 @@ class TypingUsersInitial extends TypingUsersState {
   @override
   String toString() => 'TypingUsersInitial';
 }
-
