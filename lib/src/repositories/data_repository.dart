@@ -2,12 +2,13 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_chat/src/models/models.dart';
 
 abstract class DataRepository {
-  Future<User> initChat(String userName);
+  Future<User> initChat();
 
-  Future<void> setPresence(bool presence);
+  Future<void> setPresence({@required bool presence});
 
   Future<Group> getGroupInfo(String groupId);
 
@@ -17,15 +18,15 @@ abstract class DataRepository {
 
   Stream<List<Message>> streamOfMessages(String groupId);
 
-  Stream<bool> userPresence(userId);
+  Stream<bool> userPresence(String userId);
 
-  sendMessage(String groupId, Message message);
+  void sendMessage(String groupId, Message message);
 
   StorageUploadTask storeFileTask(String filename, File file);
 
   Stream<List<String>> typingUsers(String groupId, User currentUser);
 
-  Future<void> isTyping(String groupId, User writer, bool isTyping);
+  Future<void> isTyping(String groupId, User writer, {@required bool isTyping});
 
   Future<Map<String, String>> searchUsersByName(String name);
 

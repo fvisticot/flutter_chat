@@ -10,11 +10,10 @@ class GroupManagementInitialState extends GroupManagementState {
 }
 
 class NavigateToGroupState extends GroupManagementState {
-  String groupId;
-
   NavigateToGroupState(this.groupId)
       : assert(groupId != null),
         super([groupId]);
+  String groupId;
 
   @override
   String toString() => 'NavigateToGroupState $groupId';

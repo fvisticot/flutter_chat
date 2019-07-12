@@ -5,24 +5,22 @@ class SearchUserEvent extends Equatable {
 }
 
 class SearchUserWithName extends SearchUserEvent {
-  String searchName;
-
   SearchUserWithName(this.searchName)
       : assert(searchName != null),
         super([searchName]);
+  String searchName;
 
   @override
   String toString() => 'SearchUserWithName $searchName';
 }
 
 class ChatWithUser extends SearchUserEvent {
-  String currentUid;
-  String uid;
-
   ChatWithUser(this.currentUid, this.uid)
       : assert(currentUid != null),
         assert(uid != null),
         super([currentUid, uid]);
+  String currentUid;
+  String uid;
 
   @override
   String toString() =>

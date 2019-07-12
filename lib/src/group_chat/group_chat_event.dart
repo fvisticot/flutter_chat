@@ -5,11 +5,10 @@ abstract class GroupChatEvent extends Equatable {
 }
 
 class GroupChatStarted extends GroupChatEvent {
-  String groupId;
-
   GroupChatStarted(this.groupId)
       : assert(groupId != null),
         super([groupId]);
+  String groupId;
 
   @override
   String toString() => 'GroupChatStarted';

@@ -1,18 +1,18 @@
-import 'package:flutter_chat/src/repositories/firebase_repository.dart';
+import 'package:flutter_chat/src/repositories/chat_firebase_repository.dart';
 import 'package:flutter_chat/src/user_presence/user_presence.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
-class MockFirebaseRepository extends Mock implements FirebaseRepository {}
+class MockFirebaseRepository extends Mock implements ChatFirebaseRepository {}
 
 void main() {
-  FirebaseRepository firebaseRepository;
+  ChatFirebaseRepository firebaseRepository;
   UserPresenceBloc userPresenceBloc;
 
   setUp(() {
     firebaseRepository = MockFirebaseRepository();
     when(firebaseRepository.userPresence(any))
-        .thenAnswer((_) => Stream.empty());
+        .thenAnswer((_) => const Stream.empty());
     userPresenceBloc = UserPresenceBloc(firebaseRepository, any);
   });
 
@@ -25,9 +25,10 @@ void main() {
       () {
     expectLater(
       userPresenceBloc.state,
-      emitsInOrder([UserPresenceLoading(), UserPresenceIsOnline(true)]),
+      emitsInOrder(
+          [UserPresenceLoading(), UserPresenceIsOnline(isOnline: true)]),
     );
-    userPresenceBloc.dispatch(UserPresenceEvent(true));
+    userPresenceBloc.dispatch(UserPresenceEvent(isOnline: true));
   });
 
   test(
@@ -35,8 +36,9 @@ void main() {
       () {
     expectLater(
       userPresenceBloc.state,
-      emitsInOrder([UserPresenceLoading(), UserPresenceIsOnline(false)]),
+      emitsInOrder(
+          [UserPresenceLoading(), UserPresenceIsOnline(isOnline: false)]),
     );
-    userPresenceBloc.dispatch(UserPresenceEvent(false));
+    userPresenceBloc.dispatch(UserPresenceEvent(isOnline: false));
   });
 }

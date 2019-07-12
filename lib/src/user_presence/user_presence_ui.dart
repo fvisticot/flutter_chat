@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_chat/src/repositories/firebase_repository.dart';
+import 'package:flutter_chat/src/repositories/chat_firebase_repository.dart';
 import 'user_presence.dart';
 
 class UserPresenceIndicator extends StatefulWidget {
-  final FirebaseRepository firebaseRepository;
-  final String userId;
-
-  UserPresenceIndicator(this.firebaseRepository, this.userId)
+  const UserPresenceIndicator(this.firebaseRepository, this.userId)
       : assert(firebaseRepository != null),
         assert(userId != null);
+  final ChatFirebaseRepository firebaseRepository;
+  final String userId;
+
   @override
   _UserPresenceIndicatorState createState() => _UserPresenceIndicatorState();
 }
@@ -37,7 +37,7 @@ class _UserPresenceIndicatorState extends State<UserPresenceIndicator> {
               color: (userPresenceState is UserPresenceIsOnline)
                   ? (userPresenceState.isOnline) ? Colors.green : Colors.red
                   : Colors.white,
-              borderRadius: BorderRadius.all(Radius.circular(50.0)),
+              borderRadius: const BorderRadius.all(Radius.circular(50)),
             ),
           );
         });

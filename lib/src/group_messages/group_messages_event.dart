@@ -6,12 +6,16 @@ abstract class GroupMessagesEvent extends Equatable {
 }
 
 class SyncMessagesEvent extends GroupMessagesEvent {
-  final List<Message> messages;
-
   SyncMessagesEvent(this.messages)
       : assert(messages != null),
         super([messages]);
+  final List<Message> messages;
 
   @override
   String toString() => 'SyncMessagesEvent';
+}
+
+class ErrorSyncMessagesEvent extends GroupMessagesEvent {
+  @override
+  String toString() => 'ErrorSyncMessagesEvent';
 }

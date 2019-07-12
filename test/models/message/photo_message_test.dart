@@ -5,10 +5,10 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('PhotoMessage constructor with all parameters', () {
-    String photoUrl = 'photoUrl';
-    String userId = 'uid';
-    DateTime dateTime = DateTime.now();
-    PhotoMessage photoMessage =
+    const String photoUrl = 'photoUrl';
+    const String userId = 'uid';
+    final DateTime dateTime = DateTime.now();
+    final PhotoMessage photoMessage =
         PhotoMessage(photoUrl, userId, timestamp: dateTime);
 
     expect(photoMessage.userId, userId);
@@ -18,9 +18,9 @@ void main() {
   });
 
   test('PhotoMessage constructor without timestamp', () {
-    String photoUrl = 'photoUrl';
-    String userId = 'uid';
-    PhotoMessage photoMessage = PhotoMessage(
+    const String photoUrl = 'photoUrl';
+    const String userId = 'uid';
+    final PhotoMessage photoMessage = PhotoMessage(
       photoUrl,
       userId,
     );
@@ -32,16 +32,16 @@ void main() {
   });
 
   test('PhotoMessage.fromMap', () {
-    String photoUrl = 'photoUrl';
-    String userId = 'uid';
-    DateTime dateTime = DateTime.now();
+    const String photoUrl = 'photoUrl';
+    const String userId = 'uid';
+    final DateTime dateTime = DateTime.now();
 
-    Map<String, dynamic> map = {
-      "photoUrl": photoUrl,
-      "userId": userId,
-      "timestamp": dateTime.toIso8601String()
+    final Map<String, dynamic> map = {
+      'photoUrl': photoUrl,
+      'userId': userId,
+      'timestamp': dateTime.millisecondsSinceEpoch
     };
-    PhotoMessage photoMessage = PhotoMessage.fromMap(map);
+    final PhotoMessage photoMessage = PhotoMessage.fromMap(map);
 
     expect(photoMessage.userId, userId);
     expect(photoMessage.photoUrl, photoUrl);
@@ -50,55 +50,59 @@ void main() {
   });
 
   test('PhotoMessage.toJson', () {
-    String photoUrl = 'photoUrl';
-    String userId = 'uid';
-    DateTime dateTime = DateTime.now();
-    PhotoMessage photoMessage =
+    const String photoUrl = 'photoUrl';
+    const String userId = 'uid';
+    final DateTime dateTime = DateTime.now();
+    final PhotoMessage photoMessage =
         PhotoMessage(photoUrl, userId, timestamp: dateTime);
 
-    Map<String, dynamic> json = photoMessage.toJson();
+    final Map<String, dynamic> json = photoMessage.toJson();
 
     expect(json, {
       'userId': userId,
       'type': 'photo',
       'photoUrl': photoUrl,
-      'timestamp': dateTime.toIso8601String(),
+      'timestamp': dateTime.millisecondsSinceEpoch,
     });
   });
 
   test(
       'PhotoMessage.displayMessage() shoud return a Widget when isMine is true',
       () {
-    String photoUrl = 'photoUrl';
-    String userId = 'uid';
-    DateTime dateTime = DateTime.now();
-    PhotoMessage photoMessage =
+    const String photoUrl = 'photoUrl';
+    const String userId = 'uid';
+    final DateTime dateTime = DateTime.now();
+    final PhotoMessage photoMessage =
         PhotoMessage(photoUrl, userId, timestamp: dateTime);
 
-    bool isMine = true;
+    const bool isMine = true;
+    BuildContext context;
 
-    expect(photoMessage.displayMessage(isMine), isInstanceOf<Widget>());
+    expect(photoMessage.displayMessage(context, isMine: isMine),
+        isInstanceOf<Widget>());
   });
 
   test(
       'PhotoMessage.displayMessage() shoud return a Widget when isMine is false',
       () {
-    String photoUrl = 'photoUrl';
-    String userId = 'uid';
-    DateTime dateTime = DateTime.now();
-    PhotoMessage photoMessage =
+    const String photoUrl = 'photoUrl';
+    const String userId = 'uid';
+    final DateTime dateTime = DateTime.now();
+    final PhotoMessage photoMessage =
         PhotoMessage(photoUrl, userId, timestamp: dateTime);
 
-    bool isMine = false;
+    const bool isMine = false;
+    BuildContext context;
 
-    expect(photoMessage.displayMessage(isMine), isInstanceOf<Widget>());
+    expect(photoMessage.displayMessage(context, isMine: isMine),
+        isInstanceOf<Widget>());
   });
 
   test('TextMessage.toString', () {
-    String photoUrl = 'photoUrl';
-    String userId = 'uid';
-    DateTime dateTime = DateTime.now();
-    PhotoMessage photoMessage =
+    const String photoUrl = 'photoUrl';
+    const String userId = 'uid';
+    final DateTime dateTime = DateTime.now();
+    final PhotoMessage photoMessage =
         PhotoMessage(photoUrl, userId, timestamp: dateTime);
 
     expect(photoMessage.toString(),

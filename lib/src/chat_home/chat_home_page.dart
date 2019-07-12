@@ -2,20 +2,19 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_chat/src/discussions_list/discussions_list_ui.dart';
+import 'package:flutter_chat/src/discussions_list/discussions_list_page.dart';
 import 'package:flutter_chat/src/group_chat/group_chat_ui.dart';
 import 'package:flutter_chat/src/group_management/group_management.dart';
 import 'package:flutter_chat/src/models/user.dart';
-import 'package:flutter_chat/src/repositories/firebase_repository.dart';
+import 'package:flutter_chat/src/repositories/chat_firebase_repository.dart';
 import 'package:flutter_chat/src/search_user/search_user_ui.dart';
 
 class ChatHomePage extends StatefulWidget {
-  final FirebaseRepository firebaseRepository;
-  final User currentUser;
-
-  ChatHomePage(this.firebaseRepository, this.currentUser)
+  const ChatHomePage(this.firebaseRepository, this.currentUser)
       : assert(firebaseRepository != null),
         assert(currentUser != null);
+  final ChatFirebaseRepository firebaseRepository;
+  final User currentUser;
 
   @override
   _ChatHomePageState createState() => _ChatHomePageState();
@@ -36,7 +35,7 @@ class _ChatHomePageState extends State<ChatHomePage>
         _navigateToChatPage(state.groupId);
       }
     });
-    _tabController = new TabController(vsync: this, length: 2);
+    _tabController = TabController(vsync: this, length: 2);
   }
 
   @override
@@ -57,7 +56,7 @@ class _ChatHomePageState extends State<ChatHomePage>
               body: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
+                children: const <Widget>[
                   CircularProgressIndicator(),
                   SizedBox(
                     height: 20,
@@ -70,14 +69,27 @@ class _ChatHomePageState extends State<ChatHomePage>
           } else {
             return Scaffold(
               appBar: AppBar(
-                  title: Text('Flutter Chat'),
+                  title: const Text('Chat'),
+                  centerTitle: true,
+                  flexibleSpace: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomLeft,
+                        end: Alignment.centerRight,
+                        colors: const [
+                          Color.fromRGBO(149, 152, 178, 1),
+                          Color.fromRGBO(90, 95, 129, 1)
+                        ],
+                      ),
+                    ),
+                  ),
                   bottom: TabBar(
                       controller: _tabController,
                       isScrollable: false,
                       indicatorColor: Colors.white,
                       tabs: [
-                        Tab(text: 'My discussions'),
-                        Tab(text: 'Search User')
+                        Tab(icon: Icon(Icons.chat)),
+                        Tab(icon: Icon(Icons.search)),
                       ])),
               body: TabBarView(controller: _tabController, children: <Widget>[
                 DiscussionsListPage(widget.firebaseRepository,
@@ -90,7 +102,7 @@ class _ChatHomePageState extends State<ChatHomePage>
         });
   }
 
-  _navigateToChatPage(groupId) {
+  void _navigateToChatPage(groupId) {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => GroupChatPage(
             groupId, widget.currentUser, widget.firebaseRepository)));

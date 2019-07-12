@@ -1,76 +1,56 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:io';
-
+import 'package:meta/meta.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_chat/src/models/models.dart';
-import 'package:intl/date_symbol_data_local.dart';
 
 import 'data_repository.dart';
 
-class FirebaseRepository implements DataRepository {
-  final FirebaseDatabase firebaseDatabase;
+class ChatFirebaseRepository implements DataRepository {
+  ChatFirebaseRepository() {
+    _firebaseDatabase = FirebaseDatabase.instance;
+  }
+  FirebaseDatabase _firebaseDatabase;
 
-  FirebaseRepository(this.firebaseDatabase) : assert(firebaseDatabase != null);
-
-  Future<User> initChat(String userName) async {
-    initializeDateFormatting("fr_FR", null);
+  @override
+  Future<User> initChat() async {
     final FirebaseUser firebaseUser = await FirebaseAuth.instance.currentUser();
     if (firebaseUser == null) {
       throw Exception('User not authenticated on Firebase.');
     }
-    User currentUser;
     final User userDb = await _userFromId(firebaseUser.uid);
     if (userDb == null) {
-      if (firebaseUser == null || userName == null) {
-        throw Exception(
-            'User info must be provided (userName) to create the user in DB.');
-      }
-      currentUser = User(
-          firebaseUser.uid,
-          (firebaseUser.displayName.length > 0)
-              ? firebaseUser.displayName
-              : userName);
-      print('User not present in DB, creating user ($currentUser).');
-      await _createUser(currentUser);
+      throw Exception('User must exist in database.');
     } else {
-      currentUser = userDb;
-      print('User already present in DB.');
+      print('User present in DB.');
     }
-    _initPresence(currentUser.id);
-    _setupNotifications(currentUser.id);
-    return currentUser;
+    _initPresence(userDb.id);
+    _setupNotifications(userDb.id);
+    return userDb;
   }
 
   Future<User> _userFromId(String userId) async {
-    DataSnapshot snapshot =
-        await firebaseDatabase.reference().child('users').child(userId).once();
-    Map map = snapshot.value;
+    final DataSnapshot snapshot =
+        await _firebaseDatabase.reference().child('users').child(userId).once();
+    final Map map = snapshot.value;
     if (map != null) {
       map['id'] = snapshot.key;
-      User user = User.fromMap(map);
+      final User user = User.fromMap(map);
       return user;
     } else {
       return null;
     }
   }
 
-  Future<void> _createUser(User user) {
-    return firebaseDatabase
-        .reference()
-        .child('users')
-        .child(user.id)
-        .set(user.toJson());
-  }
-
-  Future<void> _initPresence(String uid) async {
-    DatabaseReference amOnline =
-        firebaseDatabase.reference().child('.info/connected');
-    DatabaseReference userRef =
-        firebaseDatabase.reference().child('presences/$uid');
+  void _initPresence(String uid) {
+    final DatabaseReference amOnline =
+        _firebaseDatabase.reference().child('.info/connected');
+    final DatabaseReference userRef =
+        _firebaseDatabase.reference().child('presences/$uid');
     amOnline.onValue.listen((event) {
       print('Presence changed: ${event.snapshot.value}');
       userRef.onDisconnect().remove();
@@ -78,11 +58,12 @@ class FirebaseRepository implements DataRepository {
     });
   }
 
-  Future<void> setPresence(bool presence) async {
+  @override
+  Future<void> setPresence({@required bool presence}) async {
     final FirebaseUser firebaseUser = await FirebaseAuth.instance.currentUser();
     if (firebaseUser != null) {
-      DatabaseReference userRef =
-          firebaseDatabase.reference().child('presences/${firebaseUser.uid}');
+      final DatabaseReference userRef =
+          _firebaseDatabase.reference().child('presences/${firebaseUser.uid}');
       if (presence) {
         userRef.set(true);
       } else {
@@ -92,17 +73,20 @@ class FirebaseRepository implements DataRepository {
   }
 
   Future<void> _setupNotifications(String uid) async {
-    final FirebaseMessaging _firebaseMessaging = new FirebaseMessaging();
+    final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) {
-        print("onMessage received: $message");
+        print('onMessage received: $message');
+        return;
       },
       onLaunch: (Map<String, dynamic> message) {
-        print("onLaunch: $message");
+        print('onLaunch: $message');
+        return;
       },
       onResume: (Map<String, dynamic> message) {
-        print("onResume: $message");
+        print('onResume: $message');
+        return;
       },
     );
 
@@ -110,35 +94,36 @@ class FirebaseRepository implements DataRepository {
         const IosNotificationSettings(sound: true, badge: true, alert: true));
     _firebaseMessaging.onIosSettingsRegistered
         .listen((IosNotificationSettings settings) {
-      print("Settings registered: $settings");
+      print('Settings registered: $settings');
     });
 
-    String token = await _firebaseMessaging.getToken();
-    print("Push Messaging token: $token");
+    final String token = await _firebaseMessaging.getToken();
+    print('Push Messaging token: $token');
     await _setPushNotificationToken(uid, token);
   }
 
   Future<void> _setPushNotificationToken(String uid, String token) async {
-    return await firebaseDatabase
+    return _firebaseDatabase
         .reference()
         .child('users-pushTokens')
         .update({'$uid': token});
   }
 
+  @override
   Future<Group> getGroupInfo(String groupId) async {
-    DataSnapshot groupUsersSnapshot = await firebaseDatabase
+    final DataSnapshot groupUsersSnapshot = await _firebaseDatabase
         .reference()
         .child('groups-users/$groupId')
         .once();
 
     if (groupUsersSnapshot.value != null) {
-      Map<String, String> users =
+      final Map<String, String> users =
           Map<String, String>.from(groupUsersSnapshot.value);
 
       String title = '';
       if (users.length > 2) {
-        DataSnapshot groupSnapshot =
-            await firebaseDatabase.reference().child('groups/$groupId').once();
+        final DataSnapshot groupSnapshot =
+            await _firebaseDatabase.reference().child('groups/$groupId').once();
         title = groupSnapshot.value['title'];
       }
       return (title != '')
@@ -149,12 +134,13 @@ class FirebaseRepository implements DataRepository {
     }
   }
 
+  @override
   Future<List<String>> getGroupUsers(String groupId) async {
-    DataSnapshot groupUsersSnapshot = await firebaseDatabase
+    final DataSnapshot groupUsersSnapshot = await _firebaseDatabase
         .reference()
         .child('groups-users/$groupId')
         .once();
-    List<String> usersId = [];
+    final List<String> usersId = [];
     if (groupUsersSnapshot.value != null) {
       groupUsersSnapshot.value.forEach((userKey, userValue) {
         usersId.add(userKey);
@@ -163,38 +149,39 @@ class FirebaseRepository implements DataRepository {
     return usersId;
   }
 
+  @override
   Future<User> getUserFromId(String userId) async {
-    DataSnapshot userSnapshot =
-        await firebaseDatabase.reference().child('users/$userId').once();
+    final DataSnapshot userSnapshot =
+        await _firebaseDatabase.reference().child('users/$userId').once();
 
-    Map map = userSnapshot.value;
+    final Map map = userSnapshot.value;
     if (map != null) {
       map['id'] = userSnapshot.key;
-      User user = User.fromMap(map);
+      final User user = User.fromMap(map);
       return user;
     } else {
       return null;
     }
   }
 
+  @override
   Stream<List<Message>> streamOfMessages(String groupId) {
     try {
-      return firebaseDatabase
+      return _firebaseDatabase
           .reference()
           .child('groups-messages/$groupId')
           .limitToLast(50)
           .onValue
           .map((event) {
-        List<Message> messages = [];
-        Map<dynamic, dynamic> map = event.snapshot.value;
+        final List<Message> messages = [];
+        final Map<dynamic, dynamic> map = event.snapshot.value;
         if (map != null) {
-          List<dynamic> list = map.keys.toList()
+          final List<dynamic> list = map.keys.toList()
             ..sort((a, b) {
               return b.compareTo(a);
             });
-          LinkedHashMap sortedMap = LinkedHashMap.fromIterable(list,
+          final LinkedHashMap sortedMap = LinkedHashMap.fromIterable(list,
               key: (k) => k, value: (k) => map[k]);
-
           sortedMap.forEach((messageKey, messageValue) {
             messages.add(Message.fromMap(messageValue));
           });
@@ -207,20 +194,22 @@ class FirebaseRepository implements DataRepository {
     }
   }
 
-  Stream<bool> userPresence(userId) {
-    return firebaseDatabase
+  @override
+  Stream<bool> userPresence(String userId) {
+    return _firebaseDatabase
         .reference()
         .child('presences')
         .child(userId)
         .onValue
         .map((event) {
       print(event.snapshot.value);
-      return (event.snapshot.value == true);
+      return event.snapshot.value == true;
     });
   }
 
-  sendMessage(String groupId, Message message) {
-    firebaseDatabase
+  @override
+  void sendMessage(String groupId, Message message) {
+    _firebaseDatabase
         .reference()
         .child('groups-messages')
         .child(groupId)
@@ -228,21 +217,23 @@ class FirebaseRepository implements DataRepository {
         .update(message.toJson());
   }
 
+  @override
   StorageUploadTask storeFileTask(String filename, File file) {
-    StorageReference storageReference =
+    final StorageReference storageReference =
         FirebaseStorage.instance.ref().child(filename);
     return storageReference.putFile(file);
   }
 
+  @override
   Stream<List<String>> typingUsers(String groupId, User currentUser) {
     try {
-      return firebaseDatabase
+      return _firebaseDatabase
           .reference()
           .child('groups-activities')
           .child(groupId)
           .onValue
           .map((event) {
-        List<String> userNames = [];
+        final List<String> userNames = [];
         if (event.snapshot.value != null) {
           event.snapshot.value.forEach((activityKey, activityValue) {
             if (currentUser.id != activityKey) {
@@ -258,20 +249,23 @@ class FirebaseRepository implements DataRepository {
     }
   }
 
-  Future<void> isTyping(String groupId, User writer, bool isTyping) async {
-    DatabaseReference activityRef =
-        firebaseDatabase.reference().child('groups-activities').child(groupId);
+  @override
+  Future<void> isTyping(String groupId, User writer,
+      {@required bool isTyping}) async {
+    final DatabaseReference activityRef =
+        _firebaseDatabase.reference().child('groups-activities').child(groupId);
 
     if (isTyping) {
       await activityRef.update({writer.id: writer.userName});
       activityRef.child(writer.id).onDisconnect().remove();
     } else {
-      return await activityRef.child(writer.id).remove();
+      return activityRef.child(writer.id).remove();
     }
   }
 
+  @override
   Future<Map<String, String>> searchUsersByName(String name) async {
-    Query query = firebaseDatabase
+    Query query = _firebaseDatabase
         .reference()
         .child('users')
         .orderByChild('userNameLowerCase');
@@ -279,7 +273,7 @@ class FirebaseRepository implements DataRepository {
     if (name != null) {
       query = query
           .startAt(name.toLowerCase())
-          .endAt(('${name.toLowerCase()}\uf8ff'));
+          .endAt('${name.toLowerCase()}\uf8ff');
     }
     final Map<String, String> usersMap = {};
 
@@ -296,8 +290,9 @@ class FirebaseRepository implements DataRepository {
     });
   }
 
+  @override
   Future<String> getDuoGroupId(String currentUserId, String userId) async {
-    Query query = firebaseDatabase
+    final Query query = _firebaseDatabase
         .reference()
         .child('users-groups/$currentUserId')
         .orderByChild('duo')
@@ -313,13 +308,15 @@ class FirebaseRepository implements DataRepository {
     });
   }
 
+  @override
   Future<String> createDuoGroup(String currentUserId, String userId) async {
-    String groupId = firebaseDatabase.reference().child('groups').push().key;
-    DatabaseReference groupsUsersRef =
-        firebaseDatabase.reference().child('groups-users').child(groupId);
-    List<Future> futures = [];
+    final String groupId =
+        _firebaseDatabase.reference().child('groups').push().key;
+    final DatabaseReference groupsUsersRef =
+        _firebaseDatabase.reference().child('groups-users').child(groupId);
+    final List<Future> futures = [];
 
-    firebaseDatabase
+    _firebaseDatabase
         .reference()
         .child('users')
         .child(userId)
@@ -327,20 +324,20 @@ class FirebaseRepository implements DataRepository {
         .then((userSnapshot) {
       futures
           .add(groupsUsersRef.update({userId: userSnapshot.value['userName']}));
-      firebaseDatabase
+      _firebaseDatabase
           .reference()
           .child('users-groups')
           .child(currentUserId)
           .child(groupId)
           .set({
-        "duo": userId,
-        "lastMsg": "",
-        "lastMsgTimestamp": DateTime.now().millisecondsSinceEpoch,
-        "title": userSnapshot.value['userName']
+        'duo': userId,
+        'lastMsg': '',
+        'lastMsgTimestamp': DateTime.now().millisecondsSinceEpoch,
+        'title': userSnapshot.value['userName']
       });
     });
 
-    firebaseDatabase
+    _firebaseDatabase
         .reference()
         .child('users')
         .child(currentUserId)
@@ -348,16 +345,16 @@ class FirebaseRepository implements DataRepository {
         .then((userSnapshot) {
       futures.add(groupsUsersRef
           .update({currentUserId: userSnapshot.value['userName']}));
-      firebaseDatabase
+      _firebaseDatabase
           .reference()
           .child('users-groups')
           .child(userId)
           .child(groupId)
           .set({
-        "duo": currentUserId,
-        "lastMsg": "",
-        "lastMsgTimestamp": DateTime.now().millisecondsSinceEpoch,
-        "title": userSnapshot.value['userName']
+        'duo': currentUserId,
+        'lastMsg': '',
+        'lastMsgTimestamp': DateTime.now().millisecondsSinceEpoch,
+        'title': userSnapshot.value['userName']
       });
     });
 
@@ -365,29 +362,30 @@ class FirebaseRepository implements DataRepository {
     return groupId;
   }
 
+  @override
   Stream<Map<String, dynamic>> streamOfUserDiscussions(String currentUserId) {
-    return firebaseDatabase
+    return _firebaseDatabase
         .reference()
         .child('users-groups')
         .child(currentUserId)
         .onValue
         .map((event) {
-      Map<String, dynamic> discussions = {};
-      Map<dynamic, dynamic> map = event.snapshot.value;
+      final Map<String, dynamic> discussions = {};
+      final Map<dynamic, dynamic> map = event.snapshot.value;
       if (map != null) {
-        List<dynamic> list = map.keys.toList()
+        final List<dynamic> list = map.keys.toList()
           ..sort((a, b) {
             return map[b]['lastMsgTimestamp']
                 .compareTo(map[a]['lastMsgTimestamp']);
           });
-        LinkedHashMap sortedMap = LinkedHashMap.fromIterable(list,
+        final LinkedHashMap sortedMap = LinkedHashMap.fromIterable(list,
             key: (k) => k, value: (k) => map[k]);
         print(sortedMap);
         sortedMap.forEach((groupKey, groupValue) {
           discussions.addAll({
             groupKey: {
-              "title": groupValue["title"],
-              "lastMsg": groupValue["lastMsg"]
+              'title': groupValue['title'],
+              'lastMsg': groupValue['lastMsg']
             }
           });
         });

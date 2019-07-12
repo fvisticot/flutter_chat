@@ -10,24 +10,17 @@ class GroupMessagesInitial extends GroupMessagesState {
   String toString() => 'GroupMessagesInitial';
 }
 
-class GroupMessagesLoading extends GroupMessagesState {
-  @override
-  String toString() => 'GroupMessagesLoading';
-}
-
 class GroupMessagesError extends GroupMessagesState {
-  String error;
-
   GroupMessagesError({this.error}) : super([error]);
+  String error;
 
   @override
   String toString() => 'GroupMessagesError $error';
 }
 
 class GroupMessagesSuccess extends GroupMessagesState {
-  final List<Message> messages;
-
   GroupMessagesSuccess(this.messages) : super([messages]);
+  final List<Message> messages;
 
   @override
   String toString() => 'GroupMessagesSuccess';

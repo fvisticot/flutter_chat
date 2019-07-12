@@ -6,29 +6,25 @@ import 'package:flutter_chat/src/chat/chat_event.dart';
 import 'package:flutter_chat/src/chat/chat_state.dart';
 import 'package:flutter_chat/src/chat_home/chat_home_page.dart';
 import 'package:flutter_chat/src/group_chat/group_chat.dart';
-import 'package:flutter_chat/src/repositories/firebase_repository.dart';
+import 'package:flutter_chat/src/repositories/chat_firebase_repository.dart';
 
 class Chat extends StatefulWidget {
-  final FirebaseDatabase firebaseDatabase;
+  const Chat(this.userName, {this.groupId}) : assert(userName != null);
   final String userName;
   final String groupId;
-
-  Chat(this.firebaseDatabase, this.userName, {this.groupId})
-      : assert(firebaseDatabase != null),
-        assert(userName != null);
 
   @override
   _ChatState createState() => _ChatState();
 }
 
 class _ChatState extends State<Chat> with WidgetsBindingObserver {
+  FirebaseDatabase firebaseDatabase;
   ChatBloc _chatBloc;
-  FirebaseRepository firebaseRepository;
-
+  ChatFirebaseRepository firebaseRepository;
   @override
   void initState() {
-    firebaseRepository = FirebaseRepository(widget.firebaseDatabase);
     WidgetsBinding.instance.addObserver(this);
+    firebaseRepository = ChatFirebaseRepository();
     _chatBloc = ChatBloc(firebaseRepository);
     _chatBloc.dispatch(ChatStarted(widget.userName));
     super.initState();
@@ -37,9 +33,9 @@ class _ChatState extends State<Chat> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      firebaseRepository.setPresence(true);
+      firebaseRepository.setPresence(presence: true);
     } else {
-      firebaseRepository.setPresence(false);
+      firebaseRepository.setPresence(presence: false);
     }
   }
 
@@ -60,17 +56,14 @@ class _ChatState extends State<Chat> with WidgetsBindingObserver {
           } else {
             return ChatHomePage(firebaseRepository, state.user);
           }
-        }
-        if (state is ChatLoading) {
+        } else {
           return Container(
             decoration: BoxDecoration(
               color: Colors.white,
             ),
             child: Center(
-              child: SizedBox(
-                  width: 20.0,
-                  height: 20.0,
-                  child: CircularProgressIndicator()),
+              child: const SizedBox(
+                  width: 20, height: 20, child: CircularProgressIndicator()),
             ),
           );
         }

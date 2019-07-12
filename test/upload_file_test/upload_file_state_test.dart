@@ -10,14 +10,14 @@ void main() {
   test(
       'UploadFileProgress toString method should return : "UploadFileProgress [progress]"',
       () {
-    double progress = 10.2;
-    UploadFileProgress uploadFileProgress = UploadFileProgress(progress);
+    const double progress = 10.2;
+    final UploadFileProgress uploadFileProgress = UploadFileProgress(progress);
     expect(uploadFileProgress.toString(), 'UploadFileProgress $progress');
   });
 
   test('UploadFileInitial toString method should return : "UploadFileInitial"',
       () {
-    UploadFileInitial uploadFileInitial = UploadFileInitial();
+    final UploadFileInitial uploadFileInitial = UploadFileInitial();
     expect(uploadFileInitial.toString(), 'UploadFileInitial');
   });
 }

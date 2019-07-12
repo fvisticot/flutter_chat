@@ -11,11 +11,10 @@ class ChatUninitialized extends ChatState {
 }
 
 class ChatInitialized extends ChatState {
-  User user;
-
   ChatInitialized(this.user)
-      :assert(user!= null),
+      : assert(user != null),
         super([user]);
+  User user;
 
   @override
   String toString() => 'ChatInitialized $user';

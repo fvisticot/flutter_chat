@@ -1,41 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_chat/src/common/styles.dart';
 import 'package:flutter_chat/src/group_management/group_management.dart';
 import 'package:flutter_chat/src/models/models.dart';
-import 'package:flutter_chat/src/repositories/firebase_repository.dart';
+import 'package:flutter_chat/src/repositories/chat_firebase_repository.dart';
 
 import 'search_user.dart';
 
 class SearchUserPage extends StatefulWidget {
-  final FirebaseRepository firebaseRepository;
-  final User currentUser;
-  final GroupManagementBloc groupManagementBloc;
-
-  SearchUserPage(
-      this.firebaseRepository, this.currentUser, this.groupManagementBloc)
-      : assert(firebaseRepository != null),
+  const SearchUserPage(
+    this.firebaseRepository,
+    this.currentUser,
+    this.groupManagementBloc,
+  )   : assert(firebaseRepository != null),
         assert(currentUser != null),
         assert(groupManagementBloc != null);
+  final ChatFirebaseRepository firebaseRepository;
+  final User currentUser;
+  final GroupManagementBloc groupManagementBloc;
 
   @override
   _SearchUserPageState createState() => _SearchUserPageState();
 }
 
 class _SearchUserPageState extends State<SearchUserPage> {
-  TextEditingController _searchTextFieldEditingController =
-      TextEditingController();
+  TextEditingController _searchTextFieldEditingController;
   SearchUserBloc searchUserBloc;
 
   @override
   void initState() {
+    _searchTextFieldEditingController = TextEditingController();
     searchUserBloc =
         SearchUserBloc(widget.firebaseRepository, widget.groupManagementBloc);
-    _searchTextFieldEditingController.addListener(() {
-      searchUserBloc
-          .dispatch(SearchUserWithName(_searchTextFieldEditingController.text));
-    });
-
+    _searchTextFieldEditingController.addListener(searchListener);
     super.initState();
+  }
+
+  void searchListener() {
+    searchUserBloc
+        .dispatch(SearchUserWithName(_searchTextFieldEditingController.text));
+  }
+
+  @override
+  void dispose() {
+    _searchTextFieldEditingController.removeListener(searchListener);
+    super.dispose();
   }
 
   @override
@@ -44,11 +53,11 @@ class _SearchUserPageState extends State<SearchUserPage> {
         bloc: searchUserBloc,
         builder: (context, searchUserState) {
           if (searchUserState is SearchUserList) {
-            List<String> keys = searchUserState.users.keys.toList();
+            final List<String> keys = searchUserState.users.keys.toList();
             return Column(
               children: <Widget>[
                 _buildSearchBar(),
-                (searchUserState.users.length != 0)
+                (searchUserState.users.isNotEmpty)
                     ? Expanded(
                         child: ListView.builder(
                         itemCount: searchUserState.users.length,
@@ -82,13 +91,15 @@ class _SearchUserPageState extends State<SearchUserPage> {
           title: TextField(
             controller: _searchTextFieldEditingController,
             decoration: InputDecoration(
-                hintText: 'Search username', border: InputBorder.none),
+                hintText: 'Rechercher un utilisateur',
+                border: InputBorder.none),
           ),
           trailing: IconButton(
             icon: Icon(Icons.cancel),
             onPressed: () {
               _searchTextFieldEditingController.clear();
             },
+            color: Styles.mainColor,
           ),
         ),
       ),
@@ -99,11 +110,12 @@ class _SearchUserPageState extends State<SearchUserPage> {
     return ListTile(
       title: Text(userName),
       trailing: IconButton(
-          icon: Icon(Icons.message),
-          onPressed: () {
-            searchUserBloc
-                .dispatch(ChatWithUser(widget.currentUser.id, userId));
-          }),
+        icon: Icon(Icons.message),
+        onPressed: () {
+          searchUserBloc.dispatch(ChatWithUser(widget.currentUser.id, userId));
+        },
+        color: Styles.mainColor,
+      ),
     );
   }
 }

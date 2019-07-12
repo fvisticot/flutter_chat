@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_chat/src/common/styles.dart';
 import 'package:flutter_chat/src/group_management/group_management.dart';
 import 'package:flutter_chat/src/models/user.dart';
-import 'package:flutter_chat/src/repositories/firebase_repository.dart';
+import 'package:flutter_chat/src/repositories/chat_firebase_repository.dart';
 
 import 'discussions_list.dart';
 
 class DiscussionsListPage extends StatefulWidget {
-  final FirebaseRepository firebaseRepository;
+  const DiscussionsListPage(
+    this.firebaseRepository,
+    this.groupManagementBloc,
+    this.currentUser,
+  )   : assert(firebaseRepository != null),
+        assert(currentUser != null);
+  final ChatFirebaseRepository firebaseRepository;
   final GroupManagementBloc groupManagementBloc;
   final User currentUser;
-
-  DiscussionsListPage(
-      this.firebaseRepository, this.groupManagementBloc, this.currentUser)
-      : assert(firebaseRepository != null),
-        assert(currentUser != null);
 
   @override
   _DiscussionsListPageState createState() => _DiscussionsListPageState();
@@ -25,9 +27,18 @@ class _DiscussionsListPageState extends State<DiscussionsListPage> {
   @override
   void initState() {
     super.initState();
-    _discussionsListBloc = DiscussionsListBloc(widget.firebaseRepository,
-        widget.groupManagementBloc, widget.currentUser.id);
+    _discussionsListBloc = DiscussionsListBloc(
+      widget.firebaseRepository,
+      widget.groupManagementBloc,
+      widget.currentUser.id,
+    );
     _discussionsListBloc.dispatch(GetDiscussionsList());
+  }
+
+  @override
+  void dispose() {
+    _discussionsListBloc.dispose();
+    super.dispose();
   }
 
   @override
@@ -38,18 +49,9 @@ class _DiscussionsListPageState extends State<DiscussionsListPage> {
           if (discussionsListState is DiscussionsInitial) {
             return Container();
           }
-          if (discussionsListState is DiscussionsLoading) {
-            return Center(
-              child: SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(),
-              ),
-            );
-          }
           if (discussionsListState is DiscussionsSuccess) {
-            if (discussionsListState.discussions.length > 0) {
-              List<String> keys =
+            if (discussionsListState.discussions.isNotEmpty) {
+              final List<String> keys =
                   discussionsListState.discussions.keys.toList();
               return ListView.builder(
                   itemCount: keys.length,
@@ -64,18 +66,32 @@ class _DiscussionsListPageState extends State<DiscussionsListPage> {
                         overflow: TextOverflow.ellipsis,
                       ),
                       trailing: IconButton(
-                          icon: Icon(Icons.message),
-                          onPressed: () {
-                            _discussionsListBloc.groupManagementBloc
-                                .dispatch(NavigateToGroup(keys[index]));
-                          }),
+                        icon: Icon(Icons.message),
+                        onPressed: () {
+                          _discussionsListBloc.groupManagementBloc
+                              .dispatch(NavigateToGroup(keys[index]));
+                        },
+                        color: Styles.mainColor,
+                      ),
+                      onTap: () {
+                        _discussionsListBloc.groupManagementBloc
+                            .dispatch(NavigateToGroup(keys[index]));
+                      },
                     );
                   });
             } else {
               return Center(
-                child: Text('No discussions available'),
+                child: const Text('No discussions available'),
               );
             }
+          } else {
+            return Center(
+              child: const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(),
+              ),
+            );
           }
         });
   }

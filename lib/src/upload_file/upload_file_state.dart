@@ -5,11 +5,10 @@ class UploadFileState extends Equatable {
 }
 
 class UploadFileProgress extends UploadFileState {
-  final double progress;
-
   UploadFileProgress(this.progress)
       : assert(progress != null),
         super([progress]);
+  final double progress;
 
   @override
   String toString() => 'UploadFileProgress $progress';
