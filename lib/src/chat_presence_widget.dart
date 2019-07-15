@@ -1,7 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chat/src/chat_service/chat_service.dart';
 
-/// A widget that set user presence in the chat by taking care of app state
+/// A widget that indicates whether the user is connected to the chat or not
+/// by listening the app state
 class ChatPresenceWidget extends StatefulWidget {
   const ChatPresenceWidget({
     Key key,
