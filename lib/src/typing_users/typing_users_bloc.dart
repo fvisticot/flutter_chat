@@ -1,19 +1,18 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:flutter_chat/src/repositories/chat_firebase_repository.dart';
+import 'package:flutter_chat/src/chat_service/chat_service.dart';
 import 'package:flutter_chat/src/models/user.dart';
 import 'package:flutter_chat/src/typing_users/typing_users_event.dart';
 import 'package:flutter_chat/src/typing_users/typing_users_state.dart';
 
 class TypingUsersBloc extends Bloc<TypingUsersEvent, TypingUsersState> {
-  TypingUsersBloc(this.firebaseRepository, this.groupId, this.currentUser) {
-    _subTypingUsers = firebaseRepository
-        .typingUsers(groupId, currentUser)
-        .listen((usersNames) {
+  TypingUsersBloc(this.chatService, this.groupId, this.currentUser) {
+    _subTypingUsers =
+        chatService.typingUsers(groupId, currentUser).listen((usersNames) {
       dispatch(TypingUsersEvent(usersNames));
     });
   }
-  ChatFirebaseRepository firebaseRepository;
+  ChatService chatService;
   String groupId;
   User currentUser;
   StreamSubscription _subTypingUsers;

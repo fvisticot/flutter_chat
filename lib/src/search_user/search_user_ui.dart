@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_chat/src/chat_service/chat_service.dart';
 import 'package:flutter_chat/src/common/styles.dart';
 import 'package:flutter_chat/src/group_management/group_management.dart';
 import 'package:flutter_chat/src/models/models.dart';
-import 'package:flutter_chat/src/repositories/chat_firebase_repository.dart';
-
-import 'search_user.dart';
+import 'package:flutter_chat/src/search_user/search_user.dart';
 
 class SearchUserPage extends StatefulWidget {
   const SearchUserPage(
-    this.firebaseRepository,
+    this.chatService,
     this.currentUser,
     this.groupManagementBloc,
-  )   : assert(firebaseRepository != null),
+  )   : assert(chatService != null),
         assert(currentUser != null),
         assert(groupManagementBloc != null);
-  final ChatFirebaseRepository firebaseRepository;
+  final ChatService chatService;
   final User currentUser;
   final GroupManagementBloc groupManagementBloc;
 
@@ -31,7 +30,7 @@ class _SearchUserPageState extends State<SearchUserPage> {
   void initState() {
     _searchTextFieldEditingController = TextEditingController();
     searchUserBloc =
-        SearchUserBloc(widget.firebaseRepository, widget.groupManagementBloc);
+        SearchUserBloc(widget.chatService, widget.groupManagementBloc);
     _searchTextFieldEditingController.addListener(searchListener);
     super.initState();
   }

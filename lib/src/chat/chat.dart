@@ -1,11 +1,13 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chat/src/chat/chat_bloc.dart';
 import 'package:flutter_chat/src/chat/chat_event.dart';
 import 'package:flutter_chat/src/chat/chat_state.dart';
 import 'package:flutter_chat/src/chat_home/chat_home_page.dart';
+import 'package:flutter_chat/src/chat_service/chat_service.dart';
+import 'package:flutter_chat/src/chat_service/firebase_chat_service.dart';
 import 'package:flutter_chat/src/group_chat/group_chat.dart';
-import 'package:flutter_chat/src/repositories/chat_firebase_repository.dart';
 
 class Chat extends StatefulWidget {
   const Chat(this.userName, {this.groupId}) : assert(userName != null);
@@ -18,12 +20,12 @@ class Chat extends StatefulWidget {
 
 class _ChatState extends State<Chat> with WidgetsBindingObserver {
   ChatBloc _chatBloc;
-  ChatFirebaseRepository firebaseRepository;
+  ChatService chatService;
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
-    firebaseRepository = ChatFirebaseRepository();
-    _chatBloc = ChatBloc(firebaseRepository);
+    chatService = FirebaseChatService(FirebaseDatabase.instance);
+    _chatBloc = ChatBloc(chatService);
     _chatBloc.dispatch(ChatStarted(widget.userName));
     super.initState();
   }
@@ -31,9 +33,9 @@ class _ChatState extends State<Chat> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      firebaseRepository.setPresence(presence: true);
+      chatService.setPresence(presence: true);
     } else {
-      firebaseRepository.setPresence(presence: false);
+      chatService.setPresence(presence: false);
     }
   }
 
@@ -49,10 +51,9 @@ class _ChatState extends State<Chat> with WidgetsBindingObserver {
         }
         if (state is ChatInitialized) {
           if (widget.groupId != null) {
-            return GroupChatPage(
-                widget.groupId, state.user, firebaseRepository);
+            return GroupChatPage(widget.groupId, state.user, chatService);
           } else {
-            return ChatHomePage(firebaseRepository, state.user);
+            return ChatHomePage(chatService, state.user);
           }
         } else {
           return Container(

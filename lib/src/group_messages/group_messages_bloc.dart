@@ -1,18 +1,17 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:flutter_chat/src/repositories/chat_firebase_repository.dart';
-import 'group_messages.dart';
+import 'package:flutter_chat/src/chat_service/chat_service.dart';
+import 'package:flutter_chat/src/group_messages/group_messages.dart';
 
 class GroupMessagesBloc extends Bloc<GroupMessagesEvent, GroupMessagesState> {
-  GroupMessagesBloc(this.firebaseRepository, this.groupId) {
-    _subMessages =
-        firebaseRepository.streamOfMessages(groupId).listen((messages) {
+  GroupMessagesBloc(this.chatService, this.groupId) {
+    _subMessages = chatService.streamOfMessages(groupId).listen((messages) {
       dispatch(SyncMessagesEvent(messages));
     }, onError: (error) {
       dispatch(ErrorSyncMessagesEvent());
     });
   }
-  ChatFirebaseRepository firebaseRepository;
+  ChatService chatService;
   String groupId;
   StreamSubscription _subMessages;
 

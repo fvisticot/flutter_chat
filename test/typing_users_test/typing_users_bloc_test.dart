@@ -1,22 +1,22 @@
 import 'dart:async';
 
-import 'package:flutter_chat/src/repositories/chat_firebase_repository.dart';
+import 'package:flutter_chat/src/chat_service/chat_service.dart';
 import 'package:flutter_chat/src/typing_users/typing_users.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
-class MockFirebaseRepository extends Mock implements ChatFirebaseRepository {}
+class MockChatService extends Mock implements ChatService {}
 
 void main() {
-  ChatFirebaseRepository firebaseRepository;
+  ChatService chatService;
   TypingUsersBloc typingUsersBloc;
 
   setUp(() {
-    firebaseRepository = MockFirebaseRepository();
-    when(firebaseRepository.typingUsers(any, any))
+    chatService = MockChatService();
+    when(chatService.typingUsers(any, any))
         .thenAnswer((_) => Stream.fromIterable([]));
     typingUsersBloc = TypingUsersBloc(
-      firebaseRepository,
+      chatService,
       any,
       any,
     );

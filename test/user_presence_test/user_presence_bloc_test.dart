@@ -1,19 +1,18 @@
-import 'package:flutter_chat/src/repositories/chat_firebase_repository.dart';
+import 'package:flutter_chat/src/chat_service/chat_service.dart';
 import 'package:flutter_chat/src/user_presence/user_presence.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
-class MockFirebaseRepository extends Mock implements ChatFirebaseRepository {}
+class MockChatService extends Mock implements ChatService {}
 
 void main() {
-  ChatFirebaseRepository firebaseRepository;
+  MockChatService chatService;
   UserPresenceBloc userPresenceBloc;
 
   setUp(() {
-    firebaseRepository = MockFirebaseRepository();
-    when(firebaseRepository.userPresence(any))
-        .thenAnswer((_) => const Stream.empty());
-    userPresenceBloc = UserPresenceBloc(firebaseRepository, any);
+    chatService = MockChatService();
+    when(chatService.userPresence(any)).thenAnswer((_) => const Stream.empty());
+    userPresenceBloc = UserPresenceBloc(chatService, any);
   });
 
   test('initial state is UserPresenceLoading', () {

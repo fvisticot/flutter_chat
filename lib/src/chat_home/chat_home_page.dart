@@ -2,18 +2,18 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_chat/src/chat_service/firebase_chat_service.dart';
 import 'package:flutter_chat/src/discussions_list/discussions_list_page.dart';
 import 'package:flutter_chat/src/group_chat/group_chat_ui.dart';
 import 'package:flutter_chat/src/group_management/group_management.dart';
 import 'package:flutter_chat/src/models/user.dart';
-import 'package:flutter_chat/src/repositories/chat_firebase_repository.dart';
 import 'package:flutter_chat/src/search_user/search_user_ui.dart';
 
 class ChatHomePage extends StatefulWidget {
   const ChatHomePage(this.firebaseRepository, this.currentUser)
       : assert(firebaseRepository != null),
         assert(currentUser != null);
-  final ChatFirebaseRepository firebaseRepository;
+  final FirebaseChatService firebaseRepository;
   final User currentUser;
 
   @override

@@ -2,26 +2,26 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_chat/src/chat_service/chat_service.dart';
 import 'package:flutter_chat/src/common/styles.dart';
 import 'package:flutter_chat/src/message_bar/message_bar.dart';
 import 'package:flutter_chat/src/models/message/message.dart';
 import 'package:flutter_chat/src/models/models.dart';
 import 'package:flutter_chat/src/models/user.dart';
-import 'package:flutter_chat/src/repositories/chat_firebase_repository.dart';
 import 'package:flutter_chat/src/upload_file/upload_file.dart';
 import 'package:image_picker/image_picker.dart';
 
 class MessageBar extends StatefulWidget {
   const MessageBar(
-    this.firebaseRepository,
+    this.chatService,
     this.groupId,
     this.currentUser,
     this.uploadFileBloc,
-  )   : assert(firebaseRepository != null),
+  )   : assert(chatService != null),
         assert(groupId != null),
         assert(currentUser != null);
 
-  final ChatFirebaseRepository firebaseRepository;
+  final ChatService chatService;
   final String groupId;
   final User currentUser;
   final UploadFileBloc uploadFileBloc;
@@ -37,7 +37,7 @@ class _MessageBarState extends State<MessageBar> {
   @override
   void initState() {
     _messageBarBloc = MessageBarBloc(
-      widget.firebaseRepository,
+      widget.chatService,
       widget.groupId,
       widget.currentUser,
       widget.uploadFileBloc,

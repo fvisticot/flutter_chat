@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_chat/src/chat_service/chat_service.dart';
 import 'package:flutter_chat/src/models/user.dart';
-import 'package:flutter_chat/src/repositories/chat_firebase_repository.dart';
-
-import 'typing_users.dart';
+import 'package:flutter_chat/src/typing_users/typing_users.dart';
 
 class TypingUsers extends StatefulWidget {
   const TypingUsers(
-    this.firebaseRepository,
+    this.chatService,
     this.groupId,
     this.currentUser,
-  )   : assert(firebaseRepository != null),
+  )   : assert(chatService != null),
         assert(groupId != null),
         assert(currentUser != null);
-  final ChatFirebaseRepository firebaseRepository;
+  final ChatService chatService;
   final String groupId;
   final User currentUser;
 
@@ -26,8 +25,8 @@ class _TypingUsersState extends State<TypingUsers> {
 
   @override
   void initState() {
-    _typingUsersBloc = TypingUsersBloc(
-        widget.firebaseRepository, widget.groupId, widget.currentUser);
+    _typingUsersBloc =
+        TypingUsersBloc(widget.chatService, widget.groupId, widget.currentUser);
     super.initState();
   }
 
