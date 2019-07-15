@@ -2,25 +2,25 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_chat/src/chat_service/chat_service.dart';
 import 'package:flutter_chat/src/message_bar/message_bar.dart';
 import 'package:flutter_chat/src/models/message/message.dart';
 import 'package:flutter_chat/src/models/models.dart';
 import 'package:flutter_chat/src/models/user.dart';
-import 'package:flutter_chat/src/repositories/chat_firebase_repository.dart';
 import 'package:flutter_chat/src/upload_file/upload_file.dart';
 
 class MessageBarBloc extends Bloc<MessageBarEvent, MessageBarState> {
   MessageBarBloc(
-    this.firebaseRepository,
+    this.chatService,
     this.groupId,
     this.currentUser,
     this.uploadFileBloc,
-  )   : assert(firebaseRepository != null),
+  )   : assert(chatService != null),
         assert(groupId != null),
         assert(currentUser != null) {
     _isTyping = false;
   }
-  ChatFirebaseRepository firebaseRepository;
+  ChatService chatService;
   String groupId;
   User currentUser;
   UploadFileBloc uploadFileBloc;
@@ -38,7 +38,7 @@ class MessageBarBloc extends Bloc<MessageBarEvent, MessageBarState> {
         final String filename =
             '${currentUser.id}_${DateTime.now().millisecondsSinceEpoch.toString()}.jpg';
         final StorageUploadTask task =
-            firebaseRepository.storeFileTask(filename, event.imageFile);
+            chatService.storeFileTask(filename, event.imageFile);
         task.events.listen((event) {
           final double progress = event.snapshot.bytesTransferred.toDouble() /
               event.snapshot.totalByteCount.toDouble();
@@ -56,18 +56,17 @@ class MessageBarBloc extends Bloc<MessageBarEvent, MessageBarState> {
         });
       }
       if (event is SendMessageEvent) {
-        firebaseRepository.sendMessage(groupId, event.message);
+        chatService.sendMessage(groupId, event.message);
       }
       if (event is IsTyping) {
         if (event.isTyping) {
           if (!_isTyping) {
-            firebaseRepository.isTyping(groupId, currentUser,
+            chatService.isTyping(groupId, currentUser,
                 isTyping: event.isTyping);
           }
         } else {
           _isTyping = false;
-          firebaseRepository.isTyping(groupId, currentUser,
-              isTyping: event.isTyping);
+          chatService.isTyping(groupId, currentUser, isTyping: event.isTyping);
         }
       }
     } catch (e) {

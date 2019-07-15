@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:io';
+import 'package:flutter_chat/src/chat_service/chat_service.dart';
 import 'package:meta/meta.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -8,13 +9,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_chat/src/models/models.dart';
 
-import 'data_repository.dart';
-
-class ChatFirebaseRepository implements DataRepository {
-  ChatFirebaseRepository() {
-    _firebaseDatabase = FirebaseDatabase.instance;
-  }
-  FirebaseDatabase _firebaseDatabase;
+class FirebaseChatService implements ChatService {
+  FirebaseChatService(this.firebaseDatabase) : assert(firebaseDatabase != null);
+  final FirebaseDatabase firebaseDatabase;
 
   @override
   Future<User> initChat() async {
@@ -35,7 +32,7 @@ class ChatFirebaseRepository implements DataRepository {
 
   Future<User> _userFromId(String userId) async {
     final DataSnapshot snapshot =
-        await _firebaseDatabase.reference().child('users').child(userId).once();
+        await firebaseDatabase.reference().child('users').child(userId).once();
     final Map map = snapshot.value;
     if (map != null) {
       map['id'] = snapshot.key;
@@ -48,9 +45,9 @@ class ChatFirebaseRepository implements DataRepository {
 
   void _initPresence(String uid) {
     final DatabaseReference amOnline =
-        _firebaseDatabase.reference().child('.info/connected');
+        firebaseDatabase.reference().child('.info/connected');
     final DatabaseReference userRef =
-        _firebaseDatabase.reference().child('presences/$uid');
+        firebaseDatabase.reference().child('presences/$uid');
     amOnline.onValue.listen((event) {
       print('Presence changed: ${event.snapshot.value}');
       userRef.onDisconnect().remove();
@@ -63,7 +60,7 @@ class ChatFirebaseRepository implements DataRepository {
     final FirebaseUser firebaseUser = await FirebaseAuth.instance.currentUser();
     if (firebaseUser != null) {
       final DatabaseReference userRef =
-          _firebaseDatabase.reference().child('presences/${firebaseUser.uid}');
+          firebaseDatabase.reference().child('presences/${firebaseUser.uid}');
       if (presence) {
         userRef.set(true);
       } else {
@@ -103,7 +100,7 @@ class ChatFirebaseRepository implements DataRepository {
   }
 
   Future<void> _setPushNotificationToken(String uid, String token) async {
-    return _firebaseDatabase
+    return firebaseDatabase
         .reference()
         .child('users-pushTokens')
         .update({'$uid': token});
@@ -111,7 +108,7 @@ class ChatFirebaseRepository implements DataRepository {
 
   @override
   Future<Group> getGroupInfo(String groupId) async {
-    final DataSnapshot groupUsersSnapshot = await _firebaseDatabase
+    final DataSnapshot groupUsersSnapshot = await firebaseDatabase
         .reference()
         .child('groups-users/$groupId')
         .once();
@@ -123,7 +120,7 @@ class ChatFirebaseRepository implements DataRepository {
       String title = '';
       if (users.length > 2) {
         final DataSnapshot groupSnapshot =
-            await _firebaseDatabase.reference().child('groups/$groupId').once();
+            await firebaseDatabase.reference().child('groups/$groupId').once();
         title = groupSnapshot.value['title'];
       }
       return (title != '')
@@ -136,7 +133,7 @@ class ChatFirebaseRepository implements DataRepository {
 
   @override
   Future<List<String>> getGroupUsers(String groupId) async {
-    final DataSnapshot groupUsersSnapshot = await _firebaseDatabase
+    final DataSnapshot groupUsersSnapshot = await firebaseDatabase
         .reference()
         .child('groups-users/$groupId')
         .once();
@@ -152,7 +149,7 @@ class ChatFirebaseRepository implements DataRepository {
   @override
   Future<User> getUserFromId(String userId) async {
     final DataSnapshot userSnapshot =
-        await _firebaseDatabase.reference().child('users/$userId').once();
+        await firebaseDatabase.reference().child('users/$userId').once();
 
     final Map map = userSnapshot.value;
     if (map != null) {
@@ -167,7 +164,7 @@ class ChatFirebaseRepository implements DataRepository {
   @override
   Stream<List<Message>> streamOfMessages(String groupId) {
     try {
-      return _firebaseDatabase
+      return firebaseDatabase
           .reference()
           .child('groups-messages/$groupId')
           .limitToLast(50)
@@ -196,7 +193,7 @@ class ChatFirebaseRepository implements DataRepository {
 
   @override
   Stream<bool> userPresence(String userId) {
-    return _firebaseDatabase
+    return firebaseDatabase
         .reference()
         .child('presences')
         .child(userId)
@@ -209,7 +206,7 @@ class ChatFirebaseRepository implements DataRepository {
 
   @override
   void sendMessage(String groupId, Message message) {
-    _firebaseDatabase
+    firebaseDatabase
         .reference()
         .child('groups-messages')
         .child(groupId)
@@ -227,7 +224,7 @@ class ChatFirebaseRepository implements DataRepository {
   @override
   Stream<List<String>> typingUsers(String groupId, User currentUser) {
     try {
-      return _firebaseDatabase
+      return firebaseDatabase
           .reference()
           .child('groups-activities')
           .child(groupId)
@@ -253,7 +250,7 @@ class ChatFirebaseRepository implements DataRepository {
   Future<void> isTyping(String groupId, User writer,
       {@required bool isTyping}) async {
     final DatabaseReference activityRef =
-        _firebaseDatabase.reference().child('groups-activities').child(groupId);
+        firebaseDatabase.reference().child('groups-activities').child(groupId);
 
     if (isTyping) {
       await activityRef.update({writer.id: writer.userName});
@@ -265,7 +262,7 @@ class ChatFirebaseRepository implements DataRepository {
 
   @override
   Future<Map<String, String>> searchUsersByName(String name) async {
-    Query query = _firebaseDatabase
+    Query query = firebaseDatabase
         .reference()
         .child('users')
         .orderByChild('userNameLowerCase');
@@ -292,7 +289,7 @@ class ChatFirebaseRepository implements DataRepository {
 
   @override
   Future<String> getDuoGroupId(String currentUserId, String userId) async {
-    final Query query = _firebaseDatabase
+    final Query query = firebaseDatabase
         .reference()
         .child('users-groups/$currentUserId')
         .orderByChild('duo')
@@ -311,12 +308,12 @@ class ChatFirebaseRepository implements DataRepository {
   @override
   Future<String> createDuoGroup(String currentUserId, String userId) async {
     final String groupId =
-        _firebaseDatabase.reference().child('groups').push().key;
+        firebaseDatabase.reference().child('groups').push().key;
     final DatabaseReference groupsUsersRef =
-        _firebaseDatabase.reference().child('groups-users').child(groupId);
+        firebaseDatabase.reference().child('groups-users').child(groupId);
     final List<Future> futures = [];
 
-    _firebaseDatabase
+    firebaseDatabase
         .reference()
         .child('users')
         .child(userId)
@@ -324,7 +321,7 @@ class ChatFirebaseRepository implements DataRepository {
         .then((userSnapshot) {
       futures
           .add(groupsUsersRef.update({userId: userSnapshot.value['userName']}));
-      _firebaseDatabase
+      firebaseDatabase
           .reference()
           .child('users-groups')
           .child(currentUserId)
@@ -337,7 +334,7 @@ class ChatFirebaseRepository implements DataRepository {
       });
     });
 
-    _firebaseDatabase
+    firebaseDatabase
         .reference()
         .child('users')
         .child(currentUserId)
@@ -345,7 +342,7 @@ class ChatFirebaseRepository implements DataRepository {
         .then((userSnapshot) {
       futures.add(groupsUsersRef
           .update({currentUserId: userSnapshot.value['userName']}));
-      _firebaseDatabase
+      firebaseDatabase
           .reference()
           .child('users-groups')
           .child(userId)
@@ -364,7 +361,7 @@ class ChatFirebaseRepository implements DataRepository {
 
   @override
   Stream<Map<String, dynamic>> streamOfUserDiscussions(String currentUserId) {
-    return _firebaseDatabase
+    return firebaseDatabase
         .reference()
         .child('users-groups')
         .child(currentUserId)

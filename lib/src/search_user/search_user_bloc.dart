@@ -1,18 +1,17 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter_chat/src/chat_service/chat_service.dart';
 import 'package:flutter_chat/src/group_management/group_management.dart';
-import 'package:flutter_chat/src/repositories/chat_firebase_repository.dart';
-
-import 'search_user.dart';
+import 'package:flutter_chat/src/search_user/search_user.dart';
 
 class SearchUserBloc extends Bloc<SearchUserEvent, SearchUserState> {
   SearchUserBloc(
-    this.firebaseRepository,
+    this.chatService,
     this.groupManagementBloc,
-  )   : assert(firebaseRepository != null),
+  )   : assert(chatService != null),
         assert(groupManagementBloc != null);
-  ChatFirebaseRepository firebaseRepository;
+  ChatService chatService;
   GroupManagementBloc groupManagementBloc;
 
   @override
@@ -27,13 +26,13 @@ class SearchUserBloc extends Bloc<SearchUserEvent, SearchUserState> {
         yield SearchUserList({});
       } else {
         final Map<String, String> users =
-            await firebaseRepository.searchUsersByName(event.searchName);
+            await chatService.searchUsersByName(event.searchName);
         yield SearchUserList(users);
       }
     } else if (event is ChatWithUser) {
       yield SearchUserList({});
       final String groupId =
-          await firebaseRepository.getDuoGroupId(event.currentUid, event.uid);
+          await chatService.getDuoGroupId(event.currentUid, event.uid);
       if (groupId != null) {
         groupManagementBloc.dispatch(NavigateToGroup(groupId));
       } else {

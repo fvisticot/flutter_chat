@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_chat/src/chat_service/chat_service.dart';
 import 'package:flutter_chat/src/group_messages/group_messages.dart';
 import 'package:flutter_chat/src/message_bar/message_bar_ui.dart';
 import 'package:flutter_chat/src/models/models.dart';
-import 'package:flutter_chat/src/repositories/chat_firebase_repository.dart';
 import 'package:flutter_chat/src/typing_users/typing_users_ui.dart';
 import 'package:flutter_chat/src/upload_file/upload_file.dart';
 import 'package:flutter_chat/src/user_presence/user_presence_ui.dart';
@@ -12,10 +12,10 @@ import 'package:intl/intl.dart';
 import 'group_chat.dart';
 
 class GroupChatPage extends StatefulWidget {
-  const GroupChatPage(this.groupId, this.currentUser, this.firebaseRepository);
+  const GroupChatPage(this.groupId, this.currentUser, this.chatService);
   final String groupId;
   final User currentUser;
-  final ChatFirebaseRepository firebaseRepository;
+  final ChatService chatService;
 
   @override
   _GroupChatPageState createState() => _GroupChatPageState();
@@ -30,10 +30,9 @@ class _GroupChatPageState extends State<GroupChatPage> {
   @override
   void initState() {
     super.initState();
-    _groupChatBloc = GroupChatBloc(widget.firebaseRepository, widget.groupId);
+    _groupChatBloc = GroupChatBloc(widget.chatService, widget.groupId);
     _groupChatBloc.dispatch(GroupChatStarted(widget.groupId));
-    _groupMessagesBloc =
-        GroupMessagesBloc(widget.firebaseRepository, widget.groupId);
+    _groupMessagesBloc = GroupMessagesBloc(widget.chatService, widget.groupId);
     _uploadFileBloc = UploadFileBloc();
     _scrollController = ScrollController();
   }
@@ -55,11 +54,11 @@ class _GroupChatPageState extends State<GroupChatPage> {
                   Expanded(
                     child: _buildMessagesList(groupChatState.group),
                   ),
-                  TypingUsers(widget.firebaseRepository, widget.groupId,
-                      widget.currentUser),
+                  TypingUsers(
+                      widget.chatService, widget.groupId, widget.currentUser),
                   SafeArea(
                     bottom: true,
-                    child: MessageBar(widget.firebaseRepository, widget.groupId,
+                    child: MessageBar(widget.chatService, widget.groupId,
                         widget.currentUser, _uploadFileBloc),
                   ),
                 ],
@@ -116,7 +115,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
               Positioned(
                 bottom: 0,
                 right: 0,
-                child: UserPresenceIndicator(widget.firebaseRepository, userId),
+                child: UserPresenceIndicator(widget.chatService, userId),
               )
             ]),
             const SizedBox(

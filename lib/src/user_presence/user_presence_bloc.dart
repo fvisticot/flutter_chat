@@ -1,16 +1,15 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:flutter_chat/src/repositories/chat_firebase_repository.dart';
+import 'package:flutter_chat/src/chat_service/chat_service.dart';
 import 'user_presence.dart';
 
 class UserPresenceBloc extends Bloc<UserPresenceEvent, UserPresenceState> {
-  UserPresenceBloc(this.firebaseRepository, this.userId) {
-    _subUserPresence =
-        firebaseRepository.userPresence(userId).listen((isOnline) {
+  UserPresenceBloc(this.chatService, this.userId) {
+    _subUserPresence = chatService.userPresence(userId).listen((isOnline) {
       dispatch(UserPresenceEvent(isOnline: isOnline));
     });
   }
-  ChatFirebaseRepository firebaseRepository;
+  ChatService chatService;
   String userId;
   StreamSubscription _subUserPresence;
 

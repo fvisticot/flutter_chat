@@ -5,7 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chat/src/models/models.dart';
 
-abstract class DataRepository {
+abstract class ChatService {
   Future<User> initChat();
 
   Future<void> setPresence({@required bool presence});

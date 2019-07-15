@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_chat/src/repositories/chat_firebase_repository.dart';
-import 'user_presence.dart';
+import 'package:flutter_chat/src/chat_service/chat_service.dart';
+import 'package:flutter_chat/src/user_presence/user_presence.dart';
 
 class UserPresenceIndicator extends StatefulWidget {
-  const UserPresenceIndicator(this.firebaseRepository, this.userId)
-      : assert(firebaseRepository != null),
+  const UserPresenceIndicator(this.chatService, this.userId)
+      : assert(chatService != null),
         assert(userId != null);
-  final ChatFirebaseRepository firebaseRepository;
+  final ChatService chatService;
   final String userId;
 
   @override
@@ -20,8 +20,7 @@ class _UserPresenceIndicatorState extends State<UserPresenceIndicator> {
   @override
   void initState() {
     super.initState();
-    _userPresenceBloc =
-        UserPresenceBloc(widget.firebaseRepository, widget.userId);
+    _userPresenceBloc = UserPresenceBloc(widget.chatService, widget.userId);
   }
 
   @override

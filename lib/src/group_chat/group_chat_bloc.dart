@@ -1,17 +1,17 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:flutter_chat/src/chat_service/chat_service.dart';
 import 'package:flutter_chat/src/models/group.dart';
-import 'package:flutter_chat/src/repositories/chat_firebase_repository.dart';
 import 'group_chat.dart';
 
 class GroupChatBloc extends Bloc<GroupChatEvent, GroupChatState> {
   GroupChatBloc(
-    this.firebaseRepository,
+    this.chatService,
     this.groupId,
-  )   : assert(firebaseRepository != null),
+  )   : assert(chatService != null),
         assert(groupId != null);
-  ChatFirebaseRepository firebaseRepository;
-  String groupId;
+  final ChatService chatService;
+  final String groupId;
 
   @override
   GroupChatState get initialState => GroupChatInitial();
@@ -20,7 +20,7 @@ class GroupChatBloc extends Bloc<GroupChatEvent, GroupChatState> {
   Stream<GroupChatState> mapEventToState(GroupChatEvent event) async* {
     if (event is GroupChatStarted) {
       yield GroupChatLoading();
-      final Group group = await firebaseRepository.getGroupInfo(event.groupId);
+      final Group group = await chatService.getGroupInfo(event.groupId);
       yield GroupChatSuccess(group);
     }
   }
