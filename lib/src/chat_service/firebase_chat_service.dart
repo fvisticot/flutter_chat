@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:io';
 import 'package:flutter_chat/src/chat_service/chat_service.dart';
+import 'package:flutter_chat/src/models/discussion.dart';
 import 'package:flutter_chat/src/models/file_upload.dart';
 import 'package:flutter_chat/src/models/group.dart';
 import 'package:flutter_chat/src/models/message/message.dart';
@@ -332,10 +333,10 @@ class FirebaseChatService implements ChatService {
 
   /// Future Stream that represents the the user's discussions
   ///
-  /// The value in the stream is a `Map<String, dynamic>` representing the discussions of a user
+  /// The value in the stream is a `List<Discussion>` representing the discussions of a user
   /// sorted by the `lastMsgTimestamp`
   @override
-  Future<Stream<Map<String, dynamic>>> streamOfUserDiscussions() async {
+  Future<Stream<List<Discussion>>> streamOfUserDiscussions() async {
     final FirebaseUser firebaseUser = await _getConnectedUser();
     try {
       return firebaseDatabase
@@ -344,7 +345,8 @@ class FirebaseChatService implements ChatService {
           .child(firebaseUser.uid)
           .onValue
           .map((event) {
-        final Map<String, dynamic> discussions = {};
+        // final Map<String, dynamic> discussions = {};
+        final List<Discussion> discussions = [];
         final Map<dynamic, dynamic> map = event.snapshot.value;
         if (map != null) {
           final List<dynamic> list = map.keys.toList()
@@ -357,12 +359,13 @@ class FirebaseChatService implements ChatService {
           final LinkedHashMap sortedMap = LinkedHashMap.fromIterable(list,
               key: (k) => k, value: (k) => map[k]);
           sortedMap.forEach((groupKey, groupValue) {
-            discussions.addAll({
-              groupKey: {
-                'title': groupValue['title'],
-                'lastMsg': groupValue['lastMsg']
-              }
-            });
+            discussions.add(
+              Discussion(
+                groupId: groupKey,
+                title: groupValue['title'],
+                lastMessage: groupValue['lastMsg'],
+              ),
+            );
           });
         }
 

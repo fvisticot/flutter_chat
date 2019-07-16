@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter_chat/src/chat_service/chat_service.dart';
+import 'package:flutter_chat/src/discussions_list/discussions_list.dart';
 import 'package:flutter_chat/src/group_management/group_management.dart';
 
-import 'discussions_list.dart';
 
 class DiscussionsListBloc
     extends Bloc<DiscussionsListEvent, DiscussionsListState> {

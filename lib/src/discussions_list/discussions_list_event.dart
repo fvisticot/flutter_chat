@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter_chat/src/models/discussion.dart';
 
 abstract class DiscussionsListEvent extends Equatable {
   DiscussionsListEvent([List props = const []]) : super(props);
@@ -11,7 +12,7 @@ class GetDiscussionsList extends DiscussionsListEvent {
 
 class SyncDiscussionsList extends DiscussionsListEvent {
   SyncDiscussionsList(this.discussions) : super([discussions]);
-  Map<String, dynamic> discussions;
+  List<Discussion> discussions;
 
   @override
   String toString() => 'SyncDiscussionsList';

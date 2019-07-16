@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter_chat/src/models/discussion.dart';
 import 'package:flutter_chat/src/models/file_upload.dart';
 import 'package:flutter_chat/src/models/group.dart';
 import 'package:flutter_chat/src/models/message/message.dart';
@@ -40,5 +41,5 @@ abstract class ChatService {
 
   Future<String> createDuoGroup(String currentUserId, String userId);
 
-  Future<Stream<Map<String, dynamic>>> streamOfUserDiscussions();
+  Future<Stream<List<Discussion>>> streamOfUserDiscussions();
 }
