@@ -25,8 +25,8 @@ class FirebaseChatService implements ChatService {
     return firebaseUser;
   }
 
-  /// Returns `User` in chat
-  /// Throw `Exception` if user doesn't exists
+  /// Returns the connected `User` in chat
+  /// Throw `Exception` if user doesn't exist
   @override
   Future<User> getChatUser() async {
     final FirebaseUser firebaseUser = await _getConnectedUser();
