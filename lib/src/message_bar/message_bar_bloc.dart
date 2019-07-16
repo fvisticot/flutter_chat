@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_chat/src/chat_service/chat_service.dart';
 import 'package:flutter_chat/src/message_bar/message_bar.dart';
 import 'package:flutter_chat/src/models/message/message.dart';
@@ -25,9 +24,16 @@ class MessageBarBloc extends Bloc<MessageBarEvent, MessageBarState> {
   User currentUser;
   UploadFileBloc uploadFileBloc;
   bool _isTyping;
-
+  StreamSubscription _storeFileProgress;
+  
   @override
   MessageBarState get initialState => MessageBarInitial();
+
+  @override
+  void dispose() {
+    _storeFileProgress.cancel();
+    super.dispose();
+  }
 
   @override
   Stream<MessageBarState> mapEventToState(
@@ -37,22 +43,19 @@ class MessageBarBloc extends Bloc<MessageBarEvent, MessageBarState> {
       if (event is StoreImageEvent) {
         final String filename =
             '${currentUser.id}_${DateTime.now().millisecondsSinceEpoch.toString()}.jpg';
-        final StorageUploadTask task =
-            chatService.storeFileTask(filename, event.imageFile);
-        task.events.listen((event) {
-          final double progress = event.snapshot.bytesTransferred.toDouble() /
-              event.snapshot.totalByteCount.toDouble();
-          uploadFileBloc.dispatch(UploadFileEvent(progress));
-        });
-        task.onComplete.then((snapshot) {
-          snapshot.ref.getDownloadURL().then((url) {
+        _storeFileProgress = chatService
+            .storeFileStream(filename, event.imageFile)
+            .listen((fileUpload) {
+          if (fileUpload.downloadUrl == null) {
+            uploadFileBloc.dispatch(UploadFileEvent(fileUpload.progress));
+          } else {
             final Message message = PhotoMessage(
-              url,
+              fileUpload.downloadUrl,
               currentUser.id,
             );
             dispatch(SendMessageEvent(message));
             uploadFileBloc.dispatch(UploadFileEvent(-1));
-          });
+          }
         });
       }
       if (event is SendMessageEvent) {
@@ -61,12 +64,11 @@ class MessageBarBloc extends Bloc<MessageBarEvent, MessageBarState> {
       if (event is IsTyping) {
         if (event.isTyping) {
           if (!_isTyping) {
-            chatService.isTyping(groupId, currentUser,
-                isTyping: event.isTyping);
+            chatService.isTyping(groupId, isTyping: event.isTyping);
           }
         } else {
           _isTyping = false;
-          chatService.isTyping(groupId, currentUser, isTyping: event.isTyping);
+          chatService.isTyping(groupId, isTyping: event.isTyping);
         }
       }
     } catch (e) {

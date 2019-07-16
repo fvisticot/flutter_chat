@@ -12,9 +12,10 @@ class DiscussionsListBloc
       : assert(chatService != null),
         assert(groupManagementBloc != null),
         assert(userId != null) {
-    _subDiscussions =
-        chatService.streamOfUserDiscussions(userId).listen((discussions) {
-      dispatch(SyncDiscussionsList(discussions));
+    chatService.streamOfUserDiscussions().then((discussionsStream) {
+      _subDiscussions = discussionsStream.listen((discussions) {
+        dispatch(SyncDiscussionsList(discussions));
+      });
     });
   }
   ChatService chatService;

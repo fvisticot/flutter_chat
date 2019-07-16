@@ -11,7 +11,8 @@ void main() {
 
   setUp(() {
     chatService = MockChatService();
-    when(chatService.userPresence(any)).thenAnswer((_) => const Stream.empty());
+    when(chatService.userPresenceStream(any))
+        .thenAnswer((_) => const Stream.empty());
     userPresenceBloc = UserPresenceBloc(chatService, any);
   });
 

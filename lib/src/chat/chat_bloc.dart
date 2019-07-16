@@ -16,9 +16,13 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   @override
   Stream<ChatState> mapEventToState(ChatEvent event) async* {
     if (event is ChatStarted) {
-      yield ChatLoading();
-      final User user = await chatService.initChat();
-      yield ChatInitialized(user);
+      try {
+        yield ChatLoading();
+        final User user = await chatService.getChatUser();
+        yield ChatInitialized(user);
+      } catch (e) {
+        yield ChatError();
+      }
     }
   }
 }

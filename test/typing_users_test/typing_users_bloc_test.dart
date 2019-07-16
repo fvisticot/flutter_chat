@@ -13,8 +13,8 @@ void main() {
 
   setUp(() {
     chatService = MockChatService();
-    when(chatService.typingUsers(any, any))
-        .thenAnswer((_) => Stream.fromIterable([]));
+    when(chatService.typingUsers(any))
+        .thenAnswer((_) => Future.value(Stream.fromIterable([])));
     typingUsersBloc = TypingUsersBloc(
       chatService,
       any,

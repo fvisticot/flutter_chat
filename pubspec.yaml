@@ -18,6 +18,7 @@ dependencies:
   firebase_storage: ^3.0.3
 
   # Other dependencies
+  provider: ^3.0.0+1
   flutter_bloc: ^0.11.1
   equatable: ^0.2.3
   image_picker: ^0.6.0+1

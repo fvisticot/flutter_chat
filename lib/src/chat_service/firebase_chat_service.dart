@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:io';
 import 'package:flutter_chat/src/chat_service/chat_service.dart';
+import 'package:flutter_chat/src/models/file_upload.dart';
 import 'package:meta/meta.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -13,41 +14,42 @@ class FirebaseChatService implements ChatService {
   FirebaseChatService(this.firebaseDatabase) : assert(firebaseDatabase != null);
   final FirebaseDatabase firebaseDatabase;
 
-  @override
-  Future<User> initChat() async {
+  Future<FirebaseUser> _getConnectedUser() async {
     final FirebaseUser firebaseUser = await FirebaseAuth.instance.currentUser();
     if (firebaseUser == null) {
       throw Exception('User not authenticated on Firebase.');
     }
-    final User userDb = await _userFromId(firebaseUser.uid);
-    if (userDb == null) {
-      throw Exception('User must exist in database.');
-    } else {
-      print('User present in DB.');
-    }
-    _initPresence(userDb.id);
-    _setupNotifications(userDb.id);
-    return userDb;
+    return firebaseUser;
   }
 
-  Future<User> _userFromId(String userId) async {
-    final DataSnapshot snapshot =
-        await firebaseDatabase.reference().child('users').child(userId).once();
-    final Map map = snapshot.value;
+  /// Returns `User` in chat
+  /// Throw `Exception` if user doesn't exists
+  @override
+  Future<User> getChatUser() async {
+    final FirebaseUser firebaseUser = await _getConnectedUser();
+    final DataSnapshot userSnapshot = await firebaseDatabase
+        .reference()
+        .child('users/${firebaseUser.uid}')
+        .once();
+    final Map map = userSnapshot.value;
     if (map != null) {
-      map['id'] = snapshot.key;
+      map['id'] = userSnapshot.key;
       final User user = User.fromMap(map);
       return user;
     } else {
-      return null;
+      throw Exception('User doesn\'t exists in DB');
     }
   }
 
-  void _initPresence(String uid) {
+  /// Initialize user presence
+  /// remove presence when user is disconnected from db
+  @override
+  Future<void> initPresence() async {
+    final FirebaseUser firebaseUser = await _getConnectedUser();
     final DatabaseReference amOnline =
         firebaseDatabase.reference().child('.info/connected');
     final DatabaseReference userRef =
-        firebaseDatabase.reference().child('presences/$uid');
+        firebaseDatabase.reference().child('presences/${firebaseUser.uid}');
     amOnline.onValue.listen((event) {
       print('Presence changed: ${event.snapshot.value}');
       userRef.onDisconnect().remove();
@@ -55,6 +57,9 @@ class FirebaseChatService implements ChatService {
     });
   }
 
+  /// Set user presence
+  /// if [presence] is`true` user is connected to the chat
+  /// if `false` user is disconnected from the chat
   @override
   Future<void> setPresence({@required bool presence}) async {
     final FirebaseUser firebaseUser = await FirebaseAuth.instance.currentUser();
@@ -69,43 +74,7 @@ class FirebaseChatService implements ChatService {
     }
   }
 
-  Future<void> _setupNotifications(String uid) async {
-    final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-
-    _firebaseMessaging.configure(
-      onMessage: (Map<String, dynamic> message) {
-        print('onMessage received: $message');
-        return;
-      },
-      onLaunch: (Map<String, dynamic> message) {
-        print('onLaunch: $message');
-        return;
-      },
-      onResume: (Map<String, dynamic> message) {
-        print('onResume: $message');
-        return;
-      },
-    );
-
-    _firebaseMessaging.requestNotificationPermissions(
-        const IosNotificationSettings(sound: true, badge: true, alert: true));
-    _firebaseMessaging.onIosSettingsRegistered
-        .listen((IosNotificationSettings settings) {
-      print('Settings registered: $settings');
-    });
-
-    final String token = await _firebaseMessaging.getToken();
-    print('Push Messaging token: $token');
-    await _setPushNotificationToken(uid, token);
-  }
-
-  Future<void> _setPushNotificationToken(String uid, String token) async {
-    return firebaseDatabase
-        .reference()
-        .child('users-pushTokens')
-        .update({'$uid': token});
-  }
-
+  /// Get `Group` info of [groupId]
   @override
   Future<Group> getGroupInfo(String groupId) async {
     final DataSnapshot groupUsersSnapshot = await firebaseDatabase
@@ -127,7 +96,7 @@ class FirebaseChatService implements ChatService {
           ? Group(groupId, users, title: title)
           : Group(groupId, users);
     } else {
-      throw Exception('Unknown group');
+      throw Exception('Unknown group $groupId');
     }
   }
 
@@ -146,21 +115,8 @@ class FirebaseChatService implements ChatService {
     return usersId;
   }
 
-  @override
-  Future<User> getUserFromId(String userId) async {
-    final DataSnapshot userSnapshot =
-        await firebaseDatabase.reference().child('users/$userId').once();
-
-    final Map map = userSnapshot.value;
-    if (map != null) {
-      map['id'] = userSnapshot.key;
-      final User user = User.fromMap(map);
-      return user;
-    } else {
-      return null;
-    }
-  }
-
+  /// Stream that represents [groupId] 50 last messages
+  /// Returns a `List<Message>` ordered by message key
   @override
   Stream<List<Message>> streamOfMessages(String groupId) {
     try {
@@ -186,13 +142,15 @@ class FirebaseChatService implements ChatService {
         return messages;
       });
     } catch (e) {
-      print(e);
-      throw Exception();
+      throw Exception('Can not get messages from $groupId : $e');
     }
   }
 
+  /// Stream that represents [userId] presence
+  /// Values are `true` when the user is connected to the chat
+  /// `false` when the user is disconnected
   @override
-  Stream<bool> userPresence(String userId) {
+  Stream<bool> userPresenceStream(String userId) {
     return firebaseDatabase
         .reference()
         .child('presences')
@@ -204,25 +162,36 @@ class FirebaseChatService implements ChatService {
     });
   }
 
+  /// Stream that represents if user has unread message
+  /// Values are `true` when the user has unread messages
+  /// `false` when the user has read all messages
   @override
-  void sendMessage(String groupId, Message message) {
-    firebaseDatabase
-        .reference()
-        .child('groups-messages')
-        .child(groupId)
-        .push()
-        .update(message.toJson());
+  Stream<bool> hasUnreadMessageStream() {
+    // TODO(mattis): implement hasUnreadMessageStream
+    return null;
   }
 
+  /// Send [message] to [groupId]
   @override
-  StorageUploadTask storeFileTask(String filename, File file) {
-    final StorageReference storageReference =
-        FirebaseStorage.instance.ref().child(filename);
-    return storageReference.putFile(file);
+  Future<void> sendMessage(String groupId, Message message) async {
+    try {
+      return firebaseDatabase
+          .reference()
+          .child('groups-messages')
+          .child(groupId)
+          .push()
+          .update(message.toJson());
+    } catch (e) {
+      throw Exception('Error sending message $message to group $groupId : $e');
+    }
   }
 
+  /// Future Stream that represents the typing users in [groupId]
+  /// The value in the stream is a `List<String>` that are the names of typing users
+  /// Doesn't return our user name
   @override
-  Stream<List<String>> typingUsers(String groupId, User currentUser) {
+  Future<Stream<List<String>>> typingUsers(String groupId) async {
+    final FirebaseUser firebaseUser = await _getConnectedUser();
     try {
       return firebaseDatabase
           .reference()
@@ -233,7 +202,7 @@ class FirebaseChatService implements ChatService {
         final List<String> userNames = [];
         if (event.snapshot.value != null) {
           event.snapshot.value.forEach((activityKey, activityValue) {
-            if (currentUser.id != activityKey) {
+            if (firebaseUser.uid != activityKey) {
               userNames.add(activityValue);
             }
           });
@@ -241,22 +210,22 @@ class FirebaseChatService implements ChatService {
         return userNames;
       });
     } catch (e) {
-      print(e);
-      throw Exception();
+      throw Exception('Error getting typing users in group $groupId : $e');
     }
   }
 
+  /// Indicates if user [isTyping] in [groupId]
   @override
-  Future<void> isTyping(String groupId, User writer,
-      {@required bool isTyping}) async {
+  Future<void> isTyping(String groupId, {@required bool isTyping}) async {
+    final User chatUser = await getChatUser();
     final DatabaseReference activityRef =
         firebaseDatabase.reference().child('groups-activities').child(groupId);
 
     if (isTyping) {
-      await activityRef.update({writer.id: writer.userName});
-      activityRef.child(writer.id).onDisconnect().remove();
+      await activityRef.update({chatUser.id: chatUser.userName});
+      activityRef.child(chatUser.id).onDisconnect().remove();
     } else {
-      return activityRef.child(writer.id).remove();
+      return activityRef.child(chatUser.id).remove();
     }
   }
 
@@ -359,35 +328,86 @@ class FirebaseChatService implements ChatService {
     return groupId;
   }
 
+  /// Future Stream that represents the the user's discussions
+  /// The value in the stream is a `Map<String, dynamic>` representing the discussions of a user
+  /// sorted by the `lastMsgTimestamp`
   @override
-  Stream<Map<String, dynamic>> streamOfUserDiscussions(String currentUserId) {
-    return firebaseDatabase
-        .reference()
-        .child('users-groups')
-        .child(currentUserId)
-        .onValue
-        .map((event) {
-      final Map<String, dynamic> discussions = {};
-      final Map<dynamic, dynamic> map = event.snapshot.value;
-      if (map != null) {
-        final List<dynamic> list = map.keys.toList()
-          ..sort((a, b) {
-            return map[b]['lastMsgTimestamp']
-                .compareTo(map[a]['lastMsgTimestamp']);
+  Future<Stream<Map<String, dynamic>>> streamOfUserDiscussions() async {
+    final FirebaseUser firebaseUser = await _getConnectedUser();
+    try {
+      return firebaseDatabase
+          .reference()
+          .child('users-groups')
+          .child(firebaseUser.uid)
+          .onValue
+          .map((event) {
+        final Map<String, dynamic> discussions = {};
+        final Map<dynamic, dynamic> map = event.snapshot.value;
+        if (map != null) {
+          final List<dynamic> list = map.keys.toList()
+            ..sort(
+              (a, b) {
+                return map[b]['lastMsgTimestamp']
+                    .compareTo(map[a]['lastMsgTimestamp']);
+              },
+            );
+          final LinkedHashMap sortedMap = LinkedHashMap.fromIterable(list,
+              key: (k) => k, value: (k) => map[k]);
+          sortedMap.forEach((groupKey, groupValue) {
+            discussions.addAll({
+              groupKey: {
+                'title': groupValue['title'],
+                'lastMsg': groupValue['lastMsg']
+              }
+            });
           });
-        final LinkedHashMap sortedMap = LinkedHashMap.fromIterable(list,
-            key: (k) => k, value: (k) => map[k]);
-        print(sortedMap);
-        sortedMap.forEach((groupKey, groupValue) {
-          discussions.addAll({
-            groupKey: {
-              'title': groupValue['title'],
-              'lastMsg': groupValue['lastMsg']
-            }
-          });
-        });
-      }
-      return discussions;
+        }
+        return discussions;
+      });
+    } catch (e) {
+      throw Exception('Can not get the users discussions : $e');
+    }
+  }
+
+  /// Set the user's device token in database
+  @override
+  Future<void> setDevicePushToken() async {
+    try {
+      final FirebaseUser firebaseUser = await _getConnectedUser();
+      final String pushToken = await FirebaseMessaging().getToken();
+      print(pushToken);
+      return firebaseDatabase
+          .reference()
+          .child('users-pushTokens')
+          .update({'${firebaseUser.uid}': pushToken});
+    } catch (e) {
+      throw Exception('Can not set firebase push token : $e');
+    }
+  }
+
+  @override
+  Stream<FileUpload> storeFileStream(String filename, File file) {
+    final StorageReference _storageReference =
+        FirebaseStorage.instance.ref().child(filename);
+    final StorageUploadTask _storageTask = _storageReference.putFile(file);
+    final StreamController<FileUpload> controller = StreamController();
+    _storageTask.events.listen((event) {
+      final double progress = event.snapshot.bytesTransferred.toDouble() /
+          event.snapshot.totalByteCount.toDouble();
+      controller.add(FileUpload(progress: progress));
     });
+    _storageTask.onComplete.then((snapshot) {
+      snapshot.ref.getDownloadURL().then((url) {
+        controller.add(FileUpload(progress: 100, downloadUrl: url));
+      });
+    });
+    return controller.stream;
+  }
+
+  @override
+  StorageUploadTask storeFileTask(String filename, File file) {
+    final StorageReference storageReference =
+        FirebaseStorage.instance.ref().child(filename);
+    return storageReference.putFile(file);
   }
 }
