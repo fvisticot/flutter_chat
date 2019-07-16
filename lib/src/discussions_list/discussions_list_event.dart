@@ -17,3 +17,8 @@ class SyncDiscussionsList extends DiscussionsListEvent {
   @override
   String toString() => 'SyncDiscussionsList';
 }
+
+class ErrorSyncDiscussionsList extends DiscussionsListEvent {
+  @override
+  String toString() => 'ErrorSyncDiscussionsList';
+}

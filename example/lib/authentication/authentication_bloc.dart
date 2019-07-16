@@ -57,7 +57,6 @@ class AuthenticationBloc
           throw Exception();
         }
         final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-
         _firebaseMessaging.configure(
           onMessage: (Map<String, dynamic> message) {
             print('onMessage received: $message');
@@ -72,7 +71,6 @@ class AuthenticationBloc
             return;
           },
         );
-
         _firebaseMessaging.requestNotificationPermissions(
             const IosNotificationSettings(
                 sound: true, badge: true, alert: true));

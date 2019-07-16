@@ -55,34 +55,39 @@ class _DiscussionsListPageState extends State<DiscussionsListPage> {
               final List<Discussion> discussions =
                   discussionsListState.discussions;
               return ListView.builder(
-                  itemCount: discussionsListState.discussions.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(discussions[index].title),
-                      subtitle: Text(
-                        discussions[index].lastMessage,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      trailing: IconButton(
-                        icon: Icon(Icons.message),
-                        onPressed: () {
-                          _discussionsListBloc.groupManagementBloc.dispatch(
-                              NavigateToGroup(discussions[index].groupId));
-                        },
-                        color: Styles.mainColor,
-                      ),
-                      onTap: () {
+                itemCount: discussionsListState.discussions.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(discussions[index].title),
+                    subtitle: Text(
+                      discussions[index].lastMessage,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    trailing: IconButton(
+                      icon: Icon(Icons.message),
+                      onPressed: () {
                         _discussionsListBloc.groupManagementBloc.dispatch(
                             NavigateToGroup(discussions[index].groupId));
                       },
-                    );
-                  });
+                      color: Styles.mainColor,
+                    ),
+                    onTap: () {
+                      _discussionsListBloc.groupManagementBloc.dispatch(
+                          NavigateToGroup(discussions[index].groupId));
+                    },
+                  );
+                },
+              );
             } else {
               return Center(
-                child: const Text('No discussions available'),
+                child: const Text('Vous n\'avez pas de discussion'),
               );
             }
+          } else if (discussionsListState is DiscussionsError) {
+            return Center(
+              child: Text(discussionsListState.error),
+            );
           } else {
             return Center(
               child: const SizedBox(

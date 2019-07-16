@@ -26,6 +26,9 @@ class DiscussionsSuccess extends DiscussionsListState {
 }
 
 class DiscussionsError extends DiscussionsListState {
+  DiscussionsError(this.error);
+  final String error;
+
   @override
-  String toString() => 'DiscussionsError';
+  String toString() => 'DiscussionsError : $error';
 }

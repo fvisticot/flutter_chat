@@ -25,7 +25,7 @@ class GroupMessagesBloc extends Bloc<GroupMessagesEvent, GroupMessagesState> {
     if (event is SyncMessagesEvent) {
       yield GroupMessagesSuccess(event.messages);
     } else if (event is ErrorSyncMessagesEvent) {
-      yield GroupMessagesError();
+      yield GroupMessagesError(error: 'Error synchronizing messages');
     }
   }
 
