@@ -1,17 +1,23 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_chat/flutter_chat.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:bloc/bloc.dart';
 import 'authentication.dart';
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
-  AuthenticationBloc(this.googleSignIn, this.firebaseAuth)
-      : assert(googleSignIn != null),
-        assert(firebaseAuth != null);
+  AuthenticationBloc(
+    this.googleSignIn,
+    this.firebaseAuth,
+    this.chatService,
+  )   : assert(googleSignIn != null),
+        assert(firebaseAuth != null),
+        assert(chatService != null);
   final GoogleSignIn googleSignIn;
   final FirebaseAuth firebaseAuth;
-
+  final FirebaseChatService chatService;
   @override
   AuthenticationState get initialState => AuthenticationUninitialized();
 
@@ -23,6 +29,8 @@ class AuthenticationBloc
       if (googleIsSignedIn) {
         final FirebaseUser fbUser = await firebaseAuth.currentUser();
         if (fbUser != null) {
+          await chatService.setDevicePushToken();
+          await chatService.initPresence();
           yield AuthenticationAuthenticated();
         } else {
           yield AuthenticationUnauthenticated();
@@ -48,6 +56,32 @@ class AuthenticationBloc
         if (user.uid != currentUser.uid) {
           throw Exception();
         }
+        final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
+        _firebaseMessaging.configure(
+          onMessage: (Map<String, dynamic> message) {
+            print('onMessage received: $message');
+            return;
+          },
+          onLaunch: (Map<String, dynamic> message) {
+            print('onLaunch: $message');
+            return;
+          },
+          onResume: (Map<String, dynamic> message) {
+            print('onResume: $message');
+            return;
+          },
+        );
+
+        _firebaseMessaging.requestNotificationPermissions(
+            const IosNotificationSettings(
+                sound: true, badge: true, alert: true));
+        _firebaseMessaging.onIosSettingsRegistered
+            .listen((IosNotificationSettings settings) {
+          print('Settings registered: $settings');
+        });
+        await chatService.setDevicePushToken();
+        await chatService.initPresence();
         yield AuthenticationAuthenticated();
       } catch (e) {
         print(e);
@@ -57,6 +91,7 @@ class AuthenticationBloc
 
     if (event is LoggedOut) {
       yield AuthenticationLoading();
+      await chatService.setPresence(presence: false);
       await firebaseAuth.signOut();
       yield AuthenticationUnauthenticated();
     }
