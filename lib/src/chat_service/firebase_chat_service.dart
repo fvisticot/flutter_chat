@@ -3,12 +3,14 @@ import 'dart:collection';
 import 'dart:io';
 import 'package:flutter_chat/src/chat_service/chat_service.dart';
 import 'package:flutter_chat/src/models/file_upload.dart';
+import 'package:flutter_chat/src/models/group.dart';
+import 'package:flutter_chat/src/models/message/message.dart';
+import 'package:flutter_chat/src/models/user.dart';
 import 'package:meta/meta.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter_chat/src/models/models.dart';
 
 class FirebaseChatService implements ChatService {
   FirebaseChatService(this.firebaseDatabase) : assert(firebaseDatabase != null);
@@ -363,6 +365,8 @@ class FirebaseChatService implements ChatService {
             });
           });
         }
+
+        print(discussions);
         return discussions;
       });
     } catch (e) {

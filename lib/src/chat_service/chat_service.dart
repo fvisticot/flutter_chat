@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_chat/src/models/file_upload.dart';
+import 'package:flutter_chat/src/models/group.dart';
+import 'package:flutter_chat/src/models/message/message.dart';
+import 'package:flutter_chat/src/models/user.dart';
 import 'package:meta/meta.dart';
-import 'package:flutter_chat/src/models/models.dart';
 
 abstract class ChatService {
   Future<void> initPresence();

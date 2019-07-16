@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chat/src/chat_service/chat_service.dart';
 import 'package:flutter_chat/src/common/styles.dart';
 import 'package:flutter_chat/src/group_management/group_management.dart';
-import 'package:flutter_chat/src/models/models.dart';
+import 'package:flutter_chat/src/models/user.dart';
 import 'package:flutter_chat/src/search_user/search_user.dart';
 
 class SearchUserPage extends StatefulWidget {

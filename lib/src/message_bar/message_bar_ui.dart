@@ -6,7 +6,7 @@ import 'package:flutter_chat/src/chat_service/chat_service.dart';
 import 'package:flutter_chat/src/common/styles.dart';
 import 'package:flutter_chat/src/message_bar/message_bar.dart';
 import 'package:flutter_chat/src/models/message/message.dart';
-import 'package:flutter_chat/src/models/models.dart';
+import 'package:flutter_chat/src/models/message/text_message.dart';
 import 'package:flutter_chat/src/models/user.dart';
 import 'package:flutter_chat/src/upload_file/upload_file.dart';
 import 'package:image_picker/image_picker.dart';
