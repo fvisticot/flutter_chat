@@ -24,6 +24,12 @@ class ChatPresenceWidget extends StatefulWidget {
 
 class _ChatPresenceWidgetState extends State<ChatPresenceWidget>
     with WidgetsBindingObserver {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
   /// Set user presence when app is in foreground
   /// Unset user presence when app is in background
   @override
@@ -36,6 +42,12 @@ class _ChatPresenceWidgetState extends State<ChatPresenceWidget>
       widget.chatService.setPresence(presence: false);
       print('App in background');
     }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override

@@ -1,4 +1,3 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chat/src/chat/chat_bloc.dart';
@@ -6,12 +5,11 @@ import 'package:flutter_chat/src/chat/chat_event.dart';
 import 'package:flutter_chat/src/chat/chat_state.dart';
 import 'package:flutter_chat/src/chat_home/chat_home_page.dart';
 import 'package:flutter_chat/src/chat_service/chat_service.dart';
-import 'package:flutter_chat/src/chat_service/firebase_chat_service.dart';
 import 'package:flutter_chat/src/group_chat/group_chat.dart';
 
 class Chat extends StatefulWidget {
-  const Chat(this.userName, {this.groupId}) : assert(userName != null);
-  final String userName;
+  const Chat(this.chatService, {this.groupId}) : assert(chatService != null);
+  final ChatService chatService;
   final String groupId;
 
   @override
@@ -20,23 +18,18 @@ class Chat extends StatefulWidget {
 
 class _ChatState extends State<Chat> with WidgetsBindingObserver {
   ChatBloc _chatBloc;
-  ChatService chatService;
+
   @override
   void initState() {
-    WidgetsBinding.instance.addObserver(this);
-    chatService = FirebaseChatService(FirebaseDatabase.instance);
-    _chatBloc = ChatBloc(chatService);
-    _chatBloc.dispatch(ChatStarted(widget.userName));
+    _chatBloc = ChatBloc(widget.chatService);
+    _chatBloc.dispatch(ChatStarted());
     super.initState();
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      chatService.setPresence(presence: true);
-    } else {
-      chatService.setPresence(presence: false);
-    }
+  void dispose() {
+    _chatBloc.dispose();
+    super.dispose();
   }
 
   @override
@@ -44,16 +37,22 @@ class _ChatState extends State<Chat> with WidgetsBindingObserver {
     return BlocBuilder<ChatEvent, ChatState>(
       bloc: _chatBloc,
       builder: (BuildContext context, ChatState state) {
-        if (state is ChatUninitialized) {
-          return Container(
-            decoration: BoxDecoration(color: Colors.white),
+        if (state is ChatError) {
+          return Scaffold(
+            body: Center(
+              child: const Text('Error loading chat'),
+            ),
           );
         }
         if (state is ChatInitialized) {
           if (widget.groupId != null) {
-            return GroupChatPage(widget.groupId, state.user, chatService);
+            return GroupChatPage(
+              widget.groupId,
+              state.user,
+              widget.chatService,
+            );
           } else {
-            return ChatHomePage(chatService, state.user);
+            return ChatHomePage(widget.chatService, state.user);
           }
         } else {
           return Container(
@@ -68,11 +67,5 @@ class _ChatState extends State<Chat> with WidgetsBindingObserver {
         }
       },
     );
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
   }
 }

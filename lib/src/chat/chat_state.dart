@@ -24,3 +24,8 @@ class ChatLoading extends ChatState {
   @override
   String toString() => 'ChatLoading';
 }
+
+class ChatError extends ChatState {
+  @override
+  String toString() => 'ChatError';
+}

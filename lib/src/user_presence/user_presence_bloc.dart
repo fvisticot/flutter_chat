@@ -5,7 +5,8 @@ import 'user_presence.dart';
 
 class UserPresenceBloc extends Bloc<UserPresenceEvent, UserPresenceState> {
   UserPresenceBloc(this.chatService, this.userId) {
-    _subUserPresence = chatService.userPresence(userId).listen((isOnline) {
+    _subUserPresence =
+        chatService.userPresenceStream(userId).listen((isOnline) {
       dispatch(UserPresenceEvent(isOnline: isOnline));
     });
   }

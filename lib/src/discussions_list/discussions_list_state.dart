@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter_chat/src/models/discussion.dart';
 
 abstract class DiscussionsListState extends Equatable {
   DiscussionsListState([List props = const []]) : super(props);
@@ -18,13 +19,16 @@ class DiscussionsSuccess extends DiscussionsListState {
   DiscussionsSuccess(this.discussions)
       : assert(discussions != null),
         super([discussions]);
-  Map<String, dynamic> discussions;
+  List<Discussion> discussions;
 
   @override
   String toString() => 'DiscussionsSuccess $discussions';
 }
 
 class DiscussionsError extends DiscussionsListState {
+  DiscussionsError(this.error);
+  final String error;
+
   @override
-  String toString() => 'DiscussionsError';
+  String toString() => 'DiscussionsError : $error';
 }

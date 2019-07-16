@@ -2,20 +2,30 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter_chat/src/chat_service/chat_service.dart';
+import 'package:flutter_chat/src/discussions_list/discussions_list.dart';
 import 'package:flutter_chat/src/group_management/group_management.dart';
-
-import 'discussions_list.dart';
 
 class DiscussionsListBloc
     extends Bloc<DiscussionsListEvent, DiscussionsListState> {
-  DiscussionsListBloc(this.chatService, this.groupManagementBloc, this.userId)
-      : assert(chatService != null),
+  DiscussionsListBloc(
+    this.chatService,
+    this.groupManagementBloc,
+    this.userId,
+  )   : assert(chatService != null),
         assert(groupManagementBloc != null),
         assert(userId != null) {
-    _subDiscussions =
-        chatService.streamOfUserDiscussions(userId).listen((discussions) {
-      dispatch(SyncDiscussionsList(discussions));
-    });
+    chatService.streamOfUserDiscussions().then(
+      (discussionsStream) {
+        _subDiscussions = discussionsStream.listen(
+          (discussions) {
+            dispatch(SyncDiscussionsList(discussions));
+          },
+        );
+      },
+      onError: (e) {
+        dispatch(ErrorSyncDiscussionsList());
+      },
+    );
   }
   ChatService chatService;
   GroupManagementBloc groupManagementBloc;

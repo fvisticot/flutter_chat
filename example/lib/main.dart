@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_chat/flutter_chat.dart';
 import 'package:flutter_chat_example/prechat.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -39,11 +40,17 @@ class _ChatDemoAppState extends State<ChatDemoApp> {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   AuthenticationBloc _authenticationBloc;
   FirebaseDatabase database;
+  FirebaseChatService chatService;
 
   @override
   void initState() {
     database = FirebaseDatabase(app: app);
-    _authenticationBloc = AuthenticationBloc(googleSignIn, firebaseAuth);
+    chatService = FirebaseChatService(database);
+    _authenticationBloc = AuthenticationBloc(
+      googleSignIn,
+      firebaseAuth,
+      chatService,
+    );
     _authenticationBloc.dispatch(AppStarted());
     super.initState();
   }
@@ -57,7 +64,9 @@ class _ChatDemoAppState extends State<ChatDemoApp> {
           bloc: _authenticationBloc,
           builder: (BuildContext context, AuthenticationState state) {
             if (state is AuthenticationAuthenticated) {
-              return PreChat();
+              return PreChat(
+                chatService: chatService,
+              );
             } else if (state is AuthenticationUnauthenticated) {
               return AuthenticationPage();
             } else {

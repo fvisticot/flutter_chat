@@ -5,11 +5,6 @@ abstract class ChatEvent extends Equatable {
 }
 
 class ChatStarted extends ChatEvent {
-  ChatStarted(this.userName)
-      : assert(userName != null),
-        super([userName]);
-  String userName;
-
   @override
   String toString() => 'ChatStarted';
 }

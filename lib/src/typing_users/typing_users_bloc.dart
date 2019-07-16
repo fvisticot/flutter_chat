@@ -7,9 +7,10 @@ import 'package:flutter_chat/src/typing_users/typing_users_state.dart';
 
 class TypingUsersBloc extends Bloc<TypingUsersEvent, TypingUsersState> {
   TypingUsersBloc(this.chatService, this.groupId, this.currentUser) {
-    _subTypingUsers =
-        chatService.typingUsers(groupId, currentUser).listen((usersNames) {
-      dispatch(TypingUsersEvent(usersNames));
+    chatService.typingUsers(groupId).then((typingUsersStream) {
+      _subTypingUsers = typingUsersStream.listen((usersNames) {
+        dispatch(TypingUsersEvent(usersNames));
+      });
     });
   }
   ChatService chatService;
