@@ -27,8 +27,6 @@ abstract class ChatService {
 
   Future<void> sendMessage(String groupId, Message message);
 
-  StorageUploadTask storeFileTask(String filename, File file);
-
   Stream<FileUpload> storeFileStream(String filename, File file);
 
   Future<Stream<List<String>>> typingUsers(String groupId);

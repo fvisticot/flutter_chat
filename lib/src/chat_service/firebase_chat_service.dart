@@ -329,6 +329,7 @@ class FirebaseChatService implements ChatService {
   }
 
   /// Future Stream that represents the the user's discussions
+  ///
   /// The value in the stream is a `Map<String, dynamic>` representing the discussions of a user
   /// sorted by the `lastMsgTimestamp`
   @override
@@ -385,29 +386,30 @@ class FirebaseChatService implements ChatService {
     }
   }
 
+  /// Returns a Stream representing the file upload
+  ///
+  /// The value of the upload progress is [FileUpload.progress]
+  /// if [FileUpload.downloadUrl] isn't null the upload is done
   @override
   Stream<FileUpload> storeFileStream(String filename, File file) {
-    final StorageReference _storageReference =
-        FirebaseStorage.instance.ref().child(filename);
-    final StorageUploadTask _storageTask = _storageReference.putFile(file);
-    final StreamController<FileUpload> controller = StreamController();
-    _storageTask.events.listen((event) {
-      final double progress = event.snapshot.bytesTransferred.toDouble() /
-          event.snapshot.totalByteCount.toDouble();
-      controller.add(FileUpload(progress: progress));
-    });
-    _storageTask.onComplete.then((snapshot) {
-      snapshot.ref.getDownloadURL().then((url) {
-        controller.add(FileUpload(progress: 100, downloadUrl: url));
+    try {
+      final StorageReference _storageReference =
+          FirebaseStorage.instance.ref().child(filename);
+      final StorageUploadTask _storageTask = _storageReference.putFile(file);
+      final StreamController<FileUpload> controller = StreamController();
+      _storageTask.events.listen((event) {
+        final double progress = event.snapshot.bytesTransferred.toDouble() /
+            event.snapshot.totalByteCount.toDouble();
+        controller.add(FileUpload(progress: progress));
       });
-    });
-    return controller.stream;
-  }
-
-  @override
-  StorageUploadTask storeFileTask(String filename, File file) {
-    final StorageReference storageReference =
-        FirebaseStorage.instance.ref().child(filename);
-    return storageReference.putFile(file);
+      _storageTask.onComplete.then((snapshot) {
+        snapshot.ref.getDownloadURL().then((url) {
+          controller.add(FileUpload(progress: 100, downloadUrl: url));
+        });
+      });
+      return controller.stream;
+    } catch (e) {
+      throw Exception('Can not store file $filename : $e');
+    }
   }
 }
