@@ -64,6 +64,8 @@ class _ChatDemoAppState extends State<ChatDemoApp> {
           bloc: _authenticationBloc,
           builder: (BuildContext context, AuthenticationState state) {
             if (state is AuthenticationAuthenticated) {
+              chatService.setDevicePushToken();
+              chatService.initPresence();
               return PreChat(
                 chatService: chatService,
               );

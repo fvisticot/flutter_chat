@@ -24,7 +24,10 @@ class PreChat extends StatelessWidget {
               RaisedButton(
                 onPressed: () => Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => Chat(chatService),
+                    builder: (context) => Chat(
+                      chatService,
+                      groupId: 'fe',
+                    ),
                   ),
                 ),
                 child: const Text('Open Chat'),

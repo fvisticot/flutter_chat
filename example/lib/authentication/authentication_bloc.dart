@@ -29,8 +29,6 @@ class AuthenticationBloc
       if (googleIsSignedIn) {
         final FirebaseUser fbUser = await firebaseAuth.currentUser();
         if (fbUser != null) {
-          await chatService.setDevicePushToken();
-          await chatService.initPresence();
           yield AuthenticationAuthenticated();
         } else {
           yield AuthenticationUnauthenticated();
@@ -78,8 +76,6 @@ class AuthenticationBloc
             .listen((IosNotificationSettings settings) {
           print('Settings registered: $settings');
         });
-        await chatService.setDevicePushToken();
-        await chatService.initPresence();
         yield AuthenticationAuthenticated();
       } catch (e) {
         print(e);
