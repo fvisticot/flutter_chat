@@ -66,6 +66,27 @@ class _GroupChatPageState extends State<GroupChatPage> {
                 ],
               ),
             );
+          } else if (groupChatState is GroupChatError) {
+            return Scaffold(
+              appBar: AppBar(
+                title: const Text('Chat'),
+                flexibleSpace: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.bottomLeft,
+                      end: Alignment.centerRight,
+                      colors: const [
+                        Color.fromRGBO(149, 152, 178, 1),
+                        Color.fromRGBO(90, 95, 129, 1)
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              body: Center(
+                child: const Text('Erreur lors du chargement de la discussion'),
+              ),
+            );
           } else {
             return Scaffold(
               body: Center(
