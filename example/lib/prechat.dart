@@ -26,7 +26,6 @@ class PreChat extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => Chat(
                       chatService,
-                      groupId: 'fe',
                     ),
                   ),
                 ),
