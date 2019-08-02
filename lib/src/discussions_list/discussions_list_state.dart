@@ -19,7 +19,7 @@ class DiscussionsSuccess extends DiscussionsListState {
   DiscussionsSuccess(this.discussions)
       : assert(discussions != null),
         super([discussions]);
-  List<Discussion> discussions;
+  final List<Discussion> discussions;
 
   @override
   String toString() => 'DiscussionsSuccess $discussions';

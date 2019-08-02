@@ -8,7 +8,7 @@ class GroupChatStarted extends GroupChatEvent {
   GroupChatStarted(this.groupId)
       : assert(groupId != null),
         super([groupId]);
-  String groupId;
+  final String groupId;
 
   @override
   String toString() => 'GroupChatStarted';

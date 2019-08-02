@@ -23,14 +23,14 @@ class SearchUserBloc extends Bloc<SearchUserEvent, SearchUserState> {
   ) async* {
     if (event is SearchUserWithName) {
       if (event.searchName.isEmpty) {
-        yield SearchUserList({});
+        yield SearchUserList(const {});
       } else {
         final Map<String, String> users =
             await chatService.searchUsersByName(event.searchName);
         yield SearchUserList(users);
       }
     } else if (event is ChatWithUser) {
-      yield SearchUserList({});
+      yield SearchUserList(const {});
       final String groupId =
           await chatService.getDuoGroupId(event.currentUid, event.uid);
       if (groupId != null) {

@@ -34,7 +34,7 @@ class _ChatState extends State<Chat> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ChatEvent, ChatState>(
+    return BlocBuilder<ChatBloc, ChatState>(
       bloc: _chatBloc,
       builder: (BuildContext context, ChatState state) {
         if (state is ChatError) {

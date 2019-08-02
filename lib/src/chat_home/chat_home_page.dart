@@ -48,7 +48,7 @@ class _ChatHomePageState extends State<ChatHomePage>
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<GroupManagementEvent, GroupManagementState>(
+    return BlocBuilder<GroupManagementBloc, GroupManagementState>(
         bloc: groupManagementBloc,
         builder: (context, state) {
           if (state is CreatingGroupState) {

@@ -25,14 +25,13 @@ class _TypingUsersState extends State<TypingUsers> {
 
   @override
   void initState() {
-    _typingUsersBloc =
-        TypingUsersBloc(widget.chatService, widget.groupId);
+    _typingUsersBloc = TypingUsersBloc(widget.chatService, widget.groupId);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TypingUsersEvent, TypingUsersState>(
+    return BlocBuilder<TypingUsersBloc, TypingUsersState>(
         bloc: _typingUsersBloc,
         builder: (context, typingUsersState) {
           if (typingUsersState is TypingUsersList) {

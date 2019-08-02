@@ -37,21 +37,23 @@ void main() {
   });
 
   test('emits [TypingUsersInitial, TypingUsersList] when users are Typing', () {
+    const List<String> names = ['testname1', 'testname2'];
     expectLater(
       typingUsersBloc.state,
       emitsInOrder([
         TypingUsersInitial(),
-        TypingUsersList(['testName']),
+        TypingUsersList(names),
       ]),
     );
-    typingUsersBloc.dispatch(TypingUsersEvent(['testName']));
+    typingUsersBloc.dispatch(TypingUsersEvent(names));
   });
   test('emits [TypingUsersInitial, TypingUsersList] when nobody is typing ',
       () {
+    const List<String> names = ['testname1', 'testname2'];
     expectLater(
       typingUsersBloc.state,
-      emitsInOrder([TypingUsersInitial(), TypingUsersList([])]),
+      emitsInOrder([TypingUsersInitial(), TypingUsersList(names)]),
     );
-    typingUsersBloc.dispatch(TypingUsersEvent([]));
+    typingUsersBloc.dispatch(TypingUsersEvent(names));
   });
 }

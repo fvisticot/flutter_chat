@@ -41,7 +41,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<GroupChatEvent, GroupChatState>(
+    return BlocBuilder<GroupChatBloc, GroupChatState>(
         bloc: _groupChatBloc,
         builder: (context, groupChatState) {
           if (groupChatState is GroupChatInitial) {
@@ -164,7 +164,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
           ),
         ),
         bottom: PreferredSize(
-            child: BlocBuilder<UploadFileEvent, UploadFileState>(
+            child: BlocBuilder<UploadFileBloc, UploadFileState>(
                 bloc: _uploadFileBloc,
                 builder: (context, uploadFileState) {
                   if (uploadFileState is UploadFileProgress) {
@@ -188,7 +188,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
           FocusScope.of(context).requestFocus(FocusNode());
         },
         child: Scrollbar(
-          child: BlocBuilder<GroupMessagesEvent, GroupMessagesState>(
+          child: BlocBuilder<GroupMessagesBloc, GroupMessagesState>(
             bloc: _groupMessagesBloc,
             builder: (context, groupMessagesState) {
               if (groupMessagesState is GroupMessagesInitial) {

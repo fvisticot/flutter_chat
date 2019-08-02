@@ -48,7 +48,7 @@ class _SearchUserPageState extends State<SearchUserPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SearchUserEvent, SearchUserState>(
+    return BlocBuilder<SearchUserBloc, SearchUserState>(
         bloc: searchUserBloc,
         builder: (context, searchUserState) {
           if (searchUserState is SearchUserList) {

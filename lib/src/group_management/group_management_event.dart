@@ -8,7 +8,7 @@ class NavigateToGroup extends GroupManagementEvent {
   NavigateToGroup(this.groupId)
       : assert(groupId != null),
         super([groupId]);
-  String groupId;
+  final String groupId;
 
   @override
   String toString() => 'NavigateToGroup $groupId';
@@ -19,8 +19,8 @@ class CreateDuoGroup extends GroupManagementEvent {
       : assert(currentUid != null),
         assert(uid != null),
         super([currentUid, uid]);
-  String currentUid;
-  String uid;
+  final String currentUid;
+  final String uid;
 
   @override
   String toString() =>

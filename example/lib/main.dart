@@ -12,20 +12,20 @@ import 'authentication/authentication.dart';
 
 class SimpleBlocDelegate extends BlocDelegate {
   @override
-  void onTransition(Transition transition) {
+  void onTransition(Bloc bloc, Transition transition) {
+    super.onTransition(bloc, transition);
     print(transition);
-    super.onTransition(transition);
   }
 
   @override
-  void onError(Object error, StackTrace stacktrace) {
-    print(error);
-    super.onError(error, stacktrace);
+  void onError(Bloc bloc, Object error, StackTrace stacktrace) {
+    super.onError(bloc, error, stacktrace);
+    print('$error, $stacktrace');
   }
 }
 
 void main() {
-  BlocSupervisor().delegate = SimpleBlocDelegate();
+  BlocSupervisor.delegate = SimpleBlocDelegate();
   runApp(ChatDemoApp());
 }
 
@@ -38,30 +38,25 @@ class _ChatDemoAppState extends State<ChatDemoApp> {
   final GoogleSignIn googleSignIn = GoogleSignIn();
   final FirebaseApp app = FirebaseApp.instance;
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  AuthenticationBloc _authenticationBloc;
   FirebaseDatabase database;
   FirebaseChatService chatService;
 
   @override
-  void initState() {
-    database = FirebaseDatabase(app: app);
-    chatService = FirebaseChatService(database);
-    _authenticationBloc = AuthenticationBloc(
-      googleSignIn,
-      firebaseAuth,
-      chatService,
-    );
-    _authenticationBloc.dispatch(AppStarted());
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return BlocProvider<AuthenticationBloc>(
-      bloc: _authenticationBloc,
+      builder: (_) {
+        database = FirebaseDatabase(app: app);
+        chatService = FirebaseChatService(database);
+        final AuthenticationBloc _authenticationBloc = AuthenticationBloc(
+          googleSignIn,
+          firebaseAuth,
+          chatService,
+        )..dispatch(AppStarted());
+        return _authenticationBloc;
+      },
       child: MaterialApp(
-        home: BlocBuilder<AuthenticationEvent, AuthenticationState>(
-          bloc: _authenticationBloc,
+        home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+          bloc: BlocProvider.of<AuthenticationBloc>(context),
           builder: (BuildContext context, AuthenticationState state) {
             if (state is AuthenticationAuthenticated) {
               chatService.setDevicePushToken();
