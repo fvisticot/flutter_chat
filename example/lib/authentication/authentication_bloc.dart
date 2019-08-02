@@ -85,7 +85,7 @@ class AuthenticationBloc
 
     if (event is LoggedOut) {
       yield AuthenticationLoading();
-      chatService.setPresence(presence: false);
+      await chatService.setPresence(presence: false);
       await firebaseAuth.signOut();
       yield AuthenticationUnauthenticated();
     }

@@ -51,12 +51,12 @@ class _ChatDemoAppState extends State<ChatDemoApp> {
           googleSignIn,
           firebaseAuth,
           chatService,
-        )..dispatch(AppStarted());
+        );
+        _authenticationBloc.dispatch(AppStarted());
         return _authenticationBloc;
       },
       child: MaterialApp(
         home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-          bloc: BlocProvider.of<AuthenticationBloc>(context),
           builder: (BuildContext context, AuthenticationState state) {
             if (state is AuthenticationAuthenticated) {
               chatService.setDevicePushToken();
@@ -72,9 +72,10 @@ class _ChatDemoAppState extends State<ChatDemoApp> {
                 ),
                 child: Center(
                   child: const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator()),
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(),
+                  ),
                 ),
               );
             }

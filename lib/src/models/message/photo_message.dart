@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat/src/common/styles.dart';
 import 'package:flutter_chat/src/group_chat/photo_viewer.dart';
 import 'package:flutter_chat/src/models/message/message.dart';
 
@@ -47,7 +48,9 @@ class PhotoMessage extends Message {
           tag: photoUrl,
           child: CachedNetworkImage(
             placeholder: (context, url) => const SizedBox(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Styles.mainColor),
+              ),
               width: 20,
               height: 20,
             ),

@@ -85,13 +85,15 @@ class _SearchUserPageState extends State<SearchUserPage> {
   Widget _buildSearchBar() {
     return Container(
       child: Card(
+        elevation: 5,
         child: ListTile(
           leading: Icon(Icons.search),
           title: TextField(
             controller: _searchTextFieldEditingController,
             decoration: InputDecoration(
-                hintText: 'Rechercher un utilisateur',
-                border: InputBorder.none),
+              hintText: 'Rechercher un utilisateur',
+              border: InputBorder.none,
+            ),
           ),
           trailing: IconButton(
             icon: Icon(Icons.cancel),
@@ -107,7 +109,10 @@ class _SearchUserPageState extends State<SearchUserPage> {
 
   Widget _buildUserTile(userId, userName) {
     return ListTile(
-      title: Text(userName),
+      title: Text(
+        userName,
+        style: Styles.userTileText,
+      ),
       trailing: IconButton(
         icon: Icon(Icons.message),
         onPressed: () {

@@ -58,11 +58,15 @@ class _DiscussionsListPageState extends State<DiscussionsListPage> {
                 itemCount: discussionsListState.discussions.length,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    title: Text(discussions[index].title),
+                    title: Text(
+                      discussions[index].title,
+                      style: Styles.userTileText,
+                    ),
                     subtitle: Text(
                       discussions[index].lastMessage,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
+                      style: Styles.discussionLastMessageText,
                     ),
                     trailing: IconButton(
                       icon: Icon(Icons.message),
@@ -93,7 +97,9 @@ class _DiscussionsListPageState extends State<DiscussionsListPage> {
               child: const SizedBox(
                 width: 20,
                 height: 20,
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Styles.mainColor),
+                ),
               ),
             );
           }
