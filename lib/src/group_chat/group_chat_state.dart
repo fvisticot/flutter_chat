@@ -19,7 +19,7 @@ class GroupChatSuccess extends GroupChatState {
   GroupChatSuccess(this.group)
       : assert(group != null),
         super([group]);
-  Group group;
+  final Group group;
 
   @override
   String toString() => 'GroupChatSuccess $group';

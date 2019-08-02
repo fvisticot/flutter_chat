@@ -7,7 +7,7 @@ void main() {
   test('Text Message constructor with all parameters', () {
     const String text = 'msgTxt';
     const String userId = 'uid';
-    final DateTime dateTime = DateTime.now();
+    final DateTime dateTime = DateTime(2019);
     final TextMessage txtMsg = TextMessage(text, userId, timestamp: dateTime);
 
     expect(txtMsg.userId, userId);
@@ -31,7 +31,7 @@ void main() {
   test('TextMessage.fromMap', () {
     const String text = 'msgTxt';
     const String userId = 'uid';
-    final DateTime dateTime = DateTime.now();
+    final DateTime dateTime = DateTime(2019);
     final Map<String, dynamic> map = {
       'text': text,
       'userId': userId,
@@ -48,7 +48,7 @@ void main() {
   test('TextMessage.toJson', () {
     const String text = 'msgTxt';
     const String userId = 'uid';
-    final DateTime dateTime = DateTime.now();
+    final DateTime dateTime = DateTime(2019);
     final TextMessage txtMsg = TextMessage(text, userId, timestamp: dateTime);
 
     final Map<String, dynamic> json = txtMsg.toJson();
@@ -65,7 +65,7 @@ void main() {
       () {
     const String text = 'msgTxt';
     const String userId = 'uid';
-    final DateTime dateTime = DateTime.now();
+    final DateTime dateTime = DateTime(2019);
     final TextMessage txtMsg = TextMessage(text, userId, timestamp: dateTime);
 
     const bool isMine = true;
@@ -80,7 +80,7 @@ void main() {
       () {
     const String text = 'msgTxt';
     const String userId = 'uid';
-    final DateTime dateTime = DateTime.now();
+    final DateTime dateTime = DateTime(2019);
     final TextMessage txtMsg = TextMessage(text, userId, timestamp: dateTime);
 
     const bool isMine = false;
@@ -92,7 +92,7 @@ void main() {
   test('TextMessage.toString', () {
     const String text = 'msgTxt';
     const String userId = 'uid';
-    final DateTime dateTime = DateTime.now();
+    final DateTime dateTime = DateTime(2019);
     final TextMessage txtMsg = TextMessage(text, userId, timestamp: dateTime);
 
     expect(txtMsg.toString(),

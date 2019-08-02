@@ -13,12 +13,14 @@ void main() {
 
   setUp(() {
     chatService = MockChatService();
-    when(chatService.typingUsers(any))
-        .thenAnswer((_) => Future.value(Stream.fromIterable([])));
+    when(chatService.typingUsers('groupId')).thenAnswer(
+      (_) => Future.value(
+        Stream.fromIterable([]),
+      ),
+    );
     typingUsersBloc = TypingUsersBloc(
       chatService,
-      any,
-      any,
+      'groupId',
     );
   });
 
@@ -35,39 +37,23 @@ void main() {
   });
 
   test('emits [TypingUsersInitial, TypingUsersList] when users are Typing', () {
+    const List<String> names = ['testname1', 'testname2'];
     expectLater(
       typingUsersBloc.state,
       emitsInOrder([
         TypingUsersInitial(),
-        TypingUsersList(['testName']),
+        TypingUsersList(names),
       ]),
     );
-    typingUsersBloc.dispatch(TypingUsersEvent(['testName']));
+    typingUsersBloc.dispatch(TypingUsersEvent(names));
   });
-
-  /*test('emits [TypingUsersInitial, TypingUsersList] when users are Typing', () {
-    expectLater(
-      typingUsersBloc.state,
-      emitsInOrder([
-        TypingUsersInitial(),
-        TypingUsersList(['testName']),
-      ]),
-    ).then((_) {
-      expectLater(
-        typingUsersBloc.state,
-        emitsInOrder([emitsDone]),
-      );
-      typingUsersBloc.dispose();
-    });
-    typingUsersBloc.dispatch(TypingUsersEvent(['testName']));
-  });*/
-
   test('emits [TypingUsersInitial, TypingUsersList] when nobody is typing ',
       () {
+    const List<String> names = ['testname1', 'testname2'];
     expectLater(
       typingUsersBloc.state,
-      emitsInOrder([TypingUsersInitial(), TypingUsersList([])]),
+      emitsInOrder([TypingUsersInitial(), TypingUsersList(names)]),
     );
-    typingUsersBloc.dispatch(TypingUsersEvent([]));
+    typingUsersBloc.dispatch(TypingUsersEvent(names));
   });
 }

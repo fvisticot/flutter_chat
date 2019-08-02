@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chat/src/chat_service/chat_service.dart';
+import 'package:flutter_chat/src/common/styles.dart';
 import 'package:flutter_chat/src/group_messages/group_messages.dart';
 import 'package:flutter_chat/src/message_bar/message_bar_ui.dart';
 import 'package:flutter_chat/src/models/group.dart';
@@ -41,7 +42,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<GroupChatEvent, GroupChatState>(
+    return BlocBuilder<GroupChatBloc, GroupChatState>(
         bloc: _groupChatBloc,
         builder: (context, groupChatState) {
           if (groupChatState is GroupChatInitial) {
@@ -71,16 +72,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
               appBar: AppBar(
                 title: const Text('Chat'),
                 flexibleSpace: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.bottomLeft,
-                      end: Alignment.centerRight,
-                      colors: const [
-                        Color.fromRGBO(149, 152, 178, 1),
-                        Color.fromRGBO(90, 95, 129, 1)
-                      ],
-                    ),
-                  ),
+                  decoration: BoxDecoration(gradient: Styles.gradient),
                 ),
               ),
               body: Center(
@@ -93,7 +85,9 @@ class _GroupChatPageState extends State<GroupChatPage> {
                 child: const SizedBox(
                   width: 20,
                   height: 20,
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Styles.mainColor),
+                  ),
                 ),
               ),
             );
@@ -111,14 +105,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
         ),
         flexibleSpace: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.bottomLeft,
-              end: Alignment.centerRight,
-              colors: const [
-                Color.fromRGBO(149, 152, 178, 1),
-                Color.fromRGBO(90, 95, 129, 1)
-              ],
-            ),
+            gradient: Styles.gradient,
           ),
         ),
       );
@@ -152,19 +139,10 @@ class _GroupChatPageState extends State<GroupChatPage> {
           ],
         ),
         flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.bottomLeft,
-              end: Alignment.centerRight,
-              colors: const [
-                Color.fromRGBO(149, 152, 178, 1),
-                Color.fromRGBO(90, 95, 129, 1)
-              ],
-            ),
-          ),
+          decoration: BoxDecoration(gradient: Styles.gradient),
         ),
         bottom: PreferredSize(
-            child: BlocBuilder<UploadFileEvent, UploadFileState>(
+            child: BlocBuilder<UploadFileBloc, UploadFileState>(
                 bloc: _uploadFileBloc,
                 builder: (context, uploadFileState) {
                   if (uploadFileState is UploadFileProgress) {
@@ -188,7 +166,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
           FocusScope.of(context).requestFocus(FocusNode());
         },
         child: Scrollbar(
-          child: BlocBuilder<GroupMessagesEvent, GroupMessagesState>(
+          child: BlocBuilder<GroupMessagesBloc, GroupMessagesState>(
             bloc: _groupMessagesBloc,
             builder: (context, groupMessagesState) {
               if (groupMessagesState is GroupMessagesInitial) {

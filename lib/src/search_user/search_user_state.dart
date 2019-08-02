@@ -11,7 +11,7 @@ class SearchUserInitial extends SearchUserState {
 
 class SearchUserList extends SearchUserState {
   SearchUserList(this.users) : super([users]);
-  Map<String, String> users;
+  final Map<String, String> users;
 
   @override
   String toString() => 'SearchUserList $users';
@@ -19,7 +19,7 @@ class SearchUserList extends SearchUserState {
 
 class SearchUserGroupChat extends SearchUserState {
   SearchUserGroupChat(this.groupId) : super([groupId]);
-  String groupId;
+  final String groupId;
 
   @override
   String toString() => 'SearchUserGroupChat $groupId';

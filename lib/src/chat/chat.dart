@@ -5,6 +5,7 @@ import 'package:flutter_chat/src/chat/chat_event.dart';
 import 'package:flutter_chat/src/chat/chat_state.dart';
 import 'package:flutter_chat/src/chat_home/chat_home_page.dart';
 import 'package:flutter_chat/src/chat_service/chat_service.dart';
+import 'package:flutter_chat/src/common/styles.dart';
 import 'package:flutter_chat/src/group_chat/group_chat.dart';
 
 class Chat extends StatefulWidget {
@@ -34,7 +35,7 @@ class _ChatState extends State<Chat> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ChatEvent, ChatState>(
+    return BlocBuilder<ChatBloc, ChatState>(
       bloc: _chatBloc,
       builder: (BuildContext context, ChatState state) {
         if (state is ChatError) {
@@ -61,7 +62,12 @@ class _ChatState extends State<Chat> with WidgetsBindingObserver {
             ),
             child: Center(
               child: const SizedBox(
-                  width: 20, height: 20, child: CircularProgressIndicator()),
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Styles.mainColor),
+                ),
+              ),
             ),
           );
         }

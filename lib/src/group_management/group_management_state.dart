@@ -13,7 +13,7 @@ class NavigateToGroupState extends GroupManagementState {
   NavigateToGroupState(this.groupId)
       : assert(groupId != null),
         super([groupId]);
-  String groupId;
+  final String groupId;
 
   @override
   String toString() => 'NavigateToGroupState $groupId';

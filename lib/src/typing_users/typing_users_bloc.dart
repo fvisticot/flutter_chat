@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_chat/src/chat_service/chat_service.dart';
-import 'package:flutter_chat/src/models/user.dart';
 import 'package:flutter_chat/src/typing_users/typing_users_event.dart';
 import 'package:flutter_chat/src/typing_users/typing_users_state.dart';
 
 class TypingUsersBloc extends Bloc<TypingUsersEvent, TypingUsersState> {
-  TypingUsersBloc(this.chatService, this.groupId, this.currentUser) {
+  TypingUsersBloc(this.chatService, this.groupId) {
     chatService.typingUsers(groupId).then((typingUsersStream) {
       _subTypingUsers = typingUsersStream.listen((usersNames) {
         dispatch(TypingUsersEvent(usersNames));
@@ -15,7 +14,6 @@ class TypingUsersBloc extends Bloc<TypingUsersEvent, TypingUsersState> {
   }
   ChatService chatService;
   String groupId;
-  User currentUser;
   StreamSubscription _subTypingUsers;
 
   @override

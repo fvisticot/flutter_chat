@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chat/src/chat_service/firebase_chat_service.dart';
+import 'package:flutter_chat/src/common/styles.dart';
 import 'package:flutter_chat/src/discussions_list/discussions_list_page.dart';
 import 'package:flutter_chat/src/group_chat/group_chat_ui.dart';
 import 'package:flutter_chat/src/group_management/group_management.dart';
@@ -48,7 +49,7 @@ class _ChatHomePageState extends State<ChatHomePage>
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<GroupManagementEvent, GroupManagementState>(
+    return BlocBuilder<GroupManagementBloc, GroupManagementState>(
         bloc: groupManagementBloc,
         builder: (context, state) {
           if (state is CreatingGroupState) {
@@ -57,7 +58,9 @@ class _ChatHomePageState extends State<ChatHomePage>
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: const <Widget>[
-                  CircularProgressIndicator(),
+                  CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Styles.mainColor),
+                  ),
                   SizedBox(
                     height: 20,
                     width: 20,
@@ -69,33 +72,34 @@ class _ChatHomePageState extends State<ChatHomePage>
           } else {
             return Scaffold(
               appBar: AppBar(
-                  title: const Text('Chat'),
-                  centerTitle: true,
-                  flexibleSpace: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.bottomLeft,
-                        end: Alignment.centerRight,
-                        colors: const [
-                          Color.fromRGBO(149, 152, 178, 1),
-                          Color.fromRGBO(90, 95, 129, 1)
-                        ],
-                      ),
+                title: const Text('Chat'),
+                centerTitle: true,
+                flexibleSpace: Container(
+                  decoration: BoxDecoration(gradient: Styles.gradient),
+                ),
+                bottom: TabBar(
+                  controller: _tabController,
+                  isScrollable: false,
+                  indicatorColor: Colors.white,
+                  tabs: const [
+                    Tab(
+                      text: 'Discussions',
                     ),
-                  ),
-                  bottom: TabBar(
-                      controller: _tabController,
-                      isScrollable: false,
-                      indicatorColor: Colors.white,
-                      tabs: [
-                        Tab(icon: Icon(Icons.chat)),
-                        Tab(icon: Icon(Icons.search)),
-                      ])),
+                    Tab(text: 'Contacts'),
+                  ],
+                ),
+              ),
               body: TabBarView(controller: _tabController, children: <Widget>[
-                DiscussionsListPage(widget.firebaseRepository,
-                    groupManagementBloc, widget.currentUser),
-                SearchUserPage(widget.firebaseRepository, widget.currentUser,
-                    groupManagementBloc),
+                DiscussionsListPage(
+                  widget.firebaseRepository,
+                  groupManagementBloc,
+                  widget.currentUser,
+                ),
+                SearchUserPage(
+                  widget.firebaseRepository,
+                  widget.currentUser,
+                  groupManagementBloc,
+                ),
               ]),
             );
           }

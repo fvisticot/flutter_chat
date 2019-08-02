@@ -25,7 +25,7 @@ class _UserPresenceIndicatorState extends State<UserPresenceIndicator> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserPresenceEvent, UserPresenceState>(
+    return BlocBuilder<UserPresenceBloc, UserPresenceState>(
         bloc: _userPresenceBloc,
         builder: (context, userPresenceState) {
           return Container(

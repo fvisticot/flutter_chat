@@ -14,7 +14,7 @@ class ChatInitialized extends ChatState {
   ChatInitialized(this.user)
       : assert(user != null),
         super([user]);
-  User user;
+  final User user;
 
   @override
   String toString() => 'ChatInitialized $user';

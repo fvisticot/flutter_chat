@@ -12,7 +12,7 @@ class GroupMessagesInitial extends GroupMessagesState {
 
 class GroupMessagesError extends GroupMessagesState {
   GroupMessagesError({this.error}) : super([error]);
-  String error;
+  final String error;
 
   @override
   String toString() => 'GroupMessagesError $error';

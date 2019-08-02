@@ -12,7 +12,7 @@ class GetDiscussionsList extends DiscussionsListEvent {
 
 class SyncDiscussionsList extends DiscussionsListEvent {
   SyncDiscussionsList(this.discussions) : super([discussions]);
-  List<Discussion> discussions;
+  final List<Discussion> discussions;
 
   @override
   String toString() => 'SyncDiscussionsList';
