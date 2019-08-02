@@ -26,7 +26,7 @@ class _TypingUsersState extends State<TypingUsers> {
   @override
   void initState() {
     _typingUsersBloc =
-        TypingUsersBloc(widget.chatService, widget.groupId, widget.currentUser);
+        TypingUsersBloc(widget.chatService, widget.groupId);
     super.initState();
   }
 

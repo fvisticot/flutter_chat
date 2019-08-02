@@ -7,7 +7,7 @@ void main() {
   test('PhotoMessage constructor with all parameters', () {
     const String photoUrl = 'photoUrl';
     const String userId = 'uid';
-    final DateTime dateTime = DateTime.now();
+    final DateTime dateTime = DateTime(2019);
     final PhotoMessage photoMessage =
         PhotoMessage(photoUrl, userId, timestamp: dateTime);
 
@@ -34,7 +34,7 @@ void main() {
   test('PhotoMessage.fromMap', () {
     const String photoUrl = 'photoUrl';
     const String userId = 'uid';
-    final DateTime dateTime = DateTime.now();
+    final DateTime dateTime = DateTime(2019);
 
     final Map<String, dynamic> map = {
       'photoUrl': photoUrl,
@@ -52,7 +52,7 @@ void main() {
   test('PhotoMessage.toJson', () {
     const String photoUrl = 'photoUrl';
     const String userId = 'uid';
-    final DateTime dateTime = DateTime.now();
+    final DateTime dateTime = DateTime(2019);
     final PhotoMessage photoMessage =
         PhotoMessage(photoUrl, userId, timestamp: dateTime);
 
@@ -71,7 +71,7 @@ void main() {
       () {
     const String photoUrl = 'photoUrl';
     const String userId = 'uid';
-    final DateTime dateTime = DateTime.now();
+    final DateTime dateTime = DateTime(2019);
     final PhotoMessage photoMessage =
         PhotoMessage(photoUrl, userId, timestamp: dateTime);
 
@@ -87,7 +87,7 @@ void main() {
       () {
     const String photoUrl = 'photoUrl';
     const String userId = 'uid';
-    final DateTime dateTime = DateTime.now();
+    final DateTime dateTime = DateTime(2019);
     final PhotoMessage photoMessage =
         PhotoMessage(photoUrl, userId, timestamp: dateTime);
 
@@ -101,7 +101,7 @@ void main() {
   test('TextMessage.toString', () {
     const String photoUrl = 'photoUrl';
     const String userId = 'uid';
-    final DateTime dateTime = DateTime.now();
+    final DateTime dateTime = DateTime(2019);
     final PhotoMessage photoMessage =
         PhotoMessage(photoUrl, userId, timestamp: dateTime);
 

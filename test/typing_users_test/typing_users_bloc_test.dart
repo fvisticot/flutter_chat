@@ -13,12 +13,14 @@ void main() {
 
   setUp(() {
     chatService = MockChatService();
-    when(chatService.typingUsers(any))
-        .thenAnswer((_) => Future.value(Stream.fromIterable([])));
+    when(chatService.typingUsers('groupId')).thenAnswer(
+      (_) => Future.value(
+        Stream.fromIterable([]),
+      ),
+    );
     typingUsersBloc = TypingUsersBloc(
       chatService,
-      any,
-      any,
+      'groupId',
     );
   });
 
@@ -44,24 +46,6 @@ void main() {
     );
     typingUsersBloc.dispatch(TypingUsersEvent(['testName']));
   });
-
-  /*test('emits [TypingUsersInitial, TypingUsersList] when users are Typing', () {
-    expectLater(
-      typingUsersBloc.state,
-      emitsInOrder([
-        TypingUsersInitial(),
-        TypingUsersList(['testName']),
-      ]),
-    ).then((_) {
-      expectLater(
-        typingUsersBloc.state,
-        emitsInOrder([emitsDone]),
-      );
-      typingUsersBloc.dispose();
-    });
-    typingUsersBloc.dispatch(TypingUsersEvent(['testName']));
-  });*/
-
   test('emits [TypingUsersInitial, TypingUsersList] when nobody is typing ',
       () {
     expectLater(
