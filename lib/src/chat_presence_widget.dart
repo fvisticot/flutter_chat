@@ -26,8 +26,9 @@ class _ChatPresenceWidgetState extends State<ChatPresenceWidget>
     with WidgetsBindingObserver {
   @override
   void initState() {
-    WidgetsBinding.instance.addObserver(this);
     super.initState();
+    widget.chatService.initPresence();
+    WidgetsBinding.instance.addObserver(this);
   }
 
   /// Set user presence when app is in foreground
@@ -37,10 +38,8 @@ class _ChatPresenceWidgetState extends State<ChatPresenceWidget>
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
       widget.chatService.setPresence(presence: true);
-      print('App resumed');
     } else {
       widget.chatService.setPresence(presence: false);
-      print('App in background');
     }
   }
 

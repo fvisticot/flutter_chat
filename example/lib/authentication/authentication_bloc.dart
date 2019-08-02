@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_chat/flutter_chat.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:bloc/bloc.dart';
@@ -85,7 +86,7 @@ class AuthenticationBloc
 
     if (event is LoggedOut) {
       yield AuthenticationLoading();
-      await chatService.setPresence(presence: false);
+      chatService.setPresence(presence: false);
       await firebaseAuth.signOut();
       yield AuthenticationUnauthenticated();
     }
