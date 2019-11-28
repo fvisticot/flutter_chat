@@ -2,26 +2,32 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_chat/src/models/message/message.dart';
 
 abstract class GroupMessagesState extends Equatable {
-  GroupMessagesState([List props = const []]) : super(props);
+  const GroupMessagesState();
 }
 
 class GroupMessagesInitial extends GroupMessagesState {
   @override
   String toString() => 'GroupMessagesInitial';
+  @override
+  List<Object> get props => [];
 }
 
 class GroupMessagesError extends GroupMessagesState {
-  GroupMessagesError({this.error}) : super([error]);
+  const GroupMessagesError({this.error});
   final String error;
 
   @override
-  String toString() => 'GroupMessagesError $error';
+  String toString() => 'GroupMessagesError{error: $error}';
+  @override
+  List<Object> get props => [error];
 }
 
 class GroupMessagesSuccess extends GroupMessagesState {
-  GroupMessagesSuccess(this.messages) : super([messages]);
+  const GroupMessagesSuccess(this.messages);
   final List<Message> messages;
 
   @override
-  String toString() => 'GroupMessagesSuccess';
+  String toString() => 'GroupMessagesSuccess{messages: $messages}';
+  @override
+  List<Object> get props => [messages];
 }

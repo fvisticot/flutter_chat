@@ -34,7 +34,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
   void initState() {
     super.initState();
     _groupChatBloc = GroupChatBloc(widget.chatService, widget.groupId);
-    _groupChatBloc.dispatch(GroupChatStarted(widget.groupId));
+    _groupChatBloc.add(GroupChatStarted(widget.groupId));
     _groupMessagesBloc = GroupMessagesBloc(widget.chatService, widget.groupId);
     _uploadFileBloc = UploadFileBloc();
     _scrollController = ScrollController();

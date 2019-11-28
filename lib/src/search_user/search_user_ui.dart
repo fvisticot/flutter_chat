@@ -37,7 +37,7 @@ class _SearchUserPageState extends State<SearchUserPage> {
 
   void searchListener() {
     searchUserBloc
-        .dispatch(SearchUserWithName(_searchTextFieldEditingController.text));
+        .add(SearchUserWithName(_searchTextFieldEditingController.text));
   }
 
   @override
@@ -49,47 +49,59 @@ class _SearchUserPageState extends State<SearchUserPage> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SearchUserBloc, SearchUserState>(
-        bloc: searchUserBloc,
-        builder: (context, searchUserState) {
-          if (searchUserState is SearchUserList) {
-            final List<String> keys = searchUserState.users.keys.toList();
-            return Column(
-              children: <Widget>[
-                _buildSearchBar(),
-                (searchUserState.users.isNotEmpty)
-                    ? Expanded(
-                        child: ListView.builder(
-                        itemCount: searchUserState.users.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          if (keys[index] != widget.currentUser.id) {
-                            return _buildUserTile(keys[index],
-                                searchUserState.users[keys[index]]);
-                          } else {
-                            return Container();
-                          }
-                        },
-                      ))
-                    : Container()
-              ],
-            );
-          } else {
-            _searchTextFieldEditingController.clear();
-
-            return Column(
-              children: <Widget>[_buildSearchBar()],
-            );
-          }
-        });
+      bloc: searchUserBloc,
+      builder: (context, searchUserState) {
+        if (searchUserState is SearchUserList) {
+          final List<String> keys = searchUserState.users.keys.toList();
+          return Column(
+            children: <Widget>[
+              _SearchBar(controller: _searchTextFieldEditingController),
+              (searchUserState.users.isNotEmpty)
+                  ? Expanded(
+                      child: ListView.builder(
+                      itemCount: searchUserState.users.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        if (keys[index] != widget.currentUser.id) {
+                          return _UserTile(
+                            bloc: searchUserBloc,
+                            userName: searchUserState.users[keys[index]],
+                            currentUid: widget.currentUser.id,
+                            uid: keys[index],
+                          );
+                        } else {
+                          return Container();
+                        }
+                      },
+                    ))
+                  : Container()
+            ],
+          );
+        } else {
+          _searchTextFieldEditingController.clear();
+          return Column(
+            children: <Widget>[
+              _SearchBar(controller: _searchTextFieldEditingController),
+            ],
+          );
+        }
+      },
+    );
   }
+}
 
-  Widget _buildSearchBar() {
+class _SearchBar extends StatelessWidget {
+  const _SearchBar({Key key, @required this.controller}) : super(key: key);
+  final TextEditingController controller;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       child: Card(
         elevation: 5,
         child: ListTile(
           leading: Icon(Icons.search),
           title: TextField(
-            controller: _searchTextFieldEditingController,
+            controller: controller,
             decoration: InputDecoration(
               hintText: 'Rechercher un utilisateur',
               border: InputBorder.none,
@@ -98,7 +110,7 @@ class _SearchUserPageState extends State<SearchUserPage> {
           trailing: IconButton(
             icon: Icon(Icons.cancel),
             onPressed: () {
-              _searchTextFieldEditingController.clear();
+              controller.clear();
             },
             color: Styles.mainColor,
           ),
@@ -106,20 +118,34 @@ class _SearchUserPageState extends State<SearchUserPage> {
       ),
     );
   }
+}
 
-  Widget _buildUserTile(userId, userName) {
+class _UserTile extends StatelessWidget {
+  const _UserTile({
+    Key key,
+    @required this.bloc,
+    @required this.userName,
+    @required this.currentUid,
+    @required this.uid,
+  }) : super(key: key);
+  final SearchUserBloc bloc;
+  final String userName;
+  final String currentUid;
+  final String uid;
+  @override
+  Widget build(BuildContext context) {
     return ListTile(
       title: Text(
         userName,
         style: Styles.userTileText,
       ),
-      trailing: IconButton(
-        icon: Icon(Icons.message),
-        onPressed: () {
-          searchUserBloc.dispatch(ChatWithUser(widget.currentUser.id, userId));
-        },
+      trailing: Icon(
+        Icons.message,
         color: Styles.mainColor,
       ),
+      onTap: () {
+        bloc.add(ChatWithUser(currentUid, uid));
+      },
     );
   }
 }

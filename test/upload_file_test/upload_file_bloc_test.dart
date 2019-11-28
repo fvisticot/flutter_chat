@@ -17,7 +17,7 @@ void main() {
       uploadFileBloc.state,
       emitsInOrder([]),
     );
-    uploadFileBloc.dispose();
+    uploadFileBloc.close();
   });
 
   test(
@@ -25,9 +25,9 @@ void main() {
       () {
     expectLater(
       uploadFileBloc.state,
-      emitsInOrder([UploadFileInitial(), UploadFileProgress(10.2)]),
+      emitsInOrder([UploadFileInitial(), const UploadFileProgress(10.2)]),
     );
-    uploadFileBloc.dispatch(UploadFileEvent(10.2));
+    uploadFileBloc.add(const UploadFileEvent(10.2));
   });
 
   test(
@@ -35,10 +35,13 @@ void main() {
       () {
     expectLater(
       uploadFileBloc.state,
-      emitsInOrder(
-          [UploadFileInitial(), UploadFileProgress(10.2), UploadFileInitial()]),
+      emitsInOrder([
+        UploadFileInitial(),
+        const UploadFileProgress(10.2),
+        UploadFileInitial()
+      ]),
     );
-    uploadFileBloc.dispatch(UploadFileEvent(10.2));
-    uploadFileBloc.dispatch(UploadFileEvent(-1));
+    uploadFileBloc.add(const UploadFileEvent(10.2));
+    uploadFileBloc.add(const UploadFileEvent(-1));
   });
 }

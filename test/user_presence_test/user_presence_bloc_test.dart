@@ -26,9 +26,9 @@ void main() {
     expectLater(
       userPresenceBloc.state,
       emitsInOrder(
-          [UserPresenceLoading(), UserPresenceIsOnline(isOnline: true)]),
+          [UserPresenceLoading(), const UserPresenceIsOnline(isOnline: true)]),
     );
-    userPresenceBloc.dispatch(UserPresenceEvent(isOnline: true));
+    userPresenceBloc.add(const UserPresenceEvent(isOnline: true));
   });
 
   test(
@@ -37,8 +37,8 @@ void main() {
     expectLater(
       userPresenceBloc.state,
       emitsInOrder(
-          [UserPresenceLoading(), UserPresenceIsOnline(isOnline: false)]),
+          [UserPresenceLoading(), const UserPresenceIsOnline(isOnline: false)]),
     );
-    userPresenceBloc.dispatch(UserPresenceEvent(isOnline: false));
+    userPresenceBloc.add(const UserPresenceEvent(isOnline: false));
   });
 }

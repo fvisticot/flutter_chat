@@ -44,7 +44,7 @@ class _ChatDemoAppState extends State<ChatDemoApp> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<AuthenticationBloc>(
-      builder: (_) {
+      create: (_) {
         database = FirebaseDatabase(app: app);
         chatService = FirebaseChatService(database);
         final AuthenticationBloc _authenticationBloc = AuthenticationBloc(
@@ -52,7 +52,7 @@ class _ChatDemoAppState extends State<ChatDemoApp> {
           firebaseAuth,
           chatService,
         );
-        _authenticationBloc.dispatch(AppStarted());
+        _authenticationBloc.add(AppStarted());
         return _authenticationBloc;
       },
       child: MaterialApp(

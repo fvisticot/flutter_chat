@@ -33,12 +33,12 @@ class _DiscussionsListPageState extends State<DiscussionsListPage> {
       widget.groupManagementBloc,
       widget.currentUser.id,
     );
-    _discussionsListBloc.dispatch(GetDiscussionsList());
+    _discussionsListBloc.add(GetDiscussionsList());
   }
 
   @override
   void dispose() {
-    _discussionsListBloc.dispose();
+    _discussionsListBloc.close();
     super.dispose();
   }
 
@@ -71,14 +71,14 @@ class _DiscussionsListPageState extends State<DiscussionsListPage> {
                     trailing: IconButton(
                       icon: Icon(Icons.message),
                       onPressed: () {
-                        _discussionsListBloc.groupManagementBloc.dispatch(
-                            NavigateToGroup(discussions[index].groupId));
+                        _discussionsListBloc.groupManagementBloc
+                            .add(NavigateToGroup(discussions[index].groupId));
                       },
                       color: Styles.mainColor,
                     ),
                     onTap: () {
-                      _discussionsListBloc.groupManagementBloc.dispatch(
-                          NavigateToGroup(discussions[index].groupId));
+                      _discussionsListBloc.groupManagementBloc
+                          .add(NavigateToGroup(discussions[index].groupId));
                     },
                   );
                 },

@@ -1,28 +1,28 @@
 import 'package:equatable/equatable.dart';
 
-class SearchUserEvent extends Equatable {
-  SearchUserEvent([List props = const []]) : super(props);
+abstract class SearchUserEvent extends Equatable {
+  const SearchUserEvent();
 }
 
 class SearchUserWithName extends SearchUserEvent {
-  SearchUserWithName(this.searchName)
-      : assert(searchName != null),
-        super([searchName]);
+  const SearchUserWithName(this.searchName) : assert(searchName != null);
   final String searchName;
 
   @override
-  String toString() => 'SearchUserWithName $searchName';
+  String toString() => 'SearchUserWithName{search: $searchName}';
+  @override
+  List<Object> get props => [searchName];
 }
 
 class ChatWithUser extends SearchUserEvent {
-  ChatWithUser(this.currentUid, this.uid)
+  const ChatWithUser(this.currentUid, this.uid)
       : assert(currentUid != null),
-        assert(uid != null),
-        super([currentUid, uid]);
+        assert(uid != null);
   final String currentUid;
   final String uid;
 
   @override
-  String toString() =>
-      'ChatWithUser current user id : $currentUid, other user id : $uid';
+  String toString() => 'ChatWithUser{currentUid : $currentUid, uid : $uid}';
+  @override
+  List<Object> get props => [currentUid, uid];
 }

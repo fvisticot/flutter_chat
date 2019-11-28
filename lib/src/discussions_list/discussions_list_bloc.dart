@@ -18,12 +18,12 @@ class DiscussionsListBloc
       (discussionsStream) {
         _subDiscussions = discussionsStream.listen(
           (discussions) {
-            dispatch(SyncDiscussionsList(discussions));
+            add(SyncDiscussionsList(discussions));
           },
         );
       },
       onError: (e) {
-        dispatch(ErrorSyncDiscussionsList());
+        add(ErrorSyncDiscussionsList());
       },
     );
   }
@@ -44,8 +44,8 @@ class DiscussionsListBloc
   }
 
   @override
-  void dispose() {
-    _subDiscussions.cancel();
-    super.dispose();
+  Future<void> close() async {
+    _subDiscussions?.cancel();
+    super.close();
   }
 }

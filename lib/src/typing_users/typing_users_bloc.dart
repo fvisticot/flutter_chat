@@ -8,7 +8,7 @@ class TypingUsersBloc extends Bloc<TypingUsersEvent, TypingUsersState> {
   TypingUsersBloc(this.chatService, this.groupId) {
     chatService.typingUsers(groupId).then((typingUsersStream) {
       _subTypingUsers = typingUsersStream.listen((usersNames) {
-        dispatch(TypingUsersEvent(usersNames));
+        add(TypingUsersEvent(usersNames));
       });
     });
   }
@@ -27,8 +27,8 @@ class TypingUsersBloc extends Bloc<TypingUsersEvent, TypingUsersState> {
   }
 
   @override
-  void dispose() {
-    _subTypingUsers.cancel();
-    super.dispose();
+  Future<void> close() async {
+    _subTypingUsers?.cancel();
+    super.close();
   }
 }

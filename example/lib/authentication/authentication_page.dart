@@ -24,7 +24,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       ),
       body: Center(
         child: RaisedButton(
-          onPressed: () => _authBloc.dispatch(LogIn()),
+          onPressed: () => _authBloc.add(LogIn()),
           child: const Text('Sign In With Google'),
         ),
       ),

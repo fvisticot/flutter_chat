@@ -23,13 +23,13 @@ class _ChatState extends State<Chat> with WidgetsBindingObserver {
   @override
   void initState() {
     _chatBloc = ChatBloc(widget.chatService);
-    _chatBloc.dispatch(ChatStarted());
+    _chatBloc.add(ChatStarted());
     super.initState();
   }
 
   @override
   void dispose() {
-    _chatBloc.dispose();
+    _chatBloc.close();
     super.dispose();
   }
 

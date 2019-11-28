@@ -11,7 +11,7 @@ void main() {
       'UserPresenceIsOnline toString method should return : "UserPresenceIsOnline [isOnline]"',
       () {
     const bool isOnline = true;
-    final UserPresenceIsOnline userPresenceIsOnline =
+    const UserPresenceIsOnline userPresenceIsOnline =
         UserPresenceIsOnline(isOnline: isOnline);
     expect(userPresenceIsOnline.toString(), 'UserPresenceIsOnline $isOnline');
   });

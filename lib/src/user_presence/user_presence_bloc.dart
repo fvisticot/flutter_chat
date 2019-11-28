@@ -7,7 +7,7 @@ class UserPresenceBloc extends Bloc<UserPresenceEvent, UserPresenceState> {
   UserPresenceBloc(this.chatService, this.userId) {
     _subUserPresence =
         chatService.userPresenceStream(userId).listen((isOnline) {
-      dispatch(UserPresenceEvent(isOnline: isOnline));
+      add(UserPresenceEvent(isOnline: isOnline));
     });
   }
   ChatService chatService;
@@ -25,8 +25,8 @@ class UserPresenceBloc extends Bloc<UserPresenceEvent, UserPresenceState> {
   }
 
   @override
-  void dispose() {
-    _subUserPresence.cancel();
-    super.dispose();
+  Future<void> close() async {
+    _subUserPresence?.cancel();
+    super.close();
   }
 }
