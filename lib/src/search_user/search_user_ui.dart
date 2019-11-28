@@ -37,7 +37,7 @@ class _SearchUserPageState extends State<SearchUserPage> {
 
   void searchListener() {
     searchUserBloc
-        .dispatch(SearchUserWithName(_searchTextFieldEditingController.text));
+        .add(SearchUserWithName(_searchTextFieldEditingController.text));
   }
 
   @override
@@ -116,7 +116,7 @@ class _SearchUserPageState extends State<SearchUserPage> {
       trailing: IconButton(
         icon: Icon(Icons.message),
         onPressed: () {
-          searchUserBloc.dispatch(ChatWithUser(widget.currentUser.id, userId));
+          searchUserBloc.add(ChatWithUser(widget.currentUser.id, userId));
         },
         color: Styles.mainColor,
       ),

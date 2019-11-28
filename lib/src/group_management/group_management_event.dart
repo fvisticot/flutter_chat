@@ -1,28 +1,28 @@
 import 'package:equatable/equatable.dart';
 
-class GroupManagementEvent extends Equatable {
-  GroupManagementEvent([List props = const []]) : super(props);
+abstract class GroupManagementEvent extends Equatable {
+  const GroupManagementEvent();
 }
 
 class NavigateToGroup extends GroupManagementEvent {
-  NavigateToGroup(this.groupId)
-      : assert(groupId != null),
-        super([groupId]);
+  const NavigateToGroup(this.groupId) : assert(groupId != null);
   final String groupId;
 
   @override
-  String toString() => 'NavigateToGroup $groupId';
+  String toString() => 'NavigateToGroup{groupId: $groupId}';
+  @override
+  List<Object> get props => [groupId];
 }
 
 class CreateDuoGroup extends GroupManagementEvent {
-  CreateDuoGroup(this.currentUid, this.uid)
+  const CreateDuoGroup(this.currentUid, this.uid)
       : assert(currentUid != null),
-        assert(uid != null),
-        super([currentUid, uid]);
+        assert(uid != null);
   final String currentUid;
   final String uid;
 
   @override
-  String toString() =>
-      'CreateDuoGroup current user id : $currentUid, other user id : $uid';
+  String toString() => 'CreateDuoGroup{currentId: $currentUid, uid: $uid}';
+  @override
+  List<Object> get props => [currentUid, uid];
 }

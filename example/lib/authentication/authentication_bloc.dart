@@ -48,8 +48,9 @@ class AuthenticationBloc
           accessToken: googleAuth.accessToken,
           idToken: googleAuth.idToken,
         );
-        final FirebaseUser user =
+        final AuthResult authRes =
             await firebaseAuth.signInWithCredential(credential);
+        final FirebaseUser user = authRes.user;
         final FirebaseUser currentUser = await firebaseAuth.currentUser();
         if (user.uid != currentUser.uid) {
           throw Exception();

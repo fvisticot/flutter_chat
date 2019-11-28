@@ -56,7 +56,7 @@ class _MessageBarState extends State<MessageBar> {
   void _isTyping() {
     if (_textMessageController.text.length <= 1) {
       _messageBarBloc
-          .dispatch(IsTyping(isTyping: _textMessageController.text.isNotEmpty));
+          .add(IsTyping(isTyping: _textMessageController.text.isNotEmpty));
     }
   }
 
@@ -79,8 +79,7 @@ class _MessageBarState extends State<MessageBar> {
                             maxHeight: 750,
                           );
                           if (imageFile != null) {
-                            _messageBarBloc
-                                .dispatch(StoreImageEvent(imageFile));
+                            _messageBarBloc.add(StoreImageEvent(imageFile));
                           }
                         } catch (e) {
                           print(e);
@@ -100,7 +99,7 @@ class _MessageBarState extends State<MessageBar> {
                           maxHeight: 750,
                         );
                         if (imageFile != null) {
-                          _messageBarBloc.dispatch(StoreImageEvent(imageFile));
+                          _messageBarBloc.add(StoreImageEvent(imageFile));
                         }
                       } catch (e) {
                         print(e);
@@ -152,7 +151,7 @@ class _MessageBarState extends State<MessageBar> {
                       if (_textMessageController.text.isNotEmpty) {
                         final Message message = TextMessage(
                             _textMessageController.text, widget.currentUser.id);
-                        _messageBarBloc.dispatch(SendMessageEvent(message));
+                        _messageBarBloc.add(SendMessageEvent(message));
                         _textMessageController.clear();
                       }
                     },

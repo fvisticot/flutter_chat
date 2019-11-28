@@ -26,8 +26,10 @@ class HeroPhotoViewWrapper extends StatelessWidget {
             backgroundDecoration: backgroundDecoration,
             minScale: 0.5,
             maxScale: 2.0,
-            heroTag: heroTag,
-            transitionOnUserGestures: true,
+            heroAttributes: PhotoViewHeroAttributes(
+              tag: heroTag,
+              transitionOnUserGestures: true,
+            ),
             onTapUp: (context, details, controller) {
               Navigator.of(context).pop();
             }));

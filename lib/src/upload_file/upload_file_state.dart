@@ -1,20 +1,22 @@
 import 'package:equatable/equatable.dart';
 
-class UploadFileState extends Equatable {
-  UploadFileState([List props = const []]) : super(props);
+abstract class UploadFileState extends Equatable {
+  const UploadFileState();
 }
 
 class UploadFileProgress extends UploadFileState {
-  UploadFileProgress(this.progress)
-      : assert(progress != null),
-        super([progress]);
+  const UploadFileProgress(this.progress) : assert(progress != null);
   final double progress;
 
   @override
-  String toString() => 'UploadFileProgress $progress';
+  String toString() => 'UploadFileProgress{progress: $progress}';
+  @override
+  List<Object> get props => [progress];
 }
 
 class UploadFileInitial extends UploadFileState {
   @override
   String toString() => 'UploadFileInitial';
+  @override
+  List<Object> get props => [];
 }

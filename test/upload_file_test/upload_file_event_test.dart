@@ -11,7 +11,7 @@ void main() {
       'UploadFileEvent toString method should return : "UploadFileEvent [progress]"',
       () {
     const double progress = 10.2;
-    final UploadFileEvent uploadFileEvent = UploadFileEvent(progress);
+    const UploadFileEvent uploadFileEvent = UploadFileEvent(progress);
     expect(uploadFileEvent.toString(), 'UploadFileEvent $progress');
   });
 }

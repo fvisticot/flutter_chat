@@ -35,7 +35,7 @@ class PreChat extends StatelessWidget {
                 height: 50,
               ),
               RaisedButton(
-                onPressed: () => _authBloc.dispatch(LoggedOut()),
+                onPressed: () => _authBloc.add(LoggedOut()),
                 child: const Text('Logout'),
               ),
             ],

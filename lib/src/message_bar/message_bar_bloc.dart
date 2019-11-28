@@ -25,14 +25,14 @@ class MessageBarBloc extends Bloc<MessageBarEvent, MessageBarState> {
   UploadFileBloc uploadFileBloc;
   bool _isTyping;
   StreamSubscription _storeFileProgress;
-  
+
   @override
   MessageBarState get initialState => MessageBarInitial();
 
   @override
-  void dispose() {
-    _storeFileProgress.cancel();
-    super.dispose();
+  Future<void> close() async {
+    _storeFileProgress?.cancel();
+    super.close();
   }
 
   @override
@@ -47,14 +47,14 @@ class MessageBarBloc extends Bloc<MessageBarEvent, MessageBarState> {
             .storeFileStream(filename, event.imageFile)
             .listen((fileUpload) {
           if (fileUpload.downloadUrl == null) {
-            uploadFileBloc.dispatch(UploadFileEvent(fileUpload.progress));
+            uploadFileBloc.add(UploadFileEvent(fileUpload.progress));
           } else {
             final Message message = PhotoMessage(
               fileUpload.downloadUrl,
               currentUser.id,
             );
-            dispatch(SendMessageEvent(message));
-            uploadFileBloc.dispatch(UploadFileEvent(-1));
+            add(SendMessageEvent(message));
+            uploadFileBloc.add(const UploadFileEvent(-1));
           }
         });
       }
