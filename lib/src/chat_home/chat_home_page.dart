@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chat/src/chat_service/firebase_chat_service.dart';
 import 'package:flutter_chat/src/common/styles.dart';
+import 'package:flutter_chat/src/discussions_list/discussions_list_page.dart';
 import 'package:flutter_chat/src/group_chat/group_chat_ui.dart';
 import 'package:flutter_chat/src/group_management/group_management.dart';
 import 'package:flutter_chat/src/models/user.dart';
+import 'package:flutter_chat/src/search_user/search_user_ui.dart';
 
 class ChatHomePage extends StatefulWidget {
   const ChatHomePage(this.firebaseRepository, this.currentUser)
@@ -99,6 +101,18 @@ class _ChatHomePageState extends State<ChatHomePage>
                     ],
                   ),
                 ),
+                body: TabBarView(controller: _tabController, children: <Widget>[
+                  DiscussionsListPage(
+                    widget.firebaseRepository,
+                    groupManagementBloc,
+                    widget.currentUser,
+                  ),
+                  SearchUserPage(
+                    widget.firebaseRepository,
+                    widget.currentUser,
+                    groupManagementBloc,
+                  ),
+                ]),
               );
             }
           }),

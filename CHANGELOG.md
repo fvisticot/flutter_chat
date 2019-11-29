@@ -1,3 +1,7 @@
+## [0.1.1] - 28/11/2019
+
+- Fixes
+
 ## [0.1.0] - 28/11/2019
 
 - updated all dependencies
