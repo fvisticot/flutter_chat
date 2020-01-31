@@ -38,8 +38,8 @@ class _ChatHomePageState extends State<ChatHomePage>
   @override
   void dispose() {
     _tabController.dispose();
-    stateStream.cancel();
-    groupManagementBloc.close();
+    stateStream?.cancel();
+    groupManagementBloc?.close();
     super.dispose();
   }
 
