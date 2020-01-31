@@ -1,39 +1,38 @@
 import 'dart:io';
-
 import 'package:equatable/equatable.dart';
 import 'package:flutter_chat/src/models/message/message.dart';
+import 'package:meta/meta.dart';
 
 abstract class MessageBarEvent extends Equatable {
-  MessageBarEvent([List props = const []]) : super(props);
+  const MessageBarEvent();
 }
 
 class IsTyping extends MessageBarEvent {
+  const IsTyping({@required this.isTyping}) : assert(isTyping != null);
   final bool isTyping;
 
-  IsTyping(this.isTyping)
-      : assert(isTyping != null),
-        super([isTyping]);
-
   @override
-  String toString() => 'IsTyping $isTyping';
+  String toString() => 'IsTyping{isTyping: $isTyping}';
+  @override
+  List<Object> get props => [isTyping];
 }
 
 class SendMessageEvent extends MessageBarEvent {
+  const SendMessageEvent(this.message) : assert(message != null);
   final Message message;
 
-  SendMessageEvent(this.message)
-      : assert(message != null),
-        super([message]);
   @override
-  String toString() => 'SendMessageEvent';
+  String toString() => 'SendMessageEvent{message: $message';
+  @override
+  List<Object> get props => [message];
 }
 
 class StoreImageEvent extends MessageBarEvent {
+  const StoreImageEvent(this.imageFile) : assert(imageFile != null);
   final File imageFile;
 
-  StoreImageEvent(this.imageFile)
-      : assert(imageFile != null),
-        super([imageFile]);
   @override
-  String toString() => 'StoreImageEvent $imageFile';
+  String toString() => 'StoreImageEvent{imageFile: $imageFile}';
+  @override
+  List<Object> get props => [imageFile];
 }

@@ -5,21 +5,22 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('Text Message constructor with all parameters', () {
-    String text = 'msgTxt';
-    String userId = 'uid';
-    DateTime dateTime = DateTime.now();
-    TextMessage txtMsg = TextMessage(text, userId, timestamp: dateTime);
+    const String text = 'msgTxt';
+    const String userId = 'uid';
+    final DateTime dateTime = DateTime(2019);
+    final TextMessage txtMsg = TextMessage(text, userId, timestamp: dateTime);
 
     expect(txtMsg.userId, userId);
     expect(txtMsg.text, text);
     expect(txtMsg.type, MessageType.text);
-    expect(txtMsg.timestamp, dateTime);
+    expect(txtMsg.timestamp.millisecondsSinceEpoch,
+        dateTime.millisecondsSinceEpoch);
   });
 
   test('Text Message constructor without timestamp', () {
-    String text = 'msgTxt';
-    String userId = 'uid';
-    TextMessage txtMsg = TextMessage(text, userId);
+    const String text = 'msgTxt';
+    const String userId = 'uid';
+    final TextMessage txtMsg = TextMessage(text, userId);
 
     expect(txtMsg.userId, userId);
     expect(txtMsg.text, text);
@@ -28,15 +29,15 @@ void main() {
   });
 
   test('TextMessage.fromMap', () {
-    String text = 'msgTxt';
-    String userId = 'uid';
-    DateTime dateTime = DateTime.now();
-    Map<String, dynamic> map = {
-      "text": text,
-      "userId": userId,
-      "timestamp": dateTime.toIso8601String()
+    const String text = 'msgTxt';
+    const String userId = 'uid';
+    final DateTime dateTime = DateTime(2019);
+    final Map<String, dynamic> map = {
+      'text': text,
+      'userId': userId,
+      'timestamp': dateTime.millisecondsSinceEpoch
     };
-    TextMessage txtMsg = TextMessage.fromMap(map);
+    final TextMessage txtMsg = TextMessage.fromMap(map);
 
     expect(txtMsg.userId, userId);
     expect(txtMsg.text, text);
@@ -45,51 +46,54 @@ void main() {
   });
 
   test('TextMessage.toJson', () {
-    String text = 'msgTxt';
-    String userId = 'uid';
-    DateTime dateTime = DateTime.now();
-    TextMessage txtMsg = TextMessage(text, userId, timestamp: dateTime);
+    const String text = 'msgTxt';
+    const String userId = 'uid';
+    final DateTime dateTime = DateTime(2019);
+    final TextMessage txtMsg = TextMessage(text, userId, timestamp: dateTime);
 
-    Map<String, dynamic> json = txtMsg.toJson();
+    final Map<String, dynamic> json = txtMsg.toJson();
 
     expect(json, {
       'userId': userId,
       'type': 'text',
       'text': text,
-      'timestamp': dateTime.toIso8601String(),
+      'timestamp': dateTime.millisecondsSinceEpoch,
     });
   });
 
   test('TextMessage.displayMessage() shoud return a Widget when isMine is true',
       () {
-    String text = 'msgTxt';
-    String userId = 'uid';
-    DateTime dateTime = DateTime.now();
-    TextMessage txtMsg = TextMessage(text, userId, timestamp: dateTime);
+    const String text = 'msgTxt';
+    const String userId = 'uid';
+    final DateTime dateTime = DateTime(2019);
+    final TextMessage txtMsg = TextMessage(text, userId, timestamp: dateTime);
 
-    bool isMine = true;
+    const bool isMine = true;
+    BuildContext context;
 
-    expect(txtMsg.displayMessage(isMine), isInstanceOf<Widget>());
+    expect(
+        txtMsg.displayMessage(context, isMine: isMine), isInstanceOf<Widget>());
   });
 
   test(
       'TextMessage.displayMessage() shoud return a Widget when isMine is false',
       () {
-    String text = 'msgTxt';
-    String userId = 'uid';
-    DateTime dateTime = DateTime.now();
-    TextMessage txtMsg = TextMessage(text, userId, timestamp: dateTime);
+    const String text = 'msgTxt';
+    const String userId = 'uid';
+    final DateTime dateTime = DateTime(2019);
+    final TextMessage txtMsg = TextMessage(text, userId, timestamp: dateTime);
 
-    bool isMine = false;
-
-    expect(txtMsg.displayMessage(isMine), isInstanceOf<Widget>());
+    const bool isMine = false;
+    BuildContext context;
+    expect(
+        txtMsg.displayMessage(context, isMine: isMine), isInstanceOf<Widget>());
   });
 
   test('TextMessage.toString', () {
-    String text = 'msgTxt';
-    String userId = 'uid';
-    DateTime dateTime = DateTime.now();
-    TextMessage txtMsg = TextMessage(text, userId, timestamp: dateTime);
+    const String text = 'msgTxt';
+    const String userId = 'uid';
+    final DateTime dateTime = DateTime(2019);
+    final TextMessage txtMsg = TextMessage(text, userId, timestamp: dateTime);
 
     expect(txtMsg.toString(),
         'TextMessage{type: ${MessageType.text}, userId: $userId timestamp: $dateTime, text: $text}');

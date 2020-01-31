@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat/src/common/styles.dart';
+import 'package:flutter_chat/src/group_chat/photo_viewer.dart';
 import 'package:flutter_chat/src/models/message/message.dart';
 
 class PhotoMessage extends Message {
-  final String photoUrl;
-
   PhotoMessage(this.photoUrl, String userId, {DateTime timestamp})
       : super(userId, timestamp: timestamp) {
     type = MessageType.photo;
@@ -19,7 +19,9 @@ class PhotoMessage extends Message {
               .toLocal(),
     );
   }
+  final String photoUrl;
 
+  @override
   Map<String, dynamic> toJson() => {
         'userId': userId,
         'type': 'photo',
@@ -27,19 +29,37 @@ class PhotoMessage extends Message {
         'timestamp': timestamp.millisecondsSinceEpoch,
       };
 
-  Widget displayMessage(isMine) {
+  @override
+  Widget displayMessage(BuildContext context, {@required bool isMine}) {
     return ClipRRect(
-      borderRadius: BorderRadius.all(Radius.circular(15.0)),
-      child: CachedNetworkImage(
-        placeholder: (context, url) => SizedBox(
-              child: CircularProgressIndicator(),
+      borderRadius: const BorderRadius.all(Radius.circular(15)),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HeroPhotoViewWrapper(
+                  heroTag: photoUrl,
+                  imageProvider: CachedNetworkImageProvider(photoUrl),
+                ),
+              ));
+        },
+        child: Hero(
+          tag: photoUrl,
+          child: CachedNetworkImage(
+            placeholder: (context, url) => const SizedBox(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Styles.mainColor),
+              ),
               width: 20,
               height: 20,
             ),
-        imageUrl: photoUrl,
-        fit: BoxFit.cover,
-        width: 150,
-        height: 150,
+            imageUrl: photoUrl,
+            fit: BoxFit.cover,
+            width: 150,
+            height: 150,
+          ),
+        ),
       ),
     );
   }

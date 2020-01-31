@@ -1,8 +1,6 @@
 name: flutter_chat_example
 description: A Chat Flutter
-version: 0.0.1+4
-author:
-homepage:
+version: 0.0.1
 
 environment:
   sdk: ">=2.0.0-dev.68.0 <3.0.0"
@@ -15,10 +13,9 @@ dependencies:
     sdk: flutter
   flutter_chat:
     path: ../
-  equatable: ^0.2.3
+  equatable: ^1.0.1
   google_sign_in: ^4.0.1+1
-  firebase_messaging: ^4.0.0+4
-
+  firebase_messaging: ^6.0.1
 
 dev_dependencies:
   flutter_launcher_icons: ^0.7.0

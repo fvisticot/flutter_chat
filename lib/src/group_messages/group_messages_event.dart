@@ -2,16 +2,22 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_chat/src/models/message/message.dart';
 
 abstract class GroupMessagesEvent extends Equatable {
-  GroupMessagesEvent([List props = const []]) : super(props);
+  const GroupMessagesEvent();
 }
 
 class SyncMessagesEvent extends GroupMessagesEvent {
+  const SyncMessagesEvent(this.messages) : assert(messages != null);
   final List<Message> messages;
 
-  SyncMessagesEvent(this.messages)
-      : assert(messages != null),
-        super([messages]);
-
   @override
-  String toString() => 'SyncMessagesEvent';
+  String toString() => 'SyncMessagesEvent{messages: $messages}';
+  @override
+  List<Object> get props => [messages];
+}
+
+class ErrorSyncMessagesEvent extends GroupMessagesEvent {
+  @override
+  String toString() => 'ErrorSyncMessagesEvent';
+  @override
+  List<Object> get props => [];
 }

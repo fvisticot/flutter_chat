@@ -1,9 +1,8 @@
 class Group {
+  Group(this.id, this.users, {this.title});
   String id;
   String title;
   Map<String, String> users;
-
-  Group(this.id, this.users, {this.title});
 
   @override
   String toString() {

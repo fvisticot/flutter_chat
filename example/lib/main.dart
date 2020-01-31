@@ -5,26 +5,27 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chat/flutter_chat.dart';
+import 'package:flutter_chat_example/prechat.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'authentication/authentication.dart';
 
 class SimpleBlocDelegate extends BlocDelegate {
   @override
-  void onTransition(Transition transition) {
+  void onTransition(Bloc bloc, Transition transition) {
+    super.onTransition(bloc, transition);
     print(transition);
-    super.onTransition(transition);
   }
 
   @override
-  void onError(Object error, StackTrace stacktrace) {
-    print(error);
-    super.onError(error, stacktrace);
+  void onError(Bloc bloc, Object error, StackTrace stacktrace) {
+    super.onError(bloc, error, stacktrace);
+    print('$error, $stacktrace');
   }
 }
 
 void main() {
-  BlocSupervisor().delegate = SimpleBlocDelegate();
+  BlocSupervisor.delegate = SimpleBlocDelegate();
   runApp(ChatDemoApp());
 }
 
@@ -37,52 +38,45 @@ class _ChatDemoAppState extends State<ChatDemoApp> {
   final GoogleSignIn googleSignIn = GoogleSignIn();
   final FirebaseApp app = FirebaseApp.instance;
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  AuthenticationBloc _authenticationBloc;
   FirebaseDatabase database;
-
-  @override
-  void initState() {
-    database = FirebaseDatabase(app: app);
-    database.setPersistenceEnabled(false);
-
-    _authenticationBloc = AuthenticationBloc(googleSignIn, firebaseAuth);
-    _authenticationBloc.dispatch(AppStarted());
-    super.initState();
-  }
+  FirebaseChatService chatService;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<AuthenticationBloc>(
-      bloc: _authenticationBloc,
+      create: (_) {
+        database = FirebaseDatabase(app: app);
+        chatService = FirebaseChatService(database);
+        final AuthenticationBloc _authenticationBloc = AuthenticationBloc(
+          googleSignIn,
+          firebaseAuth,
+          chatService,
+        );
+        _authenticationBloc.add(AppStarted());
+        return _authenticationBloc;
+      },
       child: MaterialApp(
-        home: BlocBuilder<AuthenticationEvent, AuthenticationState>(
-          bloc: _authenticationBloc,
+        home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
           builder: (BuildContext context, AuthenticationState state) {
-            if (state is AuthenticationUninitialized) {
-              return Container(
-                  //decoration: BoxDecoration(color: Colors.lightGreen),
-                  );
-            }
             if (state is AuthenticationAuthenticated) {
-              return Chat(
-                database,
-                'username',
+              chatService.setDevicePushToken();
+              return PreChat(
+                chatService: chatService,
               );
-            }
-            if (state is AuthenticationUnauthenticated) {
+            } else if (state is AuthenticationUnauthenticated) {
               return AuthenticationPage();
-            }
-            if (state is AuthenticationLoading) {
+            } else {
               return Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
                 ),
-                /*child: Center(
-                  child: SizedBox(
-                      width: 20.0,
-                      height: 20.0,
-                      child: CircularProgressIndicator()),
-                ),*/
+                child: Center(
+                  child: const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
               );
             }
           },

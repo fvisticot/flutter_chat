@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat/src/common/styles.dart';
 import 'package:flutter_chat/src/models/message/message.dart';
 
 class TextMessage extends Message {
-  final String text;
-
   TextMessage(this.text, String userId, {DateTime timestamp})
       : super(userId, timestamp: timestamp) {
     type = MessageType.text;
@@ -18,7 +17,9 @@ class TextMessage extends Message {
               .toLocal(),
     );
   }
+  final String text;
 
+  @override
   Map<String, dynamic> toJson() => {
         'userId': userId,
         'type': 'text',
@@ -26,18 +27,19 @@ class TextMessage extends Message {
         'timestamp': timestamp.millisecondsSinceEpoch,
       };
 
-  Widget displayMessage(isMine) {
+  @override
+  Widget displayMessage(BuildContext context, {@required bool isMine}) {
     return Container(
-      child: Text(
-        '$text',
-        softWrap: true,
-      ),
-      padding: EdgeInsets.all(8),
-      decoration: BoxDecoration(
-          color: isMine ? Colors.blue : Colors.black12,
-          borderRadius: BorderRadius.all(Radius.circular(8)),
-          border: Border.all(color: Colors.grey.withOpacity(0.3))),
-    );
+        child: Text(
+          '$text',
+          softWrap: true,
+          style: isMine ? Styles.myMessagetext : Styles.otherMessagetext,
+        ),
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: isMine ? Styles.mainColor : Styles.otherMessageBackgroundColor,
+          borderRadius: const BorderRadius.all(Radius.circular(7)),
+        ));
   }
 
   @override

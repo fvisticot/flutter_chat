@@ -1,29 +1,36 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter_chat/src/chat_service/chat_service.dart';
+import 'package:flutter_chat/src/discussions_list/discussions_list.dart';
 import 'package:flutter_chat/src/group_management/group_management.dart';
-import 'package:flutter_chat/src/repositories/firebase_repository.dart';
-
-import 'discussions_list.dart';
 
 class DiscussionsListBloc
     extends Bloc<DiscussionsListEvent, DiscussionsListState> {
-  FirebaseRepository firebaseRepository;
+  DiscussionsListBloc(
+    this.chatService,
+    this.groupManagementBloc,
+    this.userId,
+  )   : assert(chatService != null),
+        assert(groupManagementBloc != null),
+        assert(userId != null) {
+    chatService.streamOfUserDiscussions().then(
+      (discussionsStream) {
+        _subDiscussions = discussionsStream.listen(
+          (discussions) {
+            add(SyncDiscussionsList(discussions));
+          },
+        );
+      },
+      onError: (e) {
+        add(ErrorSyncDiscussionsList());
+      },
+    );
+  }
+  ChatService chatService;
   GroupManagementBloc groupManagementBloc;
   String userId;
   StreamSubscription _subDiscussions;
-
-  DiscussionsListBloc(
-      this.firebaseRepository, this.groupManagementBloc, this.userId)
-      : assert(firebaseRepository != null),
-        assert(groupManagementBloc != null),
-        assert(userId != null) {
-    _subDiscussions = firebaseRepository
-        .streamOfUserDiscussions(userId)
-        .listen((discussions) {
-      dispatch(SyncDiscussionsList(discussions));
-    });
-  }
 
   @override
   DiscussionsListState get initialState => DiscussionsInitial();
@@ -37,8 +44,8 @@ class DiscussionsListBloc
   }
 
   @override
-  void dispose() {
-    _subDiscussions.cancel();
-    super.dispose();
+  Future<void> close() async {
+    _subDiscussions?.cancel();
+    super.close();
   }
 }

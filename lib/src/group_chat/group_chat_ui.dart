@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_chat/src/chat_service/chat_service.dart';
+import 'package:flutter_chat/src/common/styles.dart';
 import 'package:flutter_chat/src/group_messages/group_messages.dart';
 import 'package:flutter_chat/src/message_bar/message_bar_ui.dart';
-import 'package:flutter_chat/src/models/models.dart';
-import 'package:flutter_chat/src/repositories/firebase_repository.dart';
+import 'package:flutter_chat/src/models/group.dart';
+import 'package:flutter_chat/src/models/message/message.dart';
+import 'package:flutter_chat/src/models/user.dart';
 import 'package:flutter_chat/src/typing_users/typing_users_ui.dart';
 import 'package:flutter_chat/src/upload_file/upload_file.dart';
 import 'package:flutter_chat/src/user_presence/user_presence_ui.dart';
@@ -12,11 +15,10 @@ import 'package:intl/intl.dart';
 import 'group_chat.dart';
 
 class GroupChatPage extends StatefulWidget {
+  const GroupChatPage(this.groupId, this.currentUser, this.chatService);
   final String groupId;
   final User currentUser;
-  final FirebaseRepository firebaseRepository;
-
-  GroupChatPage(this.groupId, this.currentUser, this.firebaseRepository);
+  final ChatService chatService;
 
   @override
   _GroupChatPageState createState() => _GroupChatPageState();
@@ -31,32 +33,21 @@ class _GroupChatPageState extends State<GroupChatPage> {
   @override
   void initState() {
     super.initState();
-    _groupChatBloc = GroupChatBloc(widget.firebaseRepository, widget.groupId);
-    _groupChatBloc.dispatch(GroupChatStarted(widget.groupId));
-    _groupMessagesBloc =
-        GroupMessagesBloc(widget.firebaseRepository, widget.groupId);
+    _groupChatBloc = GroupChatBloc(widget.chatService, widget.groupId);
+    _groupChatBloc.add(GroupChatStarted(widget.groupId));
+    _groupMessagesBloc = GroupMessagesBloc(widget.chatService, widget.groupId);
     _uploadFileBloc = UploadFileBloc();
     _scrollController = ScrollController();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<GroupChatEvent, GroupChatState>(
+    return BlocBuilder<GroupChatBloc, GroupChatState>(
         bloc: _groupChatBloc,
         builder: (context, groupChatState) {
           if (groupChatState is GroupChatInitial) {
             return Scaffold(
               body: Container(),
-            );
-          } else if (groupChatState is GroupChatLoading) {
-            return Scaffold(
-              body: Center(
-                child: SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(),
-                ),
-              ),
             );
           } else if (groupChatState is GroupChatSuccess) {
             return Scaffold(
@@ -66,14 +57,38 @@ class _GroupChatPageState extends State<GroupChatPage> {
                   Expanded(
                     child: _buildMessagesList(groupChatState.group),
                   ),
-                  TypingUsers(widget.firebaseRepository, widget.groupId,
-                      widget.currentUser),
+                  TypingUsers(
+                      widget.chatService, widget.groupId, widget.currentUser),
                   SafeArea(
                     bottom: true,
-                    child: MessageBar(widget.firebaseRepository, widget.groupId,
+                    child: MessageBar(widget.chatService, widget.groupId,
                         widget.currentUser, _uploadFileBloc),
                   ),
                 ],
+              ),
+            );
+          } else if (groupChatState is GroupChatError) {
+            return Scaffold(
+              appBar: AppBar(
+                title: const Text('Chat'),
+                flexibleSpace: Container(
+                  decoration: BoxDecoration(gradient: Styles.gradient),
+                ),
+              ),
+              body: Center(
+                child: const Text('Erreur lors du chargement de la discussion'),
+              ),
+            );
+          } else {
+            return Scaffold(
+              body: Center(
+                child: const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Styles.mainColor),
+                  ),
+                ),
               ),
             );
           }
@@ -83,14 +98,21 @@ class _GroupChatPageState extends State<GroupChatPage> {
   Widget _buildAppBar(Group group) {
     if (group.users.length > 2) {
       return AppBar(
-          title: Text(
-        group.title,
-        maxLines: 1,
-      ));
+        title: Text(
+          group.title,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: Styles.gradient,
+          ),
+        ),
+      );
     } else {
-      String userId = group.users.keys
+      final String userId = group.users.keys
           .firstWhere((k) => k != widget.currentUser.id, orElse: () => null);
-      String title = group.users[userId];
+      final String title = group.users[userId];
       return AppBar(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -98,34 +120,38 @@ class _GroupChatPageState extends State<GroupChatPage> {
             Stack(children: <Widget>[
               CircleAvatar(
                 backgroundColor: Colors.brown.shade800,
-                child: Text('AH'),
+                child: Text(title.substring(0, 1).toUpperCase()),
               ),
               Positioned(
                 bottom: 0,
                 right: 0,
-                child: UserPresenceIndicator(widget.firebaseRepository, userId),
+                child: UserPresenceIndicator(widget.chatService, userId),
               )
             ]),
-            SizedBox(
+            const SizedBox(
               width: 10,
             ),
             Text(
               title,
               maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(gradient: Styles.gradient),
+        ),
         bottom: PreferredSize(
-            child: BlocBuilder<UploadFileEvent, UploadFileState>(
+            child: BlocBuilder<UploadFileBloc, UploadFileState>(
                 bloc: _uploadFileBloc,
                 builder: (context, uploadFileState) {
-                  if (uploadFileState is UploadFileInitial) {
-                    return Container();
-                  } else if (uploadFileState is UploadFileProgress) {
+                  if (uploadFileState is UploadFileProgress) {
                     return LinearProgressIndicator(
                       value: uploadFileState.progress,
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
                     );
+                  } else {
+                    return Container();
                   }
                 }),
             preferredSize: const Size(double.infinity, 6)),
@@ -133,47 +159,55 @@ class _GroupChatPageState extends State<GroupChatPage> {
     }
   }
 
-  _buildMessagesList(Group group) {
+  Widget _buildMessagesList(Group group) {
     return Container(
       child: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).requestFocus(FocusNode());
-          },
-          child: Scrollbar(
-              child: BlocBuilder<GroupMessagesEvent, GroupMessagesState>(
-                  bloc: _groupMessagesBloc,
-                  builder: (context, groupMessagesState) {
-                    if (groupMessagesState is GroupMessagesInitial) {
-                      return Container();
-                    } else if (groupMessagesState is GroupMessagesSuccess) {
-                      List<Message> messages = groupMessagesState.messages;
-                      if (messages.length == 0) {
-                        return Container();
-                      } else {
-                        if (_scrollController.hasClients) {
-                          _scrollController.animateTo(0,
-                              duration: Duration(milliseconds: 50),
-                              curve: Curves.easeIn);
-                        }
-                        return ListView.builder(
-                          physics: BouncingScrollPhysics(),
-                          controller: _scrollController,
-                          reverse: true,
-                          scrollDirection: Axis.vertical,
-                          itemCount: messages.length,
-                          itemBuilder: (BuildContext context, int i) {
-                            return _buildMessage(messages[i], group);
-                          },
-                        );
-                      }
-                    }
-                  }))),
+        onTap: () {
+          FocusScope.of(context).requestFocus(FocusNode());
+        },
+        child: Scrollbar(
+          child: BlocBuilder<GroupMessagesBloc, GroupMessagesState>(
+            bloc: _groupMessagesBloc,
+            builder: (context, groupMessagesState) {
+              if (groupMessagesState is GroupMessagesInitial) {
+                return Container();
+              } else if (groupMessagesState is GroupMessagesSuccess) {
+                final List<Message> messages = groupMessagesState.messages;
+                if (messages.isEmpty) {
+                  return Container();
+                } else {
+                  if (_scrollController.hasClients) {
+                    _scrollController.animateTo(0,
+                        duration: Duration(milliseconds: 50),
+                        curve: Curves.easeIn);
+                  }
+                  return ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    controller: _scrollController,
+                    reverse: true,
+                    scrollDirection: Axis.vertical,
+                    itemCount: messages.length,
+                    itemBuilder: (BuildContext context, int i) {
+                      return _buildMessage(messages[i], group);
+                    },
+                  );
+                }
+              } else {
+                return Center(
+                  child: const Text('Error loading Messages'),
+                );
+              }
+            },
+          ),
+        ),
+      ),
     );
   }
 
   Widget _buildMessage(Message message, Group group) {
-    bool isDuo = (group.users.length > 2) ? false : true;
-    bool isMine = (widget.currentUser.id == message.userId) ? true : false;
+    final bool isDuo = (group.users.length > 2) ? false : true;
+    final bool isMine =
+        (widget.currentUser.id == message.userId) ? true : false;
 
     return Row(
       mainAxisAlignment:
@@ -181,7 +215,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
       children: <Widget>[
         Flexible(
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment:
@@ -196,7 +230,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
                           style: TextStyle(fontSize: 12),
                         ),
                       ),
-                message.displayMessage(isMine),
+                message.displayMessage(context, isMine: isMine),
                 Padding(
                   padding: const EdgeInsets.only(top: 3),
                   child: Text(

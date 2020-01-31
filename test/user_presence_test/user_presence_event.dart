@@ -3,15 +3,16 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('UserPresenceEvent with null parameter should throw assertion', () {
-    expect(
-        () => UserPresenceEvent(null), throwsA(isInstanceOf<AssertionError>()));
+    expect(() => UserPresenceEvent(isOnline: null),
+        throwsA(isInstanceOf<AssertionError>()));
   });
 
   test(
       'UserPresenceEvent toString method should return : "UserPresenceEvent [isOnline]"',
       () {
-    bool isOnline = true;
-    UserPresenceEvent userPresenceEvent = UserPresenceEvent(isOnline);
+    const bool isOnline = true;
+    const UserPresenceEvent userPresenceEvent =
+        UserPresenceEvent(isOnline: isOnline);
     expect(userPresenceEvent.toString(), 'UserPresenceEvent $isOnline');
   });
 }

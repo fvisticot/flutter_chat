@@ -1,28 +1,28 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter_chat/src/chat/chat_event.dart';
+import 'package:flutter_chat/src/chat/chat_state.dart';
+import 'package:flutter_chat/src/chat_service/chat_service.dart';
 import 'package:flutter_chat/src/models/user.dart';
-import 'chat_state.dart';
-import 'chat_event.dart';
-import '../repositories/firebase_repository.dart';
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
-  FirebaseRepository firebaseRepository;
-
-  ChatBloc(this.firebaseRepository)
-  : assert (firebaseRepository != null);
+  ChatBloc(this.chatService) : assert(chatService != null);
+  ChatService chatService;
 
   @override
   ChatState get initialState => ChatUninitialized();
 
   @override
-  Stream<ChatState> mapEventToState(
-      ChatEvent event) async* {
+  Stream<ChatState> mapEventToState(ChatEvent event) async* {
     if (event is ChatStarted) {
-      yield ChatLoading();
-      User user = await firebaseRepository.initChat(event.userName);
-      yield ChatInitialized(user);
+      try {
+        yield ChatLoading();
+        final User user = await chatService.getChatUser();
+        yield ChatInitialized(user);
+      } catch (e) {
+        yield ChatError();
+      }
     }
   }
-
 }

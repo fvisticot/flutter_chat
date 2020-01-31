@@ -1,31 +1,39 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_chat/src/chat_service/chat_service.dart';
 import 'package:flutter_chat/src/message_bar/message_bar.dart';
 import 'package:flutter_chat/src/models/message/message.dart';
-import 'package:flutter_chat/src/models/models.dart';
+import 'package:flutter_chat/src/models/message/photo_message.dart';
 import 'package:flutter_chat/src/models/user.dart';
-import 'package:flutter_chat/src/repositories/firebase_repository.dart';
 import 'package:flutter_chat/src/upload_file/upload_file.dart';
 
 class MessageBarBloc extends Bloc<MessageBarEvent, MessageBarState> {
-  FirebaseRepository firebaseRepository;
-  String groupId;
-  User currentUser;
-  UploadFileBloc uploadFileBloc;
-  bool _isTyping;
-
-  MessageBarBloc(this.firebaseRepository, this.groupId, this.currentUser,
-      this.uploadFileBloc)
-      : assert(firebaseRepository != null),
+  MessageBarBloc(
+    this.chatService,
+    this.groupId,
+    this.currentUser,
+    this.uploadFileBloc,
+  )   : assert(chatService != null),
         assert(groupId != null),
         assert(currentUser != null) {
     _isTyping = false;
   }
+  ChatService chatService;
+  String groupId;
+  User currentUser;
+  UploadFileBloc uploadFileBloc;
+  bool _isTyping;
+  StreamSubscription _storeFileProgress;
 
   @override
   MessageBarState get initialState => MessageBarInitial();
+
+  @override
+  Future<void> close() async {
+    _storeFileProgress?.cancel();
+    super.close();
+  }
 
   @override
   Stream<MessageBarState> mapEventToState(
@@ -33,39 +41,34 @@ class MessageBarBloc extends Bloc<MessageBarEvent, MessageBarState> {
   ) async* {
     try {
       if (event is StoreImageEvent) {
-        String filename = currentUser.id +
-            "_" +
-            DateTime.now().millisecondsSinceEpoch.toString() +
-            ".jpg";
-        StorageUploadTask task =
-            firebaseRepository.storeFileTask(filename, event.imageFile);
-        task.events.listen((event) {
-          double progress = event.snapshot.bytesTransferred.toDouble() /
-              event.snapshot.totalByteCount.toDouble();
-          uploadFileBloc.dispatch(UploadFileEvent(progress));
-        });
-        task.onComplete.then((snapshot) {
-          snapshot.ref.getDownloadURL().then((url) {
-            Message message = PhotoMessage(
-              url,
+        final String filename =
+            '${currentUser.id}_${DateTime.now().millisecondsSinceEpoch.toString()}.jpg';
+        _storeFileProgress = chatService
+            .storeFileStream(filename, event.imageFile)
+            .listen((fileUpload) {
+          if (fileUpload.downloadUrl == null) {
+            uploadFileBloc.add(UploadFileEvent(fileUpload.progress));
+          } else {
+            final Message message = PhotoMessage(
+              fileUpload.downloadUrl,
               currentUser.id,
             );
-            dispatch(SendMessageEvent(message));
-            uploadFileBloc.dispatch(UploadFileEvent(-1.0));
-          });
+            add(SendMessageEvent(message));
+            uploadFileBloc.add(const UploadFileEvent(-1));
+          }
         });
       }
       if (event is SendMessageEvent) {
-        await firebaseRepository.sendMessage(groupId, event.message);
+        chatService.sendMessage(groupId, event.message);
       }
       if (event is IsTyping) {
         if (event.isTyping) {
           if (!_isTyping) {
-            firebaseRepository.isTyping(groupId, currentUser, event.isTyping);
+            chatService.isTyping(groupId, isTyping: event.isTyping);
           }
         } else {
           _isTyping = false;
-          firebaseRepository.isTyping(groupId, currentUser, event.isTyping);
+          chatService.isTyping(groupId, isTyping: event.isTyping);
         }
       }
     } catch (e) {

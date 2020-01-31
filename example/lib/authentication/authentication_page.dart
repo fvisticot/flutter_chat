@@ -10,7 +10,6 @@ class AuthenticationPage extends StatefulWidget {
 class _AuthenticationPageState extends State<AuthenticationPage> {
   AuthenticationBloc _authBloc;
 
-
   @override
   void initState() {
     super.initState();
@@ -21,21 +20,14 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Google Sign In'),
+        title: const Text('Google Sign In'),
       ),
-      body:  Container(
-          child: Center(
-              child: RaisedButton(
-                onPressed: () => _authBloc.dispatch(LogIn()),
-                child: Text('Sign In With Google'),
-              )
-          )
-      )
+      body: Center(
+        child: RaisedButton(
+          onPressed: () => _authBloc.add(LogIn()),
+          child: const Text('Sign In With Google'),
+        ),
+      ),
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }

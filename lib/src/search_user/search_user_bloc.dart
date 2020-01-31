@@ -1,18 +1,18 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter_chat/src/chat_service/chat_service.dart';
 import 'package:flutter_chat/src/group_management/group_management.dart';
-import 'package:flutter_chat/src/repositories/firebase_repository.dart';
-
-import 'search_user.dart';
+import 'package:flutter_chat/src/search_user/search_user.dart';
 
 class SearchUserBloc extends Bloc<SearchUserEvent, SearchUserState> {
-  FirebaseRepository firebaseRepository;
-  GroupManagementBloc groupManagementBloc;
-
-  SearchUserBloc(this.firebaseRepository, this.groupManagementBloc)
-      : assert(firebaseRepository != null),
+  SearchUserBloc(
+    this.chatService,
+    this.groupManagementBloc,
+  )   : assert(chatService != null),
         assert(groupManagementBloc != null);
+  ChatService chatService;
+  GroupManagementBloc groupManagementBloc;
 
   @override
   SearchUserState get initialState => SearchUserInitial();
@@ -22,28 +22,22 @@ class SearchUserBloc extends Bloc<SearchUserEvent, SearchUserState> {
     SearchUserEvent event,
   ) async* {
     if (event is SearchUserWithName) {
-      if (event.searchName.length == 0) {
-        yield SearchUserList({});
+      if (event.searchName.isEmpty) {
+        yield const SearchUserList({});
       } else {
         final Map<String, String> users =
-            await firebaseRepository.searchUsersByName(event.searchName);
+            await chatService.searchUsersByName(event.searchName);
         yield SearchUserList(users);
       }
     } else if (event is ChatWithUser) {
-      yield SearchUserList({});
-      String groupId =
-          await firebaseRepository.getDuoGroupId(event.currentUid, event.uid);
+      yield const SearchUserList({});
+      final String groupId =
+          await chatService.getDuoGroupId(event.currentUid, event.uid);
       if (groupId != null) {
-        groupManagementBloc.dispatch(NavigateToGroup(groupId));
+        groupManagementBloc.add(NavigateToGroup(groupId));
       } else {
-        groupManagementBloc
-            .dispatch(CreateDuoGroup(event.currentUid, event.uid));
+        groupManagementBloc.add(CreateDuoGroup(event.currentUid, event.uid));
       }
     }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }

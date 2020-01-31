@@ -1,15 +1,13 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter_chat/src/chat_service/chat_service.dart';
 import 'package:flutter_chat/src/group_management/group_management.dart';
-import 'package:flutter_chat/src/repositories/firebase_repository.dart';
 
 class GroupManagementBloc
     extends Bloc<GroupManagementEvent, GroupManagementState> {
-  FirebaseRepository firebaseRepository;
-
-  GroupManagementBloc(this.firebaseRepository)
-      : assert(firebaseRepository != null);
+  GroupManagementBloc(this.chatService) : assert(chatService != null);
+  ChatService chatService;
 
   @override
   GroupManagementState get initialState => GroupManagementInitialState();
@@ -23,8 +21,8 @@ class GroupManagementBloc
     }
     if (event is CreateDuoGroup) {
       yield CreatingGroupState();
-      String groupId =
-          await firebaseRepository.createDuoGroup(event.currentUid, event.uid);
+      final String groupId =
+          await chatService.createDuoGroup(event.currentUid, event.uid);
       yield NavigateToGroupState(groupId);
     }
   }

@@ -1,21 +1,22 @@
 import 'package:equatable/equatable.dart';
 
-class TypingUsersState extends Equatable {
-  TypingUsersState([List props = const []]) : super(props);
+abstract class TypingUsersState extends Equatable {
+  const TypingUsersState();
 }
 
 class TypingUsersList extends TypingUsersState {
-  List<String> usersNames;
-
-  TypingUsersList(this.usersNames)
-      : super([usersNames]);
+  const TypingUsersList(this.usersNames);
+  final List<String> usersNames;
 
   @override
-  String toString() => 'TypingUsersList $usersNames';
+  String toString() => 'TypingUsersList{userNames: $usersNames}';
+  @override
+  List<Object> get props => [usersNames];
 }
 
 class TypingUsersInitial extends TypingUsersState {
   @override
   String toString() => 'TypingUsersInitial';
+  @override
+  List<Object> get props => [];
 }
-

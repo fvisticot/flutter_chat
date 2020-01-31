@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_chat/src/chat_service/chat_service.dart';
 import 'package:flutter_chat/src/models/user.dart';
-import 'typing_users.dart';
-import 'package:flutter_chat/src/repositories/firebase_repository.dart';
+import 'package:flutter_chat/src/typing_users/typing_users.dart';
 
 class TypingUsers extends StatefulWidget {
-  final FirebaseRepository firebaseRepository;
+  const TypingUsers(
+    this.chatService,
+    this.groupId,
+    this.currentUser,
+  )   : assert(chatService != null),
+        assert(groupId != null),
+        assert(currentUser != null);
+  final ChatService chatService;
   final String groupId;
   final User currentUser;
-
-  TypingUsers(this.firebaseRepository, this.groupId, this.currentUser)
-      : assert(firebaseRepository != null),
-        assert(groupId!= null),
-        assert(currentUser!= null);
 
   @override
   _TypingUsersState createState() => _TypingUsersState();
@@ -23,39 +25,41 @@ class _TypingUsersState extends State<TypingUsers> {
 
   @override
   void initState() {
-    _typingUsersBloc = TypingUsersBloc(widget.firebaseRepository, widget.groupId, widget.currentUser);
+    _typingUsersBloc = TypingUsersBloc(widget.chatService, widget.groupId);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TypingUsersEvent, TypingUsersState>(
+    return BlocBuilder<TypingUsersBloc, TypingUsersState>(
         bloc: _typingUsersBloc,
         builder: (context, typingUsersState) {
           if (typingUsersState is TypingUsersList) {
-            if (typingUsersState.usersNames.length == 0){
+            if (typingUsersState.usersNames.isEmpty) {
               return Container();
             } else {
               String typingMsg;
-              if (typingUsersState.usersNames.length > 1){
-                typingMsg = 'Users are typing ...';
+              if (typingUsersState.usersNames.length > 1) {
+                typingMsg = 'Des utilisateurs écrivents...';
               } else {
-                typingMsg = '${typingUsersState.usersNames.first} is typing ...';
+                typingMsg =
+                    '${typingUsersState.usersNames.first} est en train d\'écrire...';
               }
               return Row(
                 children: <Widget>[
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                      child: Text(typingMsg, style: TextStyle(color: Colors.grey),)
-                  )
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 8),
+                      child: Text(
+                        typingMsg,
+                        style: TextStyle(color: Colors.grey),
+                      ))
                 ],
               );
             }
           } else {
             return Container();
           }
-        }
-    );
+        });
   }
 }
-

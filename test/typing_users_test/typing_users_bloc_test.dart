@@ -1,19 +1,27 @@
 import 'dart:async';
+
+import 'package:flutter_chat/src/chat_service/chat_service.dart';
+import 'package:flutter_chat/src/typing_users/typing_users.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:flutter_chat/src/typing_users/typing_users.dart';
-import 'package:flutter_chat/src/repositories/firebase_repository.dart';
 
-class MockFirebaseRepository extends Mock implements FirebaseRepository {}
+class MockChatService extends Mock implements ChatService {}
 
 void main() {
-  FirebaseRepository firebaseRepository;
+  ChatService chatService;
   TypingUsersBloc typingUsersBloc;
 
   setUp(() {
-    firebaseRepository = MockFirebaseRepository();
-    when(firebaseRepository.typingUsers(any, any)).thenAnswer((_) => Stream.fromIterable([]));
-    typingUsersBloc = TypingUsersBloc(firebaseRepository, any, any);
+    chatService = MockChatService();
+    when(chatService.typingUsers('groupId')).thenAnswer(
+      (_) => Future.value(
+        Stream.fromIterable([]),
+      ),
+    );
+    typingUsersBloc = TypingUsersBloc(
+      chatService,
+      'groupId',
+    );
   });
 
   test('initial state is correct', () {
@@ -23,31 +31,29 @@ void main() {
   test('dispose does not emit new states', () {
     expectLater(
       typingUsersBloc.state,
-      emitsInOrder([]),
+      emitsInOrder([TypingUsersInitial(), emitsDone]),
     );
-    typingUsersBloc.dispose();
+    typingUsersBloc.close();
   });
 
   test('emits [TypingUsersInitial, TypingUsersList] when users are Typing', () {
+    const List<String> names = ['testname1', 'testname2'];
     expectLater(
       typingUsersBloc.state,
       emitsInOrder([
         TypingUsersInitial(),
-        TypingUsersList(['testName'])
+        const TypingUsersList(names),
       ]),
     );
-    typingUsersBloc.dispatch(TypingUsersEvent(['testName']));
+    typingUsersBloc.add(const TypingUsersEvent(names));
   });
-
-  test('emits [TypingUsersInitial, TypingUsersList] when nobody is typing ', () {
+  test('emits [TypingUsersInitial, TypingUsersList] when nobody is typing ',
+      () {
+    const List<String> names = ['testname1', 'testname2'];
     expectLater(
       typingUsersBloc.state,
-      emitsInOrder([
-        TypingUsersInitial(),
-        TypingUsersList([])
-      ]),
+      emitsInOrder([TypingUsersInitial(), const TypingUsersList(names)]),
     );
-    typingUsersBloc.dispatch(TypingUsersEvent([]));
+    typingUsersBloc.add(const TypingUsersEvent(names));
   });
-
 }

@@ -1,34 +1,37 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'group_messages.dart';
-import 'package:flutter_chat/src/repositories/firebase_repository.dart';
+import 'package:flutter_chat/src/chat_service/chat_service.dart';
+import 'package:flutter_chat/src/group_messages/group_messages.dart';
 
 class GroupMessagesBloc extends Bloc<GroupMessagesEvent, GroupMessagesState> {
-  FirebaseRepository firebaseRepository;
-  String groupId;
-  StreamSubscription _subMessages;
-
-  GroupMessagesBloc(this.firebaseRepository, this.groupId) {
-    _subMessages = firebaseRepository.streamOfMessages(groupId).listen((messages) {
-      dispatch(SyncMessagesEvent(messages));
+  GroupMessagesBloc(this.chatService, this.groupId) {
+    _subMessages = chatService.streamOfMessages(groupId).listen((messages) {
+      add(SyncMessagesEvent(messages));
+    }, onError: (error) {
+      add(ErrorSyncMessagesEvent());
     });
   }
+  ChatService chatService;
+  String groupId;
+  StreamSubscription _subMessages;
 
   @override
   GroupMessagesState get initialState => GroupMessagesInitial();
 
   @override
   Stream<GroupMessagesState> mapEventToState(
-      GroupMessagesEvent event,
+    GroupMessagesEvent event,
   ) async* {
     if (event is SyncMessagesEvent) {
       yield GroupMessagesSuccess(event.messages);
+    } else if (event is ErrorSyncMessagesEvent) {
+      yield const GroupMessagesError(error: 'Error synchronizing messages');
     }
   }
 
   @override
-  void dispose() {
-    _subMessages.cancel();
-    super.dispose();
+  Future<void> close() async {
+    _subMessages?.cancel();
+    super.close();
   }
 }
