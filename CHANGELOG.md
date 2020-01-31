@@ -1,3 +1,7 @@
+## [0.1.3] - 31/01/2020
+
+- Small fixes
+
 ## [0.1.2] - 13/01/2020
 
 - Updated dependencies
