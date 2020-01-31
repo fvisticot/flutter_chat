@@ -1,8 +1,4 @@
-import_from_git(
-   url: "https://oauth2:eBkSWpg1x8ozCSQdKyk9@git-oab.si.fr.intraorange/practice-apple-mds-o/fastlane-core.git",
-   branch: "0.3.0",
-   path: "Fastfile"
-)
+
 # This file contains the fastlane.tools configuration
 # You can find the documentation at https://docs.fastlane.tools
 #
@@ -18,11 +14,32 @@ import_from_git(
 # Uncomment the line if you want fastlane to automatically update itself
 # update_fastlane
 
-default_platform(:ios)
 
-platform :ios do
-  desc "Description of what the lane does"
-  lane :custom_lane do
-    # add actions here: https://docs.fastlane.tools/actions
+import_from_git(
+   url: "https://oauth2:eBkSWpg1x8ozCSQdKyk9@git-oab.si.fr.intraorange/practice-apple-mds-o/fastlane-core.git",
+   branch: "0.2.2",
+   path: "Fastfile"
+)
+
+desc "Disable automatic signing"
+  lane :disable_automatic_signing do
+    disable_automatic_code_signing(
+     use_automatic_signing: false
+   )
+ end
+
+lane :build_ios_project do
+    check_mandatory_env_var
+    init_version_number
+    init_automatic_code_signing
+    init_gym(version: get_version_number)
+    disable_automatic_signing
+    gym(
+      export_options: {
+        provisioningProfiles: {
+          ENV["FL_BUNDLE_IDENTIFIER"] => ENV["PROVISIONING_IDENTIFIER"]
+        }
+      },
+      xcargs: { :PROVISIONING_PROFILE => ENV["PROVISIONING_IDENTIFIER"]}
+    )
   end
-end

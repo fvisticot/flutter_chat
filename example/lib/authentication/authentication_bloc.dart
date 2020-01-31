@@ -1,9 +1,11 @@
 import 'dart:async';
+
+import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_chat/flutter_chat.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:bloc/bloc.dart';
+
 import 'authentication.dart';
 
 class AuthenticationBloc
@@ -40,6 +42,28 @@ class AuthenticationBloc
 
     if (event is LogIn) {
       yield AuthenticationLoading();
+      final FirebaseMessaging _firebaseMessaging = new FirebaseMessaging();
+      _firebaseMessaging.configure(
+        onMessage: (Map<String, dynamic> message) async {
+          print('on message $message');
+        },
+        onResume: (Map<String, dynamic> message) async {
+          print('on resume $message');
+        },
+        onLaunch: (Map<String, dynamic> message) async {
+          print('on launch $message');
+        },
+      );
+      _firebaseMessaging.requestNotificationPermissions(
+          const IosNotificationSettings(sound: true, badge: true, alert: true));
+      _firebaseMessaging.onIosSettingsRegistered
+          .listen((IosNotificationSettings settings) {
+        print("Settings registered: $settings");
+      });
+
+      String token = await _firebaseMessaging.getToken();
+      print("Push Messaging token: $token");
+
       try {
         final GoogleSignInAccount googleUser = await googleSignIn.signIn();
         final GoogleSignInAuthentication googleAuth =
