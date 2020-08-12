@@ -13,7 +13,8 @@ class DiscussionsListBloc
     this.userId,
   )   : assert(chatService != null),
         assert(groupManagementBloc != null),
-        assert(userId != null) {
+        assert(userId != null),
+        super(DiscussionsInitial()) {
     chatService.streamOfUserDiscussions().then(
       (discussionsStream) {
         _subDiscussions = discussionsStream.listen(
@@ -32,8 +33,6 @@ class DiscussionsListBloc
   String userId;
   StreamSubscription _subDiscussions;
 
-  @override
-  DiscussionsListState get initialState => DiscussionsInitial();
 
   @override
   Stream<DiscussionsListState> mapEventToState(

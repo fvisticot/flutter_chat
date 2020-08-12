@@ -63,7 +63,7 @@ class _MessageBarState extends State<MessageBar> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MessageBarBloc, MessageBarState>(
-        bloc: _messageBarBloc,
+        cubit: _messageBarBloc,
         builder: (context, messageBarState) {
           if (messageBarState is MessageBarInitial) {
             return Row(

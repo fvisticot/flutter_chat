@@ -17,7 +17,7 @@ void main() {
   });
 
   test('initial state is UserPresenceLoading', () {
-    expect(userPresenceBloc.initialState, UserPresenceLoading());
+    expect(userPresenceBloc.state, UserPresenceLoading());
   });
 
   test(

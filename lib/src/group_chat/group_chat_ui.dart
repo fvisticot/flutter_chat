@@ -43,7 +43,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<GroupChatBloc, GroupChatState>(
-        bloc: _groupChatBloc,
+        cubit: _groupChatBloc,
         builder: (context, groupChatState) {
           if (groupChatState is GroupChatInitial) {
             return Scaffold(
@@ -143,7 +143,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
         ),
         bottom: PreferredSize(
             child: BlocBuilder<UploadFileBloc, UploadFileState>(
-                bloc: _uploadFileBloc,
+                cubit: _uploadFileBloc,
                 builder: (context, uploadFileState) {
                   if (uploadFileState is UploadFileProgress) {
                     return LinearProgressIndicator(
@@ -167,7 +167,7 @@ class _GroupChatPageState extends State<GroupChatPage> {
         },
         child: Scrollbar(
           child: BlocBuilder<GroupMessagesBloc, GroupMessagesState>(
-            bloc: _groupMessagesBloc,
+            cubit: _groupMessagesBloc,
             builder: (context, groupMessagesState) {
               if (groupMessagesState is GroupMessagesInitial) {
                 return Container();

@@ -45,7 +45,7 @@ class _DiscussionsListPageState extends State<DiscussionsListPage> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DiscussionsListBloc, DiscussionsListState>(
-        bloc: _discussionsListBloc,
+        cubit: _discussionsListBloc,
         builder: (context, discussionsListState) {
           if (discussionsListState is DiscussionsInitial) {
             return Container();

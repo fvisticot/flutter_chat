@@ -7,11 +7,10 @@ import 'package:flutter_chat/src/chat_service/chat_service.dart';
 import 'package:flutter_chat/src/models/user.dart';
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
-  ChatBloc(this.chatService) : assert(chatService != null);
+  ChatBloc(this.chatService) :
+        assert(chatService != null),
+        super(ChatUninitialized());
   ChatService chatService;
-
-  @override
-  ChatState get initialState => ChatUninitialized();
 
   @override
   Stream<ChatState> mapEventToState(ChatEvent event) async* {

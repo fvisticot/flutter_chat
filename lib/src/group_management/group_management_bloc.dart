@@ -6,11 +6,10 @@ import 'package:flutter_chat/src/group_management/group_management.dart';
 
 class GroupManagementBloc
     extends Bloc<GroupManagementEvent, GroupManagementState> {
-  GroupManagementBloc(this.chatService) : assert(chatService != null);
+  GroupManagementBloc(this.chatService) :
+        assert(chatService != null),
+        super(GroupManagementInitialState());
   ChatService chatService;
-
-  @override
-  GroupManagementState get initialState => GroupManagementInitialState();
 
   @override
   Stream<GroupManagementState> mapEventToState(

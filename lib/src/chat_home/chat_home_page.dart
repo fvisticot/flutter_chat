@@ -46,7 +46,7 @@ class _ChatHomePageState extends State<ChatHomePage>
   @override
   Widget build(BuildContext context) {
     return BlocListener(
-      bloc: groupManagementBloc,
+      cubit: groupManagementBloc,
       listener: (context, state) {
         if (state is NavigateToGroupState) {
           Navigator.of(context).push(
@@ -61,7 +61,7 @@ class _ChatHomePageState extends State<ChatHomePage>
         }
       },
       child: BlocBuilder<GroupManagementBloc, GroupManagementState>(
-          bloc: groupManagementBloc,
+          cubit: groupManagementBloc,
           builder: (context, state) {
             if (state is CreatingGroupState) {
               return Scaffold(

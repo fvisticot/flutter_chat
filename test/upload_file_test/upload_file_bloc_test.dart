@@ -9,7 +9,7 @@ void main() {
   });
 
   test('UploadFileBloc initial state should be UploadFileInitial', () {
-    expect(uploadFileBloc.initialState, UploadFileInitial());
+    expect(uploadFileBloc.state, UploadFileInitial());
   });
 
   test('UplaodFileBloc dispose should not emit new states', () {

@@ -5,7 +5,7 @@ import 'package:flutter_chat/src/typing_users/typing_users_event.dart';
 import 'package:flutter_chat/src/typing_users/typing_users_state.dart';
 
 class TypingUsersBloc extends Bloc<TypingUsersEvent, TypingUsersState> {
-  TypingUsersBloc(this.chatService, this.groupId) {
+  TypingUsersBloc(this.chatService, this.groupId) : super(TypingUsersInitial()) {
     chatService.typingUsers(groupId).then((typingUsersStream) {
       _subTypingUsers = typingUsersStream.listen((usersNames) {
         add(TypingUsersEvent(usersNames));
@@ -15,9 +15,6 @@ class TypingUsersBloc extends Bloc<TypingUsersEvent, TypingUsersState> {
   ChatService chatService;
   String groupId;
   StreamSubscription _subTypingUsers;
-
-  @override
-  TypingUsersState get initialState => TypingUsersInitial();
 
   @override
   Stream<TypingUsersState> mapEventToState(TypingUsersEvent event) async* {
