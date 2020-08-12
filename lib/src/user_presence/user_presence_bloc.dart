@@ -4,7 +4,7 @@ import 'package:flutter_chat/src/chat_service/chat_service.dart';
 import 'user_presence.dart';
 
 class UserPresenceBloc extends Bloc<UserPresenceEvent, UserPresenceState> {
-  UserPresenceBloc(this.chatService, this.userId) {
+  UserPresenceBloc(this.chatService, this.userId) : super(UserPresenceLoading()) {
     _subUserPresence =
         chatService.userPresenceStream(userId).listen((isOnline) {
       add(UserPresenceEvent(isOnline: isOnline));
@@ -13,9 +13,6 @@ class UserPresenceBloc extends Bloc<UserPresenceEvent, UserPresenceState> {
   ChatService chatService;
   String userId;
   StreamSubscription _subUserPresence;
-
-  @override
-  UserPresenceState get initialState => UserPresenceLoading();
 
   @override
   Stream<UserPresenceState> mapEventToState(UserPresenceEvent event) async* {

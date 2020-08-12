@@ -10,12 +10,10 @@ class SearchUserBloc extends Bloc<SearchUserEvent, SearchUserState> {
     this.chatService,
     this.groupManagementBloc,
   )   : assert(chatService != null),
-        assert(groupManagementBloc != null);
+        assert(groupManagementBloc != null),
+        super(SearchUserInitial());
   ChatService chatService;
   GroupManagementBloc groupManagementBloc;
-
-  @override
-  SearchUserState get initialState => SearchUserInitial();
 
   @override
   Stream<SearchUserState> mapEventToState(

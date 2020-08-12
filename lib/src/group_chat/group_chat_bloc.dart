@@ -9,12 +9,10 @@ class GroupChatBloc extends Bloc<GroupChatEvent, GroupChatState> {
     this.chatService,
     this.groupId,
   )   : assert(chatService != null),
-        assert(groupId != null);
+        assert(groupId != null),
+        super(GroupChatInitial());
   final ChatService chatService;
   final String groupId;
-
-  @override
-  GroupChatState get initialState => GroupChatInitial();
 
   @override
   Stream<GroupChatState> mapEventToState(GroupChatEvent event) async* {

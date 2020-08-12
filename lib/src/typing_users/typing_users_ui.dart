@@ -32,7 +32,7 @@ class _TypingUsersState extends State<TypingUsers> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TypingUsersBloc, TypingUsersState>(
-        bloc: _typingUsersBloc,
+        cubit: _typingUsersBloc,
         builder: (context, typingUsersState) {
           if (typingUsersState is TypingUsersList) {
             if (typingUsersState.usersNames.isEmpty) {

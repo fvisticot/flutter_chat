@@ -3,9 +3,7 @@ import 'package:bloc/bloc.dart';
 import 'upload_file.dart';
 
 class UploadFileBloc extends Bloc<UploadFileEvent, UploadFileState> {
-
-  @override
-  UploadFileState get initialState => UploadFileInitial();
+  UploadFileBloc() : super(UploadFileInitial());
 
   @override
   Stream<UploadFileState> mapEventToState(UploadFileEvent event) async* {

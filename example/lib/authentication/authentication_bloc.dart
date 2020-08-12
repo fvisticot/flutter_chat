@@ -16,12 +16,11 @@ class AuthenticationBloc
     this.chatService,
   )   : assert(googleSignIn != null),
         assert(firebaseAuth != null),
-        assert(chatService != null);
+        assert(chatService != null),
+        super(AuthenticationUninitialized());
   final GoogleSignIn googleSignIn;
   final FirebaseAuth firebaseAuth;
   final FirebaseChatService chatService;
-  @override
-  AuthenticationState get initialState => AuthenticationUninitialized();
 
   @override
   Stream<AuthenticationState> mapEventToState(

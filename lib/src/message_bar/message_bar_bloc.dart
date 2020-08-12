@@ -16,7 +16,8 @@ class MessageBarBloc extends Bloc<MessageBarEvent, MessageBarState> {
     this.uploadFileBloc,
   )   : assert(chatService != null),
         assert(groupId != null),
-        assert(currentUser != null) {
+        assert(currentUser != null),
+        super(MessageBarInitial()) {
     _isTyping = false;
   }
   ChatService chatService;
@@ -25,9 +26,6 @@ class MessageBarBloc extends Bloc<MessageBarEvent, MessageBarState> {
   UploadFileBloc uploadFileBloc;
   bool _isTyping;
   StreamSubscription _storeFileProgress;
-
-  @override
-  MessageBarState get initialState => MessageBarInitial();
 
   @override
   Future<void> close() async {

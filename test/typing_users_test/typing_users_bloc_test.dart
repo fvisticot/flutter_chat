@@ -25,7 +25,7 @@ void main() {
   });
 
   test('initial state is correct', () {
-    expect(typingUsersBloc.initialState, TypingUsersInitial());
+    expect(typingUsersBloc.state, TypingUsersInitial());
   });
 
   test('dispose does not emit new states', () {

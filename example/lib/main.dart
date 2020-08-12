@@ -10,7 +10,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 import 'authentication/authentication.dart';
 
-class SimpleBlocDelegate extends BlocDelegate {
+class SimpleBlocDelegate extends BlocObserver {
   @override
   void onTransition(Bloc bloc, Transition transition) {
     super.onTransition(bloc, transition);
@@ -18,14 +18,13 @@ class SimpleBlocDelegate extends BlocDelegate {
   }
 
   @override
-  void onError(Bloc bloc, Object error, StackTrace stacktrace) {
-    super.onError(bloc, error, stacktrace);
+  void onError(Cubit cubit, Object error, StackTrace stacktrace) {
+    super.onError(cubit, error, stacktrace);
     print('$error, $stacktrace');
   }
 }
 
 void main() {
-  BlocSupervisor.delegate = SimpleBlocDelegate();
   runApp(ChatDemoApp());
 }
 
