@@ -10,7 +10,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 import 'authentication/authentication.dart';
 
-class SimpleBlocDelegate extends BlocObserver {
+class SimpleBlocObserver extends BlocObserver {
   @override
   void onTransition(Bloc bloc, Transition transition) {
     super.onTransition(bloc, transition);
@@ -25,6 +25,7 @@ class SimpleBlocDelegate extends BlocObserver {
 }
 
 void main() {
+  Bloc.observer = SimpleBlocObserver();
   runApp(ChatDemoApp());
 }
 
